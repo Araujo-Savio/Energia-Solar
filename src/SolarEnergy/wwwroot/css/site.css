@@ -1856,3 +1856,88 @@ footer .footer-links a:hover {
     font-size: 1.05rem;
   }
 }
+
+/* ========================================
+   Agendamentos - Cards e componentes
+   ======================================== */
+
+.schedule-card {
+  border-radius: 18px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.schedule-card-header {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  padding: 1.5rem 2rem;
+}
+
+.schedule-card-header .icon-wrapper {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.schedule-card .form-control,
+.schedule-card .form-select {
+  border-radius: 10px;
+  border-width: 2px;
+}
+
+.schedule-filter .form-label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #2563eb !important;
+}
+
+.btn-schedule-primary {
+  background-color: #2563eb;
+  border: none;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-schedule-primary:hover,
+.btn-schedule-primary:focus {
+  background-color: #1d4ed8;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.25);
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.status-pending {
+  background: rgba(234, 109, 19, 0.12);
+  color: #ea6d13;
+}
+
+.status-confirmed {
+  background: rgba(37, 99, 235, 0.12);
+  color: #2563eb;
+}
+
+.status-done {
+  background: rgba(16, 185, 129, 0.15);
+  color: #0f9d58;
+}
