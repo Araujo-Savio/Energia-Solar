@@ -93,7 +93,7 @@
                                             <td>@visit.CompanyName</td>
                                             <td>@visit.ClientName</td>
                                             <td>@visit.ServiceType</td>
-                                            <td class="text-center">@visit.VisitDate:dd/MM/yyyy</td>
+                                            <td class="text-center">@visit.VisitDate.ToString("dd/MM/yyyy")</td>
                                             <td class="text-center">@visit.VisitTime.ToString("hh\:mm")</td>
                                             <td class="text-center">
                                                 <span class="@StatusBadge(visit.Status)">@StatusLabel(visit.Status)</span>
