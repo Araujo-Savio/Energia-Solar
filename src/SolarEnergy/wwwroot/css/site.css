@@ -1978,3 +1978,78 @@ footer .footer-links a:hover {
         font-size: 1rem;
     }
 }
+
+/* ========================================
+   Agendamentos de Visita Técnica
+   ======================================== */
+.schedule-card {
+    border-radius: 1rem;
+    overflow: hidden;
+    background-color: #ffffff;
+}
+
+.schedule-card-header {
+    background: var(--solar-gradient-subtle);
+    color: var(--solar-white);
+    padding: 1.5rem;
+}
+
+.schedule-card-header .icon-wrapper {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background-color: rgba(var(--solar-orange-rgb), 0.25);
+    display: grid;
+    place-items: center;
+    font-size: 1.4rem;
+}
+
+.schedule-filter .form-control,
+.schedule-filter .form-select {
+    min-height: 3rem;
+}
+
+.schedule-filter .btn {
+    min-height: 3rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Badges de status — usando as variáveis do tema */
+.status-badge {
+    display: inline-block;
+    padding: 0.35rem 0.6rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    border: 1px solid transparent;
+    font-size: 0.85rem;
+}
+
+.status-pending {
+    color: var(--solar-orange);
+    border-color: rgba(var(--solar-orange-rgb), 0.5);
+    background: rgba(var(--solar-orange-rgb), 0.08);
+}
+
+.status-confirmed {
+    color: var(--solar-white);
+    background: var(--solar-blue-primary);
+    border-color: rgba(var(--solar-blue-rgb), 0.5);
+}
+
+.status-done {
+    color: #0f5132;
+    background: #d1e7dd;
+    border-color: #badbcc;
+}
+
+@media (max-width: 768px) {
+    .schedule-card-header {
+        text-align: center;
+    }
+
+    .schedule-card-header .icon-wrapper {
+        margin: 0 auto 1rem;
+    }
+}

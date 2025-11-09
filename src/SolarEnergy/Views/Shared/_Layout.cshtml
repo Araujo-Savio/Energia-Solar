@@ -19,22 +19,22 @@
     var currentController = ViewContext.RouteData.Values["Controller"]?.ToString() ?? string.Empty;
     var isAuthenticated = User.Identity?.IsAuthenticated == true;
     
-    // Verificar tipo de usu·rio pelo ViewData
+    // Verificar tipo de usu√°rio pelo ViewData
     var userTypeEnum = ViewData["UserType"] as SolarEnergy.Models.UserType?;
     var isCompany = userTypeEnum == SolarEnergy.Models.UserType.Company;
     var isAdmin = userTypeEnum == SolarEnergy.Models.UserType.Administrator;
     var isClient = userTypeEnum == SolarEnergy.Models.UserType.Client;
 
-    // Active state para InÌcio - ajustar conforme tipo de usu·rio
+    // Active state para In√≠cio - ajustar conforme tipo de usu√°rio
     var isHomeActive = false;
     if (isCompany)
     {
-        // Para empresas: InÌcio est· ativo quando estiver na tela de Leads
+        // Para empresas: In√≠cio est√° ativo quando estiver na tela de Leads
         isHomeActive = (currentController == "Home" && currentAction == "Leads");
     }
     else if (isAdmin)
     {
-        // Para admin: InÌcio est· ativo quando estiver no Index ou AdminDashboard
+        // Para admin: In√≠cio est√° ativo quando estiver no Index ou AdminDashboard
         isHomeActive = (currentController == "Home" && (currentAction == "Index" || currentAction == "AdminDashboard"));
     }
 }
@@ -54,11 +54,11 @@
                         {
                             @if (isCompany)
                             {
-                                <!-- Menu especÌfico para EMPRESAS - Sem Painel, apenas funcionalidades essenciais -->
+                                <!-- Menu espec√≠fico para EMPRESAS - Sem Painel, apenas funcionalidades essenciais -->
                                 <li class="nav-item">
                                     <a class="nav-link nav-link-enhanced @(isHomeActive ? "active" : string.Empty)" asp-controller="Home" asp-action="Leads">
                                         <i class="fas fa-home me-2"></i>
-                                        <span>InÌcio</span>
+                                        <span>In√≠cio</span>
                                     </a>
                                 </li>
                                 <li class="nav-item dropdown">
@@ -79,7 +79,7 @@
                                                 <i class="fas fa-shopping-cart text-success me-3"></i>
                                                 <div>
                                                     <strong>Comprar Leads</strong>
-                                                    <small class="d-block text-muted">Adquira crÈditos premium</small>
+                                                    <small class="d-block text-muted">Adquira cr√©ditos premium</small>
                                                 </div>
                                             </a>
                                         </li>
@@ -87,8 +87,20 @@
                                             <a class="dropdown-item d-flex align-items-center" asp-controller="Leads" asp-action="Management">
                                                 <i class="fas fa-chart-line text-info me-3"></i>
                                                 <div>
-                                                    <strong>Central de InteligÍncia</strong>
-                                                    <small class="d-block text-muted">Analytics e relatÛrios</small>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-enhanced @(currentController == "Scheduling" ? "active" : string.Empty)" asp-controller="Scheduling" asp-action="List">
+                                        <i class="fas fa-calendar-check me-2"></i>
+                                        <span>Agendamentos</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-enhanced @(currentController == "Scheduling" ? "active" : string.Empty)" asp-controller="Scheduling" asp-action="List">
+                                        <i class="fas fa-calendar-check me-2"></i>
+                                        <span>Agendamentos</span>
+                                    </a>
+                                </li>
+                                                    <strong>Central de Intelig√™ncia</strong>
+                                                    <small class="d-block text-muted">Analytics e relat√≥rios</small>
                                                 </div>
                                             </a>
                                         </li>
@@ -98,7 +110,7 @@
                                                 <i class="fas fa-users text-primary me-3"></i>
                                                 <div>
                                                     <strong>Ver Todos os Leads</strong>
-                                                    <small class="d-block text-muted">Gerencie suas solicitaÁıes</small>
+                                                    <small class="d-block text-muted">Gerencie suas solicita√ß√µes</small>
                                                 </div>
                                             </a>
                                         </li>
@@ -113,23 +125,23 @@
                                 <li class="nav-item">
                                     <a class="nav-link nav-link-enhanced @(currentController == "Home" && currentAction == "Evaluations" ? "active" : string.Empty)" asp-controller="Home" asp-action="Evaluations">
                                         <i class="fas fa-star me-2"></i>
-                                        <span>AvaliaÁıes</span>
+                                        <span>Avalia√ß√µes</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link nav-link-enhanced @(currentController == "Reports" && currentAction == "MonthlyReport" ? "active" : string.Empty)" asp-controller="Reports" asp-action="MonthlyReport">
                                         <i class="fas fa-chart-bar me-2"></i>
-                                        <span>RelatÛrios</span>
+                                        <span>Relat√≥rios</span>
                                     </a>
                                 </li>
                             }
                             else if (isAdmin)
                             {
-                                <!-- Menu especÌfico para ADMINISTRADORES -->
+                                <!-- Menu espec√≠fico para ADMINISTRADORES -->
                                 <li class="nav-item">
                                     <a class="nav-link nav-link-enhanced @(isHomeActive ? "active" : string.Empty)" asp-controller="Home" asp-action="AdminDashboard">
                                         <i class="fas fa-home me-2"></i>
-                                        <span>InÌcio</span>
+                                        <span>In√≠cio</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
@@ -147,7 +159,7 @@
                                 <li class="nav-item">
                                     <a class="nav-link nav-link-enhanced @(currentController == "Quote" && currentAction == "MyQuotes" ? "active" : string.Empty)" asp-controller="Quote" asp-action="MyQuotes">
                                         <i class="fas fa-list me-2"></i>
-                                        <span>Todos os OrÁamentos</span>
+                                        <span>Todos os Or√ßamentos</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
@@ -159,7 +171,7 @@
                                 <li class="nav-item">
                                     <a class="nav-link nav-link-enhanced @(currentController == "Home" && currentAction == "Evaluations" ? "active" : string.Empty)" asp-controller="Home" asp-action="Evaluations">
                                         <i class="fas fa-star me-2"></i>
-                                        <span>AvaliaÁıes</span>
+                                        <span>Avalia√ß√µes</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
@@ -174,14 +186,14 @@
                                         <span>Admin</span>
                                     </a>
                                 </li>
-                                @* ¡rea Administrativa - sÛ aparece para administradores *@
+                                @* √Årea Administrativa - s√≥ aparece para administradores *@
                                 @if (ViewData["UserType"]?.ToString() == "Administrator")
                                 {
                                     <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle nav-link-enhanced" href="#" id="adminDropdown" role="button" 
                                            data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="fas fa-shield-alt me-2"></i>
-                                            <span>AdministraÁ„o</span>
+                                            <span>Administra√ß√£o</span>
                                         </a>
                                         <ul class="dropdown-menu dropdown-menu-enhanced" aria-labelledby="adminDropdown">
                                             <li>
@@ -195,7 +207,7 @@
                                                     <i class="fas fa-chart-line text-primary"></i>
                                                     <div>
                                                         <strong>Dashboard</strong>
-                                                        <small>Vis„o geral da plataforma</small>
+                                                        <small>Vis√£o geral da plataforma</small>
                                                     </div>
                                                 </a>
                                             </li>
@@ -203,7 +215,7 @@
                                                 <a class="dropdown-item" href="@Url.Action("Users", "Admin")">
                                                     <i class="fas fa-users text-info"></i>
                                                     <div>
-                                                        <strong>Gerenciar Usu·rios</strong>
+                                                        <strong>Gerenciar Usu√°rios</strong>
                                                         <small>Administrar clientes e empresas</small>
                                                     </div>
                                                 </a>
@@ -221,8 +233,8 @@
                                                 <a class="dropdown-item" href="@Url.Action("Reviews", "Admin")">
                                                     <i class="fas fa-star text-warning"></i>
                                                     <div>
-                                                        <strong>Moderar AvaliaÁıes</strong>
-                                                        <small>Gerenciar coment·rios</small>
+                                                        <strong>Moderar Avalia√ß√µes</strong>
+                                                        <small>Gerenciar coment√°rios</small>
                                                     </div>
                                                 </a>
                                             </li>
@@ -230,8 +242,8 @@
                                                 <a class="dropdown-item" href="@Url.Action("Reports", "Admin")">
                                                     <i class="fas fa-chart-bar text-purple"></i>
                                                     <div>
-                                                        <strong>RelatÛrios</strong>
-                                                        <small>Analytics e mÈtricas</small>
+                                                        <strong>Relat√≥rios</strong>
+                                                        <small>Analytics e m√©tricas</small>
                                                     </div>
                                                 </a>
                                             </li>
@@ -240,7 +252,7 @@
                                                 <a class="dropdown-item" href="@Url.Action("Settings", "Admin")">
                                                     <i class="fas fa-cog text-secondary"></i>
                                                     <div>
-                                                        <strong>ConfiguraÁıes</strong>
+                                                        <strong>Configura√ß√µes</strong>
                                                         <small>Configurar sistema</small>
                                                     </div>
                                                 </a>
@@ -251,7 +263,13 @@
                             }
                             else if (isClient)
                             {
-                                <!-- Menu especÌfico para CLIENTES - Nova organizaÁ„o -->
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-enhanced @(currentController == "Scheduling" ? "active" : string.Empty)" asp-controller="Scheduling" asp-action="List">
+                                        <i class="fas fa-calendar-check me-2"></i>
+                                        <span>Agendamentos</span>
+                                    </a>
+                                </li>
+                                <!-- Menu espec√≠fico para CLIENTES - Nova organiza√ß√£o -->
                                 <li class="nav-item">
                                     <a class="nav-link nav-link-enhanced @(currentController == "Home" && currentAction == "SearchCompanies" ? "active" : string.Empty)" asp-controller="Home" asp-action="SearchCompanies">
                                         <i class="fas fa-search me-2"></i>
@@ -261,7 +279,7 @@
                                 <li class="nav-item">
                                     <a class="nav-link nav-link-enhanced @(currentController == "Quote" && currentAction == "MyQuotes" ? "active" : string.Empty)" asp-controller="Quote" asp-action="MyQuotes">
                                         <i class="fas fa-file-invoice me-2"></i>
-                                        <span>Meus OrÁamentos</span>
+                                        <span>Meus Or√ßamentos</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
@@ -285,7 +303,7 @@
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle d-flex align-items-center nav-user-dropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fas fa-user-circle me-2 fs-5"></i>
-                                    <span class="d-none d-lg-inline fw-semibold">@(User.Identity?.Name ?? "Usu·rio")</span>
+                                    <span class="d-none d-lg-inline fw-semibold">@(User.Identity?.Name ?? "Usu√°rio")</span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-enhanced">
                                     <li>
@@ -317,7 +335,7 @@
                                     <li>
                                         <a class="dropdown-item d-flex align-items-center" asp-controller="Home" asp-action="Settings">
                                             <i class="fas fa-cog me-3"></i>
-                                            <span>ConfiguraÁıes</span>
+                                            <span>Configura√ß√µes</span>
                                         </a>
                                     </li>
                                     <li><hr class="dropdown-divider"></li>
@@ -353,7 +371,7 @@
         </nav>
     </header>
     
-    <!-- NotificaÁıes -->
+    <!-- Notifica√ß√µes -->
     @if (TempData["SuccessMessage"] != null)
     {
         <div class="alert alert-success alert-dismissible fade show m-3" role="alert">
@@ -394,7 +412,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <h5><i class="fas fa-solar-panel me-2"></i>Solar Energy</h5>
-                    <p class="mb-1">Energia limpa para um futuro sustent·vel</p>
+                    <p class="mb-1">Energia limpa para um futuro sustent√°vel</p>
                     <p class="text-muted small">&copy; @DateTime.Now.Year - Solar Energy. Todos os direitos reservados.</p>
                 </div>
                 <div class="col-md-6 text-md-end">

@@ -15,6 +15,7 @@ namespace SolarEnergy.Data
         public DbSet<Quote> Quotes { get; set; }
         public DbSet<Proposal> Proposals { get; set; }
         public DbSet<QuoteMessage> QuoteMessages { get; set; }
+        public DbSet<TechnicalVisit> TechnicalVisits { get; set; }
 
         // Lead System
         public DbSet<CompanyLeadBalance> CompanyLeadBalances { get; set; }
@@ -118,6 +119,40 @@ namespace SolarEnergy.Data
                     .WithMany(q => q.Proposals)
                     .HasForeignKey(e => e.QuoteId)
                     .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // Configuração da entidade TechnicalVisit
+            builder.Entity<TechnicalVisit>(entity =>
+            {
+                entity.ToTable("TechnicalVisits");
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.CompanyId).IsRequired().HasMaxLength(450);
+                entity.Property(e => e.ClientId).IsRequired().HasMaxLength(450);
+                entity.Property(e => e.ServiceType).IsRequired().HasMaxLength(60);
+                entity.Property(e => e.VisitDate).HasColumnType("date").IsRequired();
+                entity.Property(e => e.VisitTime).HasColumnType("time").IsRequired();
+                entity.Property(e => e.Address).HasMaxLength(200).IsRequired(false);
+                entity.Property(e => e.Notes).HasMaxLength(500).IsRequired(false);
+                entity.Property(e => e.Status).IsRequired();
+                entity.Property(e => e.CreatedAt)
+                    .HasDefaultValueSql("GETUTCDATE()");
+
+                entity.HasOne(e => e.Company)
+                    .WithMany()
+                    .HasForeignKey(e => e.CompanyId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Client)
+                    .WithMany()
+                    .HasForeignKey(e => e.ClientId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(e => new { e.CompanyId, e.VisitDate, e.VisitTime }).IsUnique();
+                entity.HasIndex(e => e.VisitDate);
+                entity.HasIndex(e => e.Status);
+                entity.HasIndex(e => e.CompanyId);
+                entity.HasIndex(e => e.ClientId);
             });
 
             // Configuração da entidade QuoteMessage
