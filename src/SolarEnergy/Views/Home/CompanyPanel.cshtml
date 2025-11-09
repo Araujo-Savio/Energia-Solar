@@ -1,0 +1,159 @@
+@{
+    ViewData["Title"] = "Painel da Empresa";
+}
+
+<div class="solar-page">
+    <div class="container-fluid px-4">
+        <div class="solar-page-header d-flex flex-wrap justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="solar-page-title">Painel da Empresa</h1>
+                <p class="solar-page-subtitle mb-0">Performance comercial e operacional das unidades</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-solar-orange">
+                    <i class="fas fa-file-alt me-1"></i> Relatórios
+                </button>
+                <button class="btn btn-solar-orange">
+                    <i class="fas fa-chart-line me-1"></i> Nova Meta
+                </button>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-xl-8">
+                <div class="solar-card h-100">
+                    <div class="solar-grid-4">
+                        <div>
+                            <span class="solar-stat-label">Leads Totais</span>
+                            <strong class="solar-stat-value">4.280</strong>
+                        </div>
+                        <div>
+                            <span class="solar-stat-label">Em Qualificação</span>
+                            <strong class="solar-stat-value">820</strong>
+                        </div>
+                        <div>
+                            <span class="solar-stat-label">Propostas Enviadas</span>
+                            <strong class="solar-stat-value">340</strong>
+                        </div>
+                        <div>
+                            <span class="solar-stat-label">Contratos Fechados</span>
+                            <strong class="solar-stat-value">210</strong>
+                        </div>
+                    </div>
+                    <div class="row g-4 mt-1">
+                        <div class="col-lg-6">
+                            <div class="solar-subcard">
+                                <h6 class="solar-card-title">Mix de Leads</h6>
+                                <div class="solar-pie-chart">
+                                    <div class="solar-pie"></div>
+                                    <div class="solar-pie-legend">
+                                        <span><i class="fas fa-circle text-solar-orange me-1"></i>60% Instalação</span>
+                                        <span><i class="fas fa-circle text-primary me-1"></i>40% Aluguel</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="solar-subcard">
+                                <h6 class="solar-card-title">Canal de Tráfego</h6>
+                                <ul class="solar-channel-list">
+                                    <li><span>Orgânico</span><span class="text-solar-orange fw-bold">45%</span></li>
+                                    <li><span>Pago</span><span class="text-solar-orange fw-bold">30%</span></li>
+                                    <li><span>Indicações</span><span class="text-solar-orange fw-bold">15%</span></li>
+                                    <li><span>Parceiros</span><span class="text-solar-orange fw-bold">10%</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4">
+                <div class="solar-card h-100">
+                    <h5 class="solar-card-title">Plano / CPL</h5>
+                    <ul class="solar-ranking list-unstyled mb-4">
+                        <li><span>Campanha A</span><span class="text-solar-orange fw-bold">R$ 125,00</span></li>
+                        <li><span>Campanha B</span><span class="text-solar-orange fw-bold">R$ 142,00</span></li>
+                        <li><span>Campanha C</span><span class="text-solar-orange fw-bold">R$ 156,00</span></li>
+                    </ul>
+                    <h6 class="solar-card-title">Leads Recentes</h6>
+                    <div class="solar-list-group">
+                        <div class="solar-list-item">
+                            <div>
+                                <strong>Maria Rodrigues</strong>
+                                <span class="d-block text-muted small">Vitória da Conquista - BA</span>
+                            </div>
+                            <span class="badge bg-status-proposal">Proposta</span>
+                        </div>
+                        <div class="solar-list-item">
+                            <div>
+                                <strong>Carlos Lima</strong>
+                                <span class="d-block text-muted small">São Paulo - SP</span>
+                            </div>
+                            <span class="badge bg-status-converted">Convertido</span>
+                        </div>
+                        <div class="solar-list-item">
+                            <div>
+                                <strong>Mariana Souza</strong>
+                                <span class="d-block text-muted small">Manaus - AM</span>
+                            </div>
+                            <span class="badge bg-status-proposal">Proposta</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mt-1">
+            <div class="col-xl-6">
+                <div class="solar-card h-100">
+                    <h5 class="solar-card-title">Detalhes do Funil</h5>
+                    <div class="solar-funnel-grid">
+                        <div>
+                            <span class="solar-stat-label">Novos leads</span>
+                            <strong class="solar-stat-value">1.240</strong>
+                        </div>
+                        <div>
+                            <span class="solar-stat-label">Leads qualificados</span>
+                            <strong class="solar-stat-value">820</strong>
+                        </div>
+                        <div>
+                            <span class="solar-stat-label">Propostas</span>
+                            <strong class="solar-stat-value">340</strong>
+                        </div>
+                        <div>
+                            <span class="solar-stat-label">Contratos</span>
+                            <strong class="solar-stat-value">210</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <div class="solar-card h-100">
+                    <h5 class="solar-card-title">Receitas Recorrentes</h5>
+                    <div class="solar-finance-grid">
+                        <div>
+                            <span class="solar-stat-label">Mês Atual</span>
+                            <strong class="solar-stat-value">R$ 120.500</strong>
+                            <span class="text-success small"><i class="fas fa-arrow-up me-1"></i>+8%</span>
+                        </div>
+                        <div>
+                            <span class="solar-stat-label">Mês Anterior</span>
+                            <strong class="solar-stat-value">R$ 111.000</strong>
+                            <span class="text-muted small">Comparativo</span>
+                        </div>
+                        <div>
+                            <span class="solar-stat-label">Projeção 12 meses</span>
+                            <strong class="solar-stat-value">R$ 1.450.000</strong>
+                            <span class="text-solar-orange small">Meta +12%</span>
+                        </div>
+                        <div>
+                            <span class="solar-stat-label">Receitas não recorrentes</span>
+                            <strong class="solar-stat-value">R$ 32.800</strong>
+                            <span class="badge bg-status-warning">Revisar</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

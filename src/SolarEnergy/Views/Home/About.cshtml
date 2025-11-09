@@ -1,0 +1,80 @@
+@{
+    ViewData["Title"] = "Sobre";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold text-solar-blue mb-3">
+                    <i class="fas fa-solar-panel me-3"></i>Sobre a Solar Energy
+                </h1>
+                <p class="lead text-muted">Conectando pessoas e empresas para um futuro mais sustentável</p>
+            </div>
+            
+            <div class="card shadow-lg border-0 mb-5">
+                <div class="card-body p-5">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h3 class="text-solar-blue fw-bold mb-3">Nossa Missão</h3>
+                            <p class="mb-4">Facilitar o acesso à energia solar limpa e renovável, conectando consumidores a empresas qualificadas e promovendo um futuro mais sustentável para todos.</p>
+                            
+                            <h3 class="text-solar-blue fw-bold mb-3">Nossa Visão</h3>
+                            <p class="mb-0">Ser a principal plataforma de energia solar do Brasil, democratizando o acesso à energia limpa e contribuindo para a redução das emissões de carbono.</p>
+                        </div>
+                        <div class="col-md-6 text-center">
+                            <i class="fas fa-leaf fa-10x text-solar-orange opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-5">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-handshake fa-3x text-solar-orange mb-3"></i>
+                            <h5 class="fw-bold text-solar-blue">Confiança</h5>
+                            <p class="text-muted mb-0">Empresas verificadas e avaliadas por clientes reais</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-chart-line fa-3x text-solar-orange mb-3"></i>
+                            <h5 class="fw-bold text-solar-blue">Transparência</h5>
+                            <p class="text-muted mb-0">Comparação clara de preços e propostas</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-globe fa-3x text-solar-orange mb-3"></i>
+                            <h5 class="fw-bold text-solar-blue">Sustentabilidade</h5>
+                            <p class="text-muted mb-0">Contribuindo para um planeta mais verde</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <h3 class="text-solar-blue fw-bold mb-4">Junte-se a nós!</h3>
+                <p class="lead mb-4">Faça parte da revolução solar e comece a economizar hoje mesmo</p>
+                @if (User.Identity?.IsAuthenticated != true)
+                {
+                    <a asp-controller="Auth" asp-action="Register" class="btn btn-solar-orange btn-lg px-5">
+                        <i class="fas fa-rocket me-2"></i>Começar Agora
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Home" asp-action="Dashboard" class="btn btn-solar-orange btn-lg px-5">
+                        <i class="fas fa-tachometer-alt me-2"></i>Ir para Dashboard
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

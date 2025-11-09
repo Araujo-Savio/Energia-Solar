@@ -1,0 +1,299 @@
+@model List<SolarEnergy.ViewModels.QuoteListViewModel>
+@{
+    ViewData["Title"] = "Meus Orçamentos";
+    var userType = ViewData["UserType"] as SolarEnergy.Models.UserType?;
+    var isAdmin = userType == SolarEnergy.Models.UserType.Administrator;
+}
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="badge bg-solar-orange bg-opacity-75 text-uppercase fw-semibold px-3 py-2">
+                @if (isAdmin)
+                {
+                    <text>Administração - Todos os Orçamentos</text>
+                }
+                else
+                {
+                    <text>Área do Cliente</text>
+                }
+            </span>
+            <h1 class="display-6 text-solar-blue fw-bold mt-3">
+                @if (isAdmin)
+                {
+                    <text>Gerenciar Todos os Orçamentos</text>
+                }
+                else
+                {
+                    <text>Meus Orçamentos Solicitados</text>
+                }
+            </h1>
+            <p class="text-muted lead">
+                @if (isAdmin)
+                {
+                    <text>Supervisão geral de todas as solicitações na plataforma</text>
+                }
+                else
+                {
+                    <text>Acompanhe o status dos seus orçamentos e propostas recebidas</text>
+                }
+            </p>
+        </div>
+
+        @if (Model.Any())
+        {
+            <div class="row">
+                @foreach (var quote in Model)
+                {
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card border-0 shadow-sm h-100 quote-card">
+                            <div class="card-header bg-transparent border-0 pb-0">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h6 class="fw-bold text-solar-blue mb-1">
+                                            @if (isAdmin)
+                                            {
+                                                <span class="small text-muted">Solicitação #@quote.QuoteId.ToString("D6")</span><br>
+                                                <span class="fs-6">@quote.CompanyName</span>
+                                            }
+                                            else
+                                            {
+                                                <i class="fas fa-building me-1 text-solar-orange"></i>@quote.CompanyName
+                                            }
+                                        </h6>
+                                    </div>
+                                    <span class="badge @GetStatusBadgeClass(quote.Status) ms-2">
+                                        @quote.Status
+                                    </span>
+                                </div>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    @quote.RequestDate.ToString("dd/MM/yyyy HH:mm")
+                                </small>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-bolt text-solar-orange me-2"></i>
+                                            <div>
+                                                <small class="text-muted d-block">Consumo</small>
+                                                <strong>@quote.MonthlyConsumptionKwh.ToString("N0") kWh</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-cogs text-solar-orange me-2"></i>
+                                            <div>
+                                                <small class="text-muted d-block">Serviço</small>
+                                                <strong class="small">@quote.ServiceType</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @if (quote.HasChat)
+                                {
+                                    <div class="alert alert-primary border-0 py-2 px-3 mb-3">
+                                        <i class="fas fa-comments me-2"></i>
+                                        <strong>Chat disponível</strong>
+                                        @if (quote.UnreadMessagesCount > 0)
+                                        {
+                                            <span class="badge bg-danger ms-2">@quote.UnreadMessagesCount nova(s)</span>
+                                        }
+                                        @if (quote.LastMessageDate.HasValue)
+                                        {
+                                            <small class="d-block text-primary">
+                                                <i class="fas fa-clock me-1"></i>Última mensagem: @quote.LastMessageDate.Value.ToString("dd/MM HH:mm")
+                                            </small>
+                                        }
+                                    </div>
+                                }
+
+                                @if (quote.HasProposal)
+                                {
+                                    <div class="alert alert-success border-0 py-2 px-3 mb-3">
+                                        <i class="fas fa-check-circle me-2"></i>
+                                        <strong>@quote.ProposalCount</strong> proposta(s) recebida(s)
+                                        @if (!isAdmin)
+                                        {
+                                            <small class="d-block text-success">
+                                                <i class="fas fa-star me-1"></i>A empresa respondeu!
+                                            </small>
+                                        }
+                                    </div>
+                                }
+                                else if (!string.IsNullOrEmpty(quote.CompanyResponseMessage))
+                                {
+                                    <div class="alert alert-info border-0 py-2 px-3 mb-3">
+                                        <i class="fas fa-reply me-2"></i>
+                                        <strong>Empresa respondeu</strong>
+                                        <small class="d-block text-info">
+                                            <i class="fas fa-comment me-1"></i>Mensagem recebida
+                                        </small>
+                                    </div>
+                                }
+                                else if (quote.Status == "Pendente")
+                                {
+                                    <div class="alert alert-warning border-0 py-2 px-3 mb-3">
+                                        <i class="fas fa-clock me-2"></i>
+                                        @if (isAdmin)
+                                        {
+                                            <text>Aguardando análise da empresa</text>
+                                        }
+                                        else
+                                        {
+                                            <text>Sua solicitação foi enviada</text>
+                                            <small class="d-block text-warning">
+                                                <i class="fas fa-hourglass-half me-1"></i>Aguardando resposta...
+                                            </small>
+                                        }
+                                    </div>
+                                }
+                                else if (quote.Status == "Em Análise")
+                                {
+                                    <div class="alert alert-info border-0 py-2 px-3 mb-3">
+                                        <i class="fas fa-eye me-2"></i>
+                                        @if (isAdmin)
+                                        {
+                                            <text>Em análise pela empresa</text>
+                                        }
+                                        else
+                                        {
+                                            <text>Sua solicitação está sendo analisada</text>
+                                            <small class="d-block text-info">
+                                                <i class="fas fa-search me-1"></i>A empresa está preparando uma resposta
+                                            </small>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                            <div class="card-footer bg-transparent border-0 pt-0">
+                                @if (quote.HasChat)
+                                {
+                                    <div class="d-grid gap-2">
+                                        <a asp-controller="Chat" asp-action="Index" asp-route-quoteId="@quote.QuoteId" 
+                                           class="btn btn-primary">
+                                            <i class="fas fa-comments me-2"></i>
+                                            Abrir Chat
+                                            @if (quote.UnreadMessagesCount > 0)
+                                            {
+                                                <span class="badge bg-danger ms-2">@quote.UnreadMessagesCount</span>
+                                            }
+                                        </a>
+                                        <a asp-action="Details" asp-route-id="@quote.QuoteId" 
+                                           class="btn btn-outline-solar-orange">
+                                            <i class="fas fa-eye me-2"></i>Ver Detalhes
+                                        </a>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <a asp-action="Details" asp-route-id="@quote.QuoteId" 
+                                       class="btn btn-solar-orange w-100">
+                                        <i class="fas fa-eye me-2"></i>
+                                        @if (isAdmin)
+                                        {
+                                            <text>Ver Detalhes Administrativos</text>
+                                        }
+                                        else
+                                        {
+                                            <text>Ver Detalhes e Propostas</text>
+                                        }
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center py-5">
+                            <div class="mb-4">
+                                @if (isAdmin)
+                                {
+                                    <i class="fas fa-chart-bar fa-4x text-solar-orange opacity-50"></i>
+                                }
+                                else
+                                {
+                                    <i class="fas fa-file-signature fa-4x text-solar-orange opacity-50"></i>
+                                }
+                            </div>
+                            <h4 class="text-solar-blue fw-bold mb-3">
+                                @if (isAdmin)
+                                {
+                                    <text>Nenhuma solicitação encontrada</text>
+                                }
+                                else
+                                {
+                                    <text>Você ainda não solicitou orçamentos</text>
+                                }
+                            </h4>
+                            <p class="text-muted mb-4">
+                                @if (isAdmin)
+                                {
+                                    <text>Quando clientes solicitarem orçamentos, eles aparecerão aqui para supervisão.</text>
+                                }
+                                else
+                                {
+                                    <text>Explore nossa rede de empresas parceiras e solicite orçamentos personalizados para seu projeto de energia solar.</text>
+                                }
+                            </p>
+                            @if (!isAdmin)
+                            {
+                                <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                                    <a asp-controller="Home" asp-action="SearchCompanies" class="btn btn-solar-orange">
+                                        <i class="fas fa-search me-2"></i>Buscar Empresas
+                                    </a>
+                                    <a asp-controller="Home" asp-action="Simulation" class="btn btn-outline-solar-orange">
+                                        <i class="fas fa-calculator me-2"></i>Fazer Simulação
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<style>
+.quote-card {
+    transition: all 0.3s ease;
+}
+
+.quote-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+}
+
+.info-card {
+    background: #f8f9fa;
+    border-left: 4px solid var(--bs-orange);
+    padding: 0.75rem;
+    border-radius: 0.375rem;
+}
+</style>
+
+@functions {
+    private string GetStatusBadgeClass(string status)
+    {
+        return status switch
+        {
+            "Pendente" => "bg-warning text-dark",
+            "Em Análise" => "bg-info text-white",
+            "Proposta Enviada" => "bg-success text-white",
+            "Aceito" => "bg-primary text-white",
+            "Recusado" => "bg-danger text-white",
+            "Cancelado" => "bg-secondary text-white",
+            _ => "bg-secondary text-white"
+        };
+    }
+}

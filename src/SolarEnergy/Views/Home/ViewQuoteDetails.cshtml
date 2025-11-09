@@ -1,0 +1,539 @@
+@model SolarEnergy.ViewModels.QuoteDetailForCompanyViewModel
+@{
+    ViewData["Title"] = $"Detalhes da Solicitação - {Model.ClientName}";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent p-0 mb-3">
+                    <li class="breadcrumb-item">
+                        <a asp-action="Leads" class="text-solar-orange text-decoration-none">
+                            <i class="fas fa-arrow-left me-1"></i>Voltar às Solicitações
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active text-muted" aria-current="page">Detalhes</li>
+                </ol>
+            </nav>
+
+            <!-- Header -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-solar-blue text-white py-3">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h4 class="mb-1">
+                                <i class="fas fa-file-invoice me-2"></i>
+                                Solicitação #@Model.QuoteId.ToString("D6")
+                            </h4>
+                            <p class="mb-0 opacity-75">
+                                <i class="fas fa-user me-1"></i>
+                                @Model.ClientName
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            @if (Model.Status == "Pendente")
+                            {
+                                <span class="badge bg-warning text-dark px-3 py-2 fs-6">Novo</span>
+                            }
+                            else if (Model.Status == "Em Análise")
+                            {
+                                <span class="badge bg-info px-3 py-2 fs-6">Em Análise</span>
+                            }
+                            else if (Model.HasProposal)
+                            {
+                                <span class="badge bg-success px-3 py-2 fs-6">Proposta Enviada</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary px-3 py-2 fs-6">@Model.Status</span>
+                            }
+                            <div class="small opacity-75 mt-1">
+                                <i class="fas fa-calendar me-1"></i>
+                                @Model.RequestDate.ToString("dd/MM/yyyy HH:mm")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Informações do Cliente -->
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-transparent border-0 py-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="text-solar-blue fw-bold mb-0">
+                                    <i class="fas fa-user me-2 text-solar-orange"></i>
+                                    Informações do Cliente
+                                </h6>
+                                @if (!Model.HasAccess)
+                                {
+                                    <span class="badge bg-warning">
+                                        <i class="fas fa-lock me-1"></i>Bloqueado
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-unlock me-1"></i>Desbloqueado
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            @if (!Model.HasAccess)
+                            {
+                                <div class="alert alert-warning border-0 mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-lock fa-2x text-warning me-3"></i>
+                                        <div>
+                                            <h6 class="alert-heading mb-1">Dados do Cliente Protegidos</h6>
+                                            <p class="mb-0">Para acessar as informações completas deste cliente, você precisa desbloquear este lead consumindo 1 crédito.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <hr class="my-3">
+                                    
+                                    @if (Model.CanPurchaseAccess)
+                                    {
+                                        <div class="d-grid">
+                                            <button type="button" class="btn btn-solar-orange" id="unlockLeadBtn" data-quote-id="@Model.QuoteId">
+                                                <i class="fas fa-unlock me-2"></i>
+                                                Desbloquear Lead (1 crédito)
+                                            </button>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="text-center">
+                                            <p class="mb-2"><strong>Você não possui créditos suficientes.</strong></p>
+                                            <a asp-controller="Leads" asp-action="Purchase" class="btn btn-outline-primary">
+                                                <i class="fas fa-shopping-cart me-2"></i>
+                                                Comprar Leads
+                                            </a>
+                                        </div>
+                                    }
+                                </div>
+                            }
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <strong class="text-muted d-block">Nome:</strong>
+                                    <span class="fw-semibold">@Model.ClientName</span>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong class="text-muted d-block">Email:</strong>
+                                    <span class="fw-semibold">
+                                        @if (Model.HasAccess && !string.IsNullOrEmpty(Model.ClientEmail))
+                                        {
+                                            <a href="mailto:@Model.ClientEmail" class="text-decoration-none">@Model.ClientEmail</a>
+                                        }
+                                        else
+                                        {
+                                            @Model.ClientEmail
+                                        }
+                                    </span>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong class="text-muted d-block">Telefone:</strong>
+                                    <span class="fw-semibold">
+                                        @if (Model.HasAccess && !string.IsNullOrEmpty(Model.ClientPhone))
+                                        {
+                                            <a href="tel:@Model.ClientPhone" class="text-decoration-none">@Model.ClientPhone</a>
+                                        }
+                                        else
+                                        {
+                                            @Model.ClientPhone
+                                        }
+                                    </span>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong class="text-muted d-block">Localização:</strong>
+                                    <span class="fw-semibold">@Model.ClientLocation</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detalhes da Solicitação -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-transparent border-0 py-3">
+                            <h5 class="text-solar-blue fw-bold mb-0">
+                                <i class="fas fa-solar-panel me-2 text-solar-orange"></i>
+                                Detalhes da Solicitação
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <div class="info-card p-3 rounded bg-light border-start border-info border-4">
+                                        <h6 class="text-info fw-bold mb-2">
+                                            <i class="fas fa-bolt me-2"></i>Consumo Mensal
+                                        </h6>
+                                        <p class="fs-4 fw-bold text-info mb-0">
+                                            @Model.MonthlyConsumptionKwh.ToString("N0") <small class="fs-6 text-muted">kWh</small>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <div class="info-card p-3 rounded bg-light border-start border-success border-4">
+                                        <h6 class="text-success fw-bold mb-2">
+                                            <i class="fas fa-cogs me-2"></i>Tipo de Serviço
+                                        </h6>
+                                        <p class="fw-bold text-success mb-0">@Model.ServiceType</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(Model.Message))
+                            {
+                                <div class="mb-3">
+                                    <div class="info-card p-3 rounded bg-light border-start border-warning border-4">
+                                        <h6 class="text-warning fw-bold mb-2">
+                                            <i class="fas fa-comment me-2"></i>Mensagem do Cliente
+                                        </h6>
+                                        <p class="text-secondary mb-0 lh-base">@Model.Message</p>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Propostas Enviadas -->
+                    @if (Model.HasProposal)
+                    {
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-transparent border-0 py-3">
+                                <h5 class="text-solar-blue fw-bold mb-0">
+                                    <i class="fas fa-file-contract me-2 text-solar-orange"></i>
+                                    Propostas Enviadas
+                                    <span class="badge bg-success ms-2">@Model.Proposals.Count</span>
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                @foreach (var proposal in Model.Proposals.OrderByDescending(p => p.ProposalDate))
+                                {
+                                    <div class="proposal-card border rounded p-4 mb-3">
+                                        <div class="row">
+                                            <div class="col-md-4 mb-3">
+                                                <div class="text-center p-3 bg-success bg-opacity-10 rounded">
+                                                    <h3 class="text-success fw-bold mb-1">
+                                                        @proposal.Value.ToString("C", new System.Globalization.CultureInfo("pt-BR"))
+                                                    </h3>
+                                                    <small class="text-muted">Valor da Proposta</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="row">
+                                                    @if (proposal.InstallationTimeframe.HasValue)
+                                                    {
+                                                        <div class="col-6 mb-2">
+                                                            <small class="text-muted d-block">Prazo</small>
+                                                            <strong>@proposal.InstallationTimeframe dias</strong>
+                                                        </div>
+                                                    }
+                                                    @if (proposal.Warranty.HasValue)
+                                                    {
+                                                        <div class="col-6 mb-2">
+                                                            <small class="text-muted d-block">Garantia</small>
+                                                            <strong>@proposal.Warranty anos</strong>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @if (!string.IsNullOrEmpty(proposal.Description))
+                                        {
+                                            <div class="mt-3 pt-3 border-top">
+                                                <p class="text-muted mb-0">@proposal.Description</p>
+                                            </div>
+                                        }
+                                        <div class="mt-3 pt-3 border-top text-muted small">
+                                            <i class="fas fa-clock me-1"></i>
+                                            Enviada em @proposal.ProposalDate.ToString("dd/MM/yyyy HH:mm")
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <div class="sticky-top" style="top: 20px;">
+                        <!-- Ações -->
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-header bg-transparent border-0 py-3">
+                                <h6 class="text-solar-blue fw-bold mb-0">
+                                    <i class="fas fa-tasks me-2 text-solar-orange"></i>
+                                    Ações Disponíveis
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                @if (Model.HasChatMessages || Model.UnreadMessagesCount > 0)
+                                {
+                                    @if (Model.HasAccess)
+                                    {
+                                        <div class="d-grid gap-2 mb-3">
+                                            <a asp-controller="Chat" asp-action="Index" asp-route-quoteId="@Model.QuoteId"
+                                               class="btn btn-primary">
+                                                <i class="fas fa-comments me-2"></i>
+                                                Abrir Chat
+                                                @if (Model.UnreadMessagesCount > 0)
+                                                {
+                                                    <span class="badge bg-danger ms-2">@Model.UnreadMessagesCount</span>
+                                                }
+                                            </a>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="alert alert-info border-0 mb-3">
+                                            <i class="fas fa-comments me-2"></i>
+                                            <strong>Chat disponível</strong><br>
+                                            <small>Desbloqueie este lead para acessar o chat com o cliente.</small>
+                                        </div>
+                                    }
+                                }
+                                @if (!Model.HasProposal && Model.HasAccess)
+                                {
+                                    <div class="d-grid gap-2">
+                                        <button type="button" class="btn btn-solar-orange"
+                                                data-bs-toggle="modal" data-bs-target="#responseModal"
+                                                data-quote-id="@Model.QuoteId" 
+                                                data-client-name="@Model.ClientName"
+                                                data-service-type="@Model.ServiceType">
+                                            <i class="fas fa-reply me-2"></i>Responder Cliente
+                                        </button>
+                                        
+                                        @if (!string.IsNullOrEmpty(Model.ClientEmail))
+                                        {
+                                            <a href="mailto:@Model.ClientEmail" class="btn btn-outline-primary">
+                                                <i class="fas fa-envelope me-2"></i>Enviar E-mail
+                                            </a>
+                                        }
+                                        
+                                        @if (!string.IsNullOrEmpty(Model.ClientPhone))
+                                        {
+                                            <a href="tel:@Model.ClientPhone" class="btn btn-outline-success">
+                                                <i class="fas fa-phone me-2"></i>Ligar
+                                            </a>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="alert alert-success border-0">
+                                        <i class="fas fa-check-circle me-2"></i>
+                                        <strong>Proposta enviada!</strong><br>
+                                        Aguarde a resposta do cliente.
+                                    </div>
+                                    @if (Model.HasChatMessages && Model.HasAccess)
+                                    {
+                                        <div class="d-grid gap-2">
+                                            <a asp-controller="Chat" asp-action="Index" asp-route-quoteId="@Model.QuoteId"
+                                               class="btn btn-primary">
+                                                <i class="fas fa-comments me-2"></i>
+                                                Continuar Conversa
+                                                @if (Model.UnreadMessagesCount > 0)
+                                                {
+                                                    <span class="badge bg-danger ms-2">@Model.UnreadMessagesCount</span>
+                                                }
+                                            </a>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Informações Adicionais -->
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-transparent border-0 py-3">
+                                <h6 class="text-solar-blue fw-bold mb-0">
+                                    <i class="fas fa-info-circle me-2 text-solar-orange"></i>
+                                    Informações do Projeto
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <small class="text-muted d-block">Tipo de Empresa</small>
+                                    @if (Model.CompanyServiceType == SolarEnergy.Models.SolarServiceType.PanelSales)
+                                    {
+                                        <span class="badge bg-primary">Venda de Painéis</span>
+                                    }
+                                    else if (Model.CompanyServiceType == SolarEnergy.Models.SolarServiceType.EnergyRental)
+                                    {
+                                        <span class="badge bg-success">Aluguel de Energia</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-info">Ambos os Serviços</span>
+                                    }
+                                </div>
+                                <div class="mb-3">
+                                    <small class="text-muted d-block">Consumo Médio</small>
+                                    <strong>@Model.MonthlyConsumptionKwh kWh/mês</strong>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">Recebido em</small>
+                                    <strong>@Model.RequestDate.ToString("dd/MM/yyyy HH:mm")</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Resposta (igual ao da view Leads) -->
+<div class="modal fade" id="responseModal" tabindex="-1" aria-labelledby="responseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="responseModalLabel">
+                    <i class="fas fa-reply me-2"></i>Responder Solicitação
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="SendCompanyResponse" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="QuoteId" id="modalQuoteId" value="@Model.QuoteId" />
+                    
+                    <div class="mb-3">
+                        <strong>Cliente: </strong>@Model.ClientName<br>
+                        <strong>Serviço: </strong>@Model.ServiceType
+                    </div>
+
+                    <!-- Aqui você pode adicionar o resto do formulário baseado no tipo de empresa -->
+                    @if (Model.CompanyServiceType == SolarEnergy.Models.SolarServiceType.EnergyRental)
+                    {
+                        <input type="hidden" name="ResponseType" value="Message" />
+                        <div class="mb-3">
+                            <label for="Message" class="form-label">Mensagem para o Cliente</label>
+                            <textarea class="form-control" name="Message" rows="4" 
+                                      placeholder="Digite sua mensagem para o cliente..." required></textarea>
+                        </div>
+                    }
+                    @if (Model.CompanyServiceType == SolarEnergy.Models.SolarServiceType.PanelSales)
+                    {
+                        <input type="hidden" name="ResponseType" value="Proposal" />
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="Value" class="form-label">Valor da Proposta (R$)</label>
+                                <input type="number" class="form-control" name="Value" step="0.01" min="0" 
+                                       placeholder="0,00" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="InstallationTimeframe" class="form-label">Prazo de Instalação (dias)</label>
+                                <input type="number" class="form-control" name="InstallationTimeframe" min="1" 
+                                       placeholder="Ex: 30">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="Description" class="form-label">Descrição da Proposta</label>
+                            <textarea class="form-control" name="Description" rows="4" 
+                                      placeholder="Descreva os detalhes da proposta..."></textarea>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-solar-orange">
+                        <i class="fas fa-paper-plane me-1"></i>Enviar Resposta
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const responseModal = document.getElementById('responseModal');
+    if (responseModal) {
+        responseModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            if (button) {
+                const quoteId = button.getAttribute('data-quote-id');
+                if (quoteId) {
+                    document.getElementById('modalQuoteId').value = quoteId;
+                }
+            }
+        });
+    }
+});
+
+$(document).ready(function() {
+    // Handle unlock lead button
+    $('#unlockLeadBtn').on('click', function() {
+        const quoteId = $(this).data('quote-id');
+        
+        if (!confirm('Deseja consumir 1 lead para acessar os dados completos deste cliente?\n\nEsta ação não pode ser desfeita.')) {
+            return;
+        }
+        
+        // Show loading state
+        const originalText = $(this).html();
+        $(this).html('<i class="fas fa-spinner fa-spin me-2"></i>Desbloqueando...').prop('disabled', true);
+        
+        // Make AJAX request
+        $.ajax({
+            url: '/Leads/ConsumeLead',
+            type: 'POST',
+            data: {
+                quoteId: quoteId,
+                __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Show success message
+                    showAlert('success', response.message);
+                    
+                    // Reload page to show unlocked content
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    showAlert('error', response.message);
+                    $('#unlockLeadBtn').html(originalText).prop('disabled', false);
+                }
+            },
+            error: function() {
+                showAlert('error', 'Erro ao processar solicitação. Tente novamente.');
+                $('#unlockLeadBtn').html(originalText).prop('disabled', false);
+            }
+        });
+    });
+    
+    function showAlert(type, message) {
+        // Remove existing alerts
+        $('.dynamic-alert').remove();
+        
+        // Create new alert
+        const alertHtml = `
+            <div class="alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show dynamic-alert">
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+        
+        // Insert at top of content
+        $('.row').first().prepend(`<div class="col-12 mb-3">${alertHtml}</div>`);
+        
+        // Auto-remove success alerts
+        if (type === 'success') {
+            setTimeout(() => {
+                $('.dynamic-alert').fadeOut();
+            }, 4000);
+        }
+    }
+    
+    // ... resto do código JavaScript existente ...
+});
+</script>

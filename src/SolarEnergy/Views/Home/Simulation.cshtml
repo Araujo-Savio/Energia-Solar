@@ -1,0 +1,604 @@
+@{
+    ViewData["Title"] = "Simulador";
+}
+
+<div class="solar-page economy-simulator">
+    <div class="container-fluid px-4">
+        <div class="solar-page-header d-flex flex-wrap justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="solar-page-title">Simulador de Economia</h1>
+                <p class="solar-page-subtitle mb-0">Combine dados reais de consumo para comparar instalação própria e aluguel de energia.</p>
+            </div>
+            <div class="text-end">
+                <span class="badge bg-status-online mb-2"><i class="fas fa-bolt me-1"></i>Cálculo sob demanda</span>
+                <p class="text-muted small mb-0">Informe os parâmetros básicos, depois utilize o botão de cálculo para atualizar a simulação.</p>
+            </div>
+        </div>
+
+        <div class="row g-4 align-items-stretch">
+            <div class="col-xxl-4 col-lg-5">
+                <div class="solar-card h-100">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h5 class="solar-card-title mb-0">Métricas de Economia</h5>
+                        <span class="badge bg-status-warning text-uppercase small fw-semibold">Base do cálculo</span>
+                    </div>
+                    <p class="text-muted small mb-4">
+                        Nesse campo, insira as métricas básicas para alimentar o simulador: consumo médio da rede, índice de cobertura desejado, horizonte de tempo e inflação anual da tarifa. Você também pode informar o desconto aplicado em contratos de aluguel para refletir o benefício na conta.
+                    </p>
+                    <div class="simulator-section">
+                        <h6 class="simulator-section-title">
+                            <i class="fas fa-chart-line me-2 text-solar-orange"></i>Parâmetros básicos
+                        </h6>
+                        <div class="metrics-grid">
+                            <div>
+                                <label class="form-label" for="monthlyConsumption">Consumo médio mensal (kWh)</label>
+                                <input id="monthlyConsumption" type="number" min="0" step="1" class="form-control" value="0" data-sim-input="monthly-consumption" />
+                            </div>
+                            <div>
+                                <label class="form-label" for="energyTariff">Tarifa da energia (R$/kWh)</label>
+                                <input id="energyTariff" type="number" min="0" step="0.01" class="form-control" value="0.92" data-sim-input="energy-tariff" />
+                            </div>
+                            <div>
+                                <label class="form-label" for="coverage">Cobertura do sistema (%)</label>
+                                <input id="coverage" type="number" min="0" max="120" step="1" class="form-control" value="0" data-sim-input="coverage" />
+                            </div>
+                            <div>
+                                <label class="form-label" for="degradation">Degradação anual do sistema (%)</label>
+                                <input id="degradation" type="number" min="0" max="5" step="0.1" class="form-control" value="0.7" data-sim-input="degradation" />
+                            </div>
+                            <div>
+                                <label class="form-label" for="horizon">Horizonte de análise (anos)</label>
+                                <input id="horizon" type="number" min="0" max="30" step="1" class="form-control" value="0" data-sim-input="horizon" />
+                            </div>
+                            <div>
+                                <label class="form-label" for="inflation">Inflação anual da tarifa (%)</label>
+                                <input id="inflation" type="number" min="0" max="25" step="0.1" class="form-control" value="7.5" data-sim-input="inflation" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info mt-4 mb-0 small" role="status">
+                        <i class="fas fa-robot me-2 text-solar-blue"></i>Os custos de instalação e aluguel são estimados automaticamente a partir do consumo informado, considerando padrões médios de mercado.
+                    </div>
+
+                    <button type="button" class="btn btn-solar-orange w-100 mt-4" data-sim-action="recalculate">
+                        <i class="fas fa-rotate me-2"></i>Calcular projeção
+                    </button>
+                    <p class="text-muted small text-center mt-3 mb-0">
+                        Os resultados só são atualizados quando você solicitar o cálculo pelo botão acima.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-xxl-5 col-lg-7">
+                <div class="solar-card h-100 d-flex flex-column">
+                    <div class="d-flex flex-wrap justify-content-between align-items-start mb-3">
+                        <div>
+                            <h5 class="solar-card-title mb-1">Projeção comparativa</h5>
+                            <p class="text-muted small mb-0">
+                                Compare o custo total projetado de cada cenário considerando inflação, degradação do sistema e despesas adicionais.
+                            </p>
+                        </div>
+                        <span class="badge bg-status-alert">Resultados dinâmicos</span>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="costComparisonChart" aria-label="Comparativo de custos dos cenários" role="img"></canvas>
+                    </div>
+
+                    <div class="simulator-summary mt-4">
+                        <div class="simulator-summary-grid">
+                            <div>
+                                <div class="summary-label-row">
+                                    <span class="label">Custo sem energia solar</span>
+                                    <button type="button" class="summary-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Conta projetada para o horizonte escolhido" aria-label="Conta projetada para o horizonte escolhido">
+                                        <i class="fas fa-info"></i>
+                                    </button>
+                                </div>
+                                <strong class="value text-solar-blue" data-sim-output="base-total">-</strong>
+                            </div>
+                            <div>
+                                <div class="summary-label-row">
+                                    <span class="label">Investimento com instalação</span>
+                                    <button type="button" class="summary-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Inclui obra, manutenção e incentivos" aria-label="Inclui obra, manutenção e incentivos">
+                                        <i class="fas fa-info"></i>
+                                    </button>
+                                </div>
+                                <strong class="value text-solar-orange" data-sim-output="install-total">-</strong>
+                            </div>
+                            <div>
+                                <div class="summary-label-row">
+                                    <span class="label">Custo com aluguel</span>
+                                    <button type="button" class="summary-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Mensalidade e energia residual consideradas" aria-label="Mensalidade e energia residual consideradas">
+                                        <i class="fas fa-info"></i>
+                                    </button>
+                                </div>
+                                <strong class="value text-solar-orange" data-sim-output="rental-total">-</strong>
+                            </div>
+                            <div>
+                                <div class="summary-label-row">
+                                    <span class="label">Economia com instalação</span>
+                                    <button type="button" class="summary-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Diferença em relação à conta sem solar" aria-label="Diferença em relação à conta sem solar">
+                                        <i class="fas fa-info"></i>
+                                    </button>
+                                </div>
+                                <strong class="value text-success" data-sim-output="install-savings">-</strong>
+                            </div>
+                            <div>
+                                <div class="summary-label-row">
+                                    <span class="label">Economia com aluguel</span>
+                                    <button type="button" class="summary-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Inclui descontos informados" aria-label="Inclui descontos informados">
+                                        <i class="fas fa-info"></i>
+                                    </button>
+                                </div>
+                                <strong class="value text-success" data-sim-output="rental-savings">-</strong>
+                            </div>
+                            <div>
+                                <div class="summary-label-row">
+                                    <span class="label">Energia gerada anualmente</span>
+                                    <button type="button" class="summary-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Considerando a cobertura informada" aria-label="Considerando a cobertura informada">
+                                        <i class="fas fa-info"></i>
+                                    </button>
+                                </div>
+                                <strong class="value" data-sim-output="annual-generation">-</strong>
+                            </div>
+                        </div>
+
+                        <div class="simulator-coverage mt-4">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="label">Cobertura estimada da conta</span>
+                                <strong class="value" data-sim-output="coverage-label">-</strong>
+                            </div>
+                            <div class="progress simulator-progress">
+                                <div class="progress-bar" role="progressbar" style="width: 0%;" data-sim-progress="coverage" aria-valuemin="0" aria-valuemax="120"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="simulator-hints mt-auto pt-4">
+                        <div class="hint-item">
+                            <i class="fas fa-info-circle text-solar-orange me-2"></i>
+                            <span class="text-muted small">
+                                Tempo total que será gasto com a instalação: <strong data-sim-output="install-time">-</strong>. Esse período é considerado antes do início da economia projetada.
+                            </span>
+                        </div>
+                        <div class="hint-item">
+                            <i class="fas fa-leaf text-success me-2"></i>
+                            <span class="text-muted small">
+                                Utilize as métricas acima para testar cenários diferentes. Os resultados podem ser exportados pela equipe comercial através do painel de relatórios.
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xxl-3">
+                <div class="d-flex flex-column gap-3 h-100">
+                    <div class="solar-card insight-card h-100">
+                        <div class="insight-header">
+                            <div class="insight-icon bg-solar-blue text-white">
+                                <i class="fas fa-solar-panel"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Instalação própria</h6>
+                                <p class="text-muted small mb-0">Resumo do cenário baseado nos dados informados.</p>
+                            </div>
+                            <span class="badge bg-status-online" data-sim-output="install-badge">-</span>
+                        </div>
+                        <ul class="insight-list">
+                            <li>
+                                <span>Investimento inicial</span>
+                                <strong data-sim-output="install-investment">-</strong>
+                            </li>
+                            <li>
+                                <span>Economia mensal estimada</span>
+                                <strong data-sim-output="install-monthly-savings">-</strong>
+                            </li>
+                            <li>
+                                <span>Economia total no horizonte</span>
+                                <strong data-sim-output="install-savings-total">-</strong>
+                            </li>
+                            <li>
+                                <span>Payback estimado</span>
+                                <strong data-sim-output="install-payback">-</strong>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="solar-card insight-card h-100">
+                        <div class="insight-header">
+                            <div class="insight-icon bg-solar-orange text-white">
+                                <i class="fas fa-handshake"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Aluguel de energia</h6>
+                                <p class="text-muted small mb-0">Mensalidade fixa e descontos aplicados na conta.</p>
+                            </div>
+                            <span class="badge bg-status-warning" data-sim-output="rental-badge">-</span>
+                        </div>
+                        <ul class="insight-list">
+                            <li>
+                                <span>Mensalidade inicial</span>
+                                <strong data-sim-output="rental-monthly">-</strong>
+                            </li>
+                            <li>
+                                <span>Economia mensal estimada</span>
+                                <strong data-sim-output="rental-monthly-savings">-</strong>
+                            </li>
+                            <li>
+                                <span>Economia total no horizonte</span>
+                                <strong data-sim-output="rental-savings-total">-</strong>
+                            </li>
+                            <li>
+                                <span>Desconto aplicado na conta</span>
+                                <strong data-sim-output="rental-discount-label">-</strong>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="solar-card insight-card h-100">
+                        <div class="insight-header">
+                            <div class="insight-icon bg-solar-blue text-white">
+                                <i class="fas fa-clipboard-check"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Próximos passos</h6>
+                                <p class="text-muted small mb-0">Utilize estes indicadores para direcionar a proposta ao cliente.</p>
+                            </div>
+                        </div>
+                        <ul class="insight-list">
+                            <li>
+                                <span>Economia média anual</span>
+                                <strong data-sim-output="annual-savings-average">-</strong>
+                            </li>
+                            <li>
+                                <span>Investimento recuperado em</span>
+                                <strong data-sim-output="payback-resume">-</strong>
+                            </li>
+                            <li>
+                                <span>Economia acumulada em 5 anos</span>
+                                <strong data-sim-output="five-year-savings">-</strong>
+                            </li>
+                            <li>
+                                <span>Horizonte analisado</span>
+                                <strong data-sim-output="horizon-label">-</strong>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" integrity="sha384-MV6cFQhfZc6AtZ1I928PDScdJtba8pI99O2mHaFxN4iAdCKfFsRJg7xvHRvgqBBz" crossorigin="anonymous"></script>
+    <script>
+        (function () {
+            const currencyFormatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+            const numberFormatter = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 });
+            const percentFormatter = new Intl.NumberFormat('pt-BR', { style: 'percent', minimumFractionDigits: 0, maximumFractionDigits: 1 });
+
+            const outputs = {
+                baseTotal: document.querySelector('[data-sim-output="base-total"]'),
+                installTotal: document.querySelector('[data-sim-output="install-total"]'),
+                rentalTotal: document.querySelector('[data-sim-output="rental-total"]'),
+                installSavings: document.querySelector('[data-sim-output="install-savings"]'),
+                rentalSavings: document.querySelector('[data-sim-output="rental-savings"]'),
+                installMonthlySavings: document.querySelector('[data-sim-output="install-monthly-savings"]'),
+                rentalMonthlySavings: document.querySelector('[data-sim-output="rental-monthly-savings"]'),
+                installInvestment: document.querySelector('[data-sim-output="install-investment"]'),
+                installSavingsTotal: document.querySelector('[data-sim-output="install-savings-total"]'),
+                rentalSavingsTotal: document.querySelector('[data-sim-output="rental-savings-total"]'),
+                annualGeneration: document.querySelector('[data-sim-output="annual-generation"]'),
+                coverageLabel: document.querySelector('[data-sim-output="coverage-label"]'),
+                installTime: document.querySelector('[data-sim-output="install-time"]'),
+                installPayback: document.querySelector('[data-sim-output="install-payback"]'),
+                installBadge: document.querySelector('[data-sim-output="install-badge"]'),
+                rentalBadge: document.querySelector('[data-sim-output="rental-badge"]'),
+                rentalMonthly: document.querySelector('[data-sim-output="rental-monthly"]'),
+                rentalDiscountLabel: document.querySelector('[data-sim-output="rental-discount-label"]'),
+                annualSavingsAverage: document.querySelector('[data-sim-output="annual-savings-average"]'),
+                paybackResume: document.querySelector('[data-sim-output="payback-resume"]'),
+                fiveYearSavings: document.querySelector('[data-sim-output="five-year-savings"]'),
+                horizonLabel: document.querySelector('[data-sim-output="horizon-label"]')
+            };
+            const coverageProgress = document.querySelector('[data-sim-progress="coverage"]');
+            const actionButtons = document.querySelectorAll('[data-sim-action="recalculate"]');
+
+            const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.forEach((tooltipTriggerEl) => {
+                if (window.bootstrap && bootstrap.Tooltip) {
+                    new bootstrap.Tooltip(tooltipTriggerEl);
+                }
+            });
+
+            let chartInstance;
+
+            function parseInput(inputName) {
+                const element = document.querySelector(`[data-sim-input="${inputName}"]`);
+                if (!element) return 0;
+                const value = parseFloat((element.value || '').toString().replace(',', '.'));
+                return Number.isFinite(value) ? value : 0;
+            }
+
+            function formatCurrency(value) {
+                return Number.isFinite(value) ? currencyFormatter.format(value) : '-';
+            }
+
+            function formatNumber(value, suffix = '') {
+                return Number.isFinite(value) ? `${numberFormatter.format(value)}${suffix}` : '-';
+            }
+
+            function formatPercent(value) {
+                return Number.isFinite(value) ? percentFormatter.format(value) : '-';
+            }
+
+            function formatMonths(totalMonths) {
+                if (!Number.isFinite(totalMonths)) {
+                    return '-';
+                }
+                if (totalMonths < 12) {
+                    return `${Math.round(totalMonths)} meses`;
+                }
+                const years = Math.floor(totalMonths / 12);
+                const months = Math.round(totalMonths % 12);
+                if (months === 0) {
+                    return `${years} ${years === 1 ? 'ano' : 'anos'}`;
+                }
+                return `${years} ${years === 1 ? 'ano' : 'anos'} e ${months} ${months === 1 ? 'mês' : 'meses'}`;
+            }
+
+            function updateBadge(element, savings) {
+                if (!element) return;
+                element.classList.remove('badge-positive', 'badge-negative');
+                if (!Number.isFinite(savings) || Math.abs(savings) < 1) {
+                    element.textContent = 'Sem economia';
+                    return;
+                }
+
+                if (savings > 0) {
+                    element.textContent = 'Economia projetada';
+                    element.classList.add('badge-positive');
+                } else {
+                    element.textContent = 'Revise os custos';
+                    element.classList.add('badge-negative');
+                }
+            }
+
+            function buildChart(totals) {
+                const canvas = document.getElementById('costComparisonChart');
+                if (!canvas) return;
+                const context = canvas.getContext('2d');
+                if (!context) return;
+
+                const labels = ['Sem energia solar', 'Instalação própria', 'Aluguel de energia'];
+                const dataValues = [totals.base, totals.installation, totals.rental];
+                const backgroundColors = ['#1a2b3d', '#ff6b35', '#2563eb'];
+
+                if (chartInstance) {
+                    chartInstance.data.labels = labels;
+                    chartInstance.data.datasets[0].data = dataValues;
+                    chartInstance.data.datasets[0].backgroundColor = backgroundColors;
+                    chartInstance.update();
+                    return;
+                }
+
+                chartInstance = new Chart(context, {
+                    type: 'bar',
+                    data: {
+                        labels,
+                        datasets: [
+                            {
+                                label: 'Custo total projetado',
+                                data: dataValues,
+                                backgroundColor: backgroundColors,
+                                borderRadius: 12,
+                                maxBarThickness: 64
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const value = typeof context.parsed.x === 'number' ? context.parsed.x : context.parsed.y;
+                                        return `${context.label}: ${formatCurrency(value)}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                ticks: {
+                                    callback: (value) => formatCurrency(value)
+                                },
+                                grid: {
+                                    color: 'rgba(26, 43, 61, 0.05)'
+                                }
+                            },
+                            y: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        },
+                        indexAxis: 'y'
+                    }
+                });
+            }
+
+            function deriveScenarioDefaults(monthlyConsumption, energyTariff) {
+                const safeConsumption = Math.max(monthlyConsumption, 0);
+                const safeTariff = Math.max(energyTariff, 0);
+                const monthlyBill = safeConsumption * safeTariff;
+                const systemSizeKw = Math.max(safeConsumption / 120, 2.5);
+                const installationCost = systemSizeKw * 4200;
+                const maintenanceAnnual = installationCost * 0.012;
+                const installationIncentive = installationCost * 0.04;
+                const installationTimeMonths = Math.min(Math.max(systemSizeKw * 0.8, 2), 8);
+
+                const rentalMonthly = Math.max(monthlyBill * 0.68, 250);
+                const rentalSetup = Math.max(systemSizeKw * 150, 0);
+                const rentalIncreaseRate = 0.045;
+                const rentalDiscountRate = Math.min(0.18, 0.1 + (systemSizeKw / 100));
+
+                return {
+                    installationCost,
+                    installationTimeMonths,
+                    maintenanceAnnual,
+                    installationIncentive,
+                    rentalMonthly,
+                    rentalSetup,
+                    rentalIncreaseRate,
+                    rentalDiscountRate
+                };
+            }
+
+            function recalculate() {
+                const monthlyConsumption = parseInput('monthly-consumption');
+                const energyTariff = parseInput('energy-tariff');
+                const coveragePercent = parseInput('coverage');
+                const degradationPercent = parseInput('degradation');
+                const horizonYears = Math.max(1, parseInput('horizon'));
+                const inflationPercent = parseInput('inflation');
+
+                const scenarioDefaults = deriveScenarioDefaults(monthlyConsumption, energyTariff);
+
+                const installationCost = scenarioDefaults.installationCost;
+                const installationTimeMonths = scenarioDefaults.installationTimeMonths;
+                const maintenanceAnnual = scenarioDefaults.maintenanceAnnual;
+                const installationIncentive = scenarioDefaults.installationIncentive;
+
+                const rentalMonthly = scenarioDefaults.rentalMonthly;
+                const rentalSetup = scenarioDefaults.rentalSetup;
+                const rentalIncreaseRate = scenarioDefaults.rentalIncreaseRate;
+                const rentalDiscountRate = scenarioDefaults.rentalDiscountRate;
+
+                const coverage = Math.min(Math.max(coveragePercent / 100, 0), 1.2);
+                const degradation = Math.min(Math.max(degradationPercent / 100, 0), 0.3);
+                const inflation = Math.max(inflationPercent / 100, 0);
+                const rentalIncrease = Math.max(rentalIncreaseRate, 0);
+                const rentalDiscount = Math.min(Math.max(rentalDiscountRate, 0), 1);
+
+                const monthlyTariffWithoutInflation = energyTariff > 0 ? energyTariff : 0;
+                const annualConsumption = monthlyConsumption * 12;
+
+                let cumulativeBase = 0;
+                let cumulativeInstall = installationCost - installationIncentive;
+                let cumulativeRental = rentalSetup;
+                let annualSavingsInstallSum = 0;
+                let annualSavingsRentalSum = 0;
+                let fiveYearSavings = 0;
+
+                let paybackYears = null;
+                let cumulativeInstallSavings = -cumulativeInstall;
+                let firstYearInstallSavings = 0;
+                let firstYearRentalSavings = 0;
+
+                for (let year = 1; year <= horizonYears; year++) {
+                    const tariffWithInflation = monthlyTariffWithoutInflation * Math.pow(1 + inflation, year - 1);
+
+                    const coverageForYear = Math.min(coverage, 1) * Math.pow(1 - degradation, Math.max(year - 1, 0));
+                    const coveredConsumptionMonthly = monthlyConsumption * coverageForYear;
+                    const remainingConsumptionMonthly = Math.max(monthlyConsumption - coveredConsumptionMonthly, 0);
+                    const remainingConsumptionAnnual = remainingConsumptionMonthly * 12;
+
+                    const baseCostYear = annualConsumption * tariffWithInflation;
+                    cumulativeBase += baseCostYear;
+
+                    const maintenanceYear = maintenanceAnnual * Math.pow(1 + inflation, year - 1);
+                    const installCostYear = remainingConsumptionAnnual * tariffWithInflation + maintenanceYear;
+                    cumulativeInstall += installCostYear;
+
+                    const rentalMonthlyYear = rentalMonthly * Math.pow(1 + rentalIncrease, year - 1);
+                    const rentalDiscountYear = (remainingConsumptionAnnual * tariffWithInflation) * (1 - rentalDiscount);
+                    const rentalCostYear = rentalMonthlyYear * 12 + rentalDiscountYear;
+                    cumulativeRental += rentalCostYear;
+
+                    const annualSavingsInstall = baseCostYear - installCostYear;
+                    const annualSavingsRental = baseCostYear - rentalCostYear;
+
+                    if (year === 1) {
+                        firstYearInstallSavings = annualSavingsInstall;
+                        firstYearRentalSavings = annualSavingsRental;
+                    }
+
+                    annualSavingsInstallSum += annualSavingsInstall;
+                    annualSavingsRentalSum += annualSavingsRental;
+
+                    if (year <= 5) {
+                        fiveYearSavings += annualSavingsInstall;
+                    }
+
+                    cumulativeInstallSavings += annualSavingsInstall;
+                    if (paybackYears === null && cumulativeInstallSavings >= 0) {
+                        const previousSavings = cumulativeInstallSavings - annualSavingsInstall;
+                        const fractionOfYear = annualSavingsInstall > 0 ? (installationCost - installationIncentive - previousSavings) / annualSavingsInstall : 0;
+                        paybackYears = year - 1 + Math.max(0, Math.min(1, fractionOfYear));
+                    }
+                }
+
+                const totalBaseCost = cumulativeBase;
+                const totalInstallCost = cumulativeInstall;
+                const totalRentalCost = cumulativeRental;
+
+                const totalInstallSavings = totalBaseCost - totalInstallCost;
+                const totalRentalSavings = totalBaseCost - totalRentalCost;
+
+                const annualGeneration = annualConsumption * Math.min(coverage, 1);
+
+                const monthlyInstallSavings = firstYearInstallSavings / 12;
+                const monthlyRentalSavings = firstYearRentalSavings / 12;
+                const averageAnnualSavings = annualSavingsInstallSum / horizonYears;
+
+                if (outputs.baseTotal) outputs.baseTotal.textContent = formatCurrency(totalBaseCost);
+                if (outputs.installTotal) outputs.installTotal.textContent = formatCurrency(totalInstallCost);
+                if (outputs.rentalTotal) outputs.rentalTotal.textContent = formatCurrency(totalRentalCost);
+                if (outputs.installSavings) outputs.installSavings.textContent = formatCurrency(totalInstallSavings);
+                if (outputs.rentalSavings) outputs.rentalSavings.textContent = formatCurrency(totalRentalSavings);
+                if (outputs.installMonthlySavings) outputs.installMonthlySavings.textContent = formatCurrency(monthlyInstallSavings);
+                if (outputs.rentalMonthlySavings) outputs.rentalMonthlySavings.textContent = formatCurrency(monthlyRentalSavings);
+                if (outputs.installInvestment) outputs.installInvestment.textContent = formatCurrency(installationCost - installationIncentive);
+                if (outputs.installSavingsTotal) outputs.installSavingsTotal.textContent = formatCurrency(totalInstallSavings);
+                if (outputs.rentalSavingsTotal) outputs.rentalSavingsTotal.textContent = formatCurrency(totalRentalSavings);
+                if (outputs.annualGeneration) outputs.annualGeneration.textContent = Number.isFinite(annualGeneration) ? `${formatNumber(annualGeneration, ' kWh')}` : '-';
+                if (outputs.coverageLabel) outputs.coverageLabel.textContent = formatPercent(Math.min(coverage, 1));
+                if (outputs.installTime) outputs.installTime.textContent = formatMonths(installationTimeMonths);
+                if (outputs.installPayback) outputs.installPayback.textContent = paybackYears !== null ? formatMonths(paybackYears * 12) : 'Não alcançado';
+                if (outputs.rentalMonthly) outputs.rentalMonthly.textContent = formatCurrency(rentalMonthly);
+                if (outputs.rentalDiscountLabel) outputs.rentalDiscountLabel.textContent = formatPercent(rentalDiscount);
+                if (outputs.annualSavingsAverage) outputs.annualSavingsAverage.textContent = formatCurrency(averageAnnualSavings);
+                if (outputs.paybackResume) outputs.paybackResume.textContent = paybackYears !== null ? formatMonths(paybackYears * 12) : 'Não recupera investimento';
+                if (outputs.fiveYearSavings) outputs.fiveYearSavings.textContent = formatCurrency(fiveYearSavings);
+                if (outputs.horizonLabel) outputs.horizonLabel.textContent = `${horizonYears} ${horizonYears === 1 ? 'ano' : 'anos'}`;
+
+                updateBadge(outputs.installBadge, totalInstallSavings);
+                updateBadge(outputs.rentalBadge, totalRentalSavings);
+
+                if (coverageProgress) {
+                    const progressValue = Math.min(Math.max(coverage * 100, 0), 120);
+                    coverageProgress.style.width = `${progressValue}%`;
+                    coverageProgress.setAttribute('aria-valuenow', progressValue.toFixed(0));
+                }
+
+                buildChart({
+                    base: totalBaseCost,
+                    installation: totalInstallCost,
+                    rental: totalRentalCost
+                });
+            }
+
+            actionButtons.forEach((button) => {
+                button.addEventListener('click', recalculate);
+            });
+
+            recalculate();
+        })();
+    </script>
+}

@@ -1,0 +1,188 @@
+@{
+    ViewData["Title"] = "Dashboard Admin";
+}
+
+<div class="solar-page">
+    <div class="container-fluid px-4">
+        <div class="solar-page-header d-flex flex-wrap justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="solar-page-title">Dashboard Admin</h1>
+                <p class="solar-page-subtitle mb-0">Visão geral da operação e saúde do sistema</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-solar-orange">
+                    <i class="fas fa-bell me-1"></i> Solicitações pendentes
+                </button>
+                <button class="btn btn-solar-orange">
+                    <i class="fas fa-user-plus me-1"></i> Criar usuário
+                </button>
+                <button class="btn btn-solar-orange">
+                    <i class="fas fa-solar-panel me-1"></i> Nova unidade
+                </button>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-xl-4">
+                <div class="solar-card h-100">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h5 class="solar-card-title mb-0">Saúde do Sistema</h5>
+                        <span class="badge bg-success">Online</span>
+                    </div>
+                    <ul class="list-unstyled solar-system-health">
+                        <li>
+                            <span><i class="fas fa-plug me-2 text-success"></i> API</span>
+                            <span class="badge bg-status-online">Estável</span>
+                        </li>
+                        <li>
+                            <span><i class="fas fa-exchange-alt me-2 text-success"></i> IoT Gateway</span>
+                            <span class="badge bg-status-online">Estável</span>
+                        </li>
+                        <li>
+                            <span><i class="fas fa-database me-2 text-warning"></i> Ingestão</span>
+                            <span class="badge bg-status-warning">Atenção</span>
+                        </li>
+                        <li>
+                            <span><i class="fas fa-cogs me-2 text-success"></i> ETL</span>
+                            <span class="badge bg-status-online">Estável</span>
+                        </li>
+                        <li>
+                            <span><i class="fas fa-bell me-2 text-success"></i> Alertas</span>
+                            <span class="badge bg-status-online">Normal</span>
+                        </li>
+                        <li>
+                            <span><i class="fas fa-envelope-open-text me-2 text-success"></i> Mensageria</span>
+                            <span class="badge bg-status-online">Normal</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-xl-8">
+                <div class="solar-card h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="solar-card-title mb-0">Unidades em operação</h5>
+                        <div class="d-flex gap-2">
+                            <span class="badge bg-status-online">Ativas 5</span>
+                            <span class="badge bg-status-alert">Alertas 3</span>
+                            <span class="badge bg-status-warning">Críticas 2</span>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-7">
+                            <div class="solar-map-placeholder">
+                                <div class="solar-map-grid">
+                                    <span class="solar-map-point" style="top: 28%; left: 38%"></span>
+                                    <span class="solar-map-point" style="top: 65%; left: 35%"></span>
+                                    <span class="solar-map-point" style="top: 45%; left: 55%"></span>
+                                    <span class="solar-map-point alert" style="top: 32%; left: 62%"></span>
+                                    <span class="solar-map-point critical" style="top: 52%; left: 48%"></span>
+                                </div>
+                                <div class="solar-map-watermark">
+                                    <i class="fas fa-solar-panel"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="solar-list-group">
+                                <div class="solar-list-item">
+                                    <div>
+                                        <strong>Unidade Norte</strong>
+                                        <span class="d-block text-muted small">Manaus - AM</span>
+                                    </div>
+                                    <span class="badge bg-status-online">Online</span>
+                                </div>
+                                <div class="solar-list-item">
+                                    <div>
+                                        <strong>Unidade Nordeste</strong>
+                                        <span class="d-block text-muted small">Recife - PE</span>
+                                    </div>
+                                    <span class="badge bg-status-alert">Alerta</span>
+                                </div>
+                                <div class="solar-list-item">
+                                    <div>
+                                        <strong>Unidade Sudeste</strong>
+                                        <span class="d-block text-muted small">São Paulo - SP</span>
+                                    </div>
+                                    <span class="badge bg-status-online">Online</span>
+                                </div>
+                                <div class="solar-list-item">
+                                    <div>
+                                        <strong>Unidade Centro-Oeste</strong>
+                                        <span class="d-block text-muted small">Goiânia - GO</span>
+                                    </div>
+                                    <span class="badge bg-status-warning">Atenção</span>
+                                </div>
+                                <div class="solar-list-item">
+                                    <div>
+                                        <strong>Unidade Sul</strong>
+                                        <span class="d-block text-muted small">Curitiba - PR</span>
+                                    </div>
+                                    <span class="badge bg-status-alert">Alerta</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-xl-4">
+                <div class="solar-card h-100">
+                    <h5 class="solar-card-title">Potência agregada (últimas 24h)</h5>
+                    <div class="solar-mini-chart">
+                        <div class="solar-mini-chart-line"></div>
+                        <div class="solar-mini-chart-point" style="left: 15%; top: 60%"></div>
+                        <div class="solar-mini-chart-point" style="left: 35%; top: 40%"></div>
+                        <div class="solar-mini-chart-point" style="left: 55%; top: 45%"></div>
+                        <div class="solar-mini-chart-point" style="left: 75%; top: 25%"></div>
+                        <div class="solar-mini-chart-point" style="left: 90%; top: 35%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between text-muted small">
+                        <span>0h</span>
+                        <span>24h</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4">
+                <div class="solar-card h-100">
+                    <h5 class="solar-card-title">Geração por unidade (Top 10)</h5>
+                    <ul class="solar-ranking list-unstyled mb-0">
+                        <li><span>Empresa A</span><span class="text-solar-orange fw-bold">12.5 MWh</span></li>
+                        <li><span>Empresa B</span><span class="text-solar-orange fw-bold">11.8 MWh</span></li>
+                        <li><span>Empresa C</span><span class="text-solar-orange fw-bold">10.9 MWh</span></li>
+                        <li><span>Empresa D</span><span class="text-solar-orange fw-bold">9.7 MWh</span></li>
+                        <li><span>Empresa E</span><span class="text-solar-orange fw-bold">8.5 MWh</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-xl-4">
+                <div class="solar-card h-100">
+                    <h5 class="solar-card-title">Faturas e recebíveis</h5>
+                    <div class="solar-finance-grid">
+                        <div>
+                            <span class="solar-stat-label">Receitas</span>
+                            <strong class="solar-stat-value">R$ 230.000</strong>
+                            <span class="text-success small"><i class="fas fa-arrow-up me-1"></i>+12%</span>
+                        </div>
+                        <div>
+                            <span class="solar-stat-label">Inadimplência</span>
+                            <strong class="solar-stat-value">R$ 15.200</strong>
+                            <span class="text-danger small"><i class="fas fa-arrow-up me-1"></i>+4%</span>
+                        </div>
+                        <div>
+                            <span class="solar-stat-label">Alarmes críticos</span>
+                            <strong class="solar-stat-value">5</strong>
+                            <span class="badge bg-status-warning">Ação imediata</span>
+                        </div>
+                        <div>
+                            <span class="solar-stat-label">Contratos ativos</span>
+                            <strong class="solar-stat-value">312</strong>
+                            <span class="text-muted small">Atualizado há 5min</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

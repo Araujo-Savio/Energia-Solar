@@ -1,0 +1,171 @@
+@{
+    ViewData["Title"] = "Contato";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold text-solar-blue mb-3">
+                    <i class="fas fa-envelope me-3"></i>Entre em Contato
+                </h1>
+                <p class="lead text-muted">Estamos aqui para ajudar você em sua jornada solar</p>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-8 mb-5">
+                    <div class="card shadow-lg border-0">
+                        <div class="card-body p-5">
+                            <h3 class="text-solar-blue fw-bold mb-4">Envie uma Mensagem</h3>
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-semibold">Nome Completo</label>
+                                        <input type="text" class="form-control" placeholder="Seu nome completo" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-semibold">E-mail</label>
+                                        <input type="email" class="form-control" placeholder="seu@email.com" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-semibold">Telefone</label>
+                                        <input type="tel" class="form-control" placeholder="(00) 00000-0000">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-semibold">Assunto</label>
+                                        <select class="form-control">
+                                            <option>Selecione um assunto</option>
+                                            <option>Dúvidas sobre energia solar</option>
+                                            <option>Problema com orçamento</option>
+                                            <option>Suporte técnico</option>
+                                            <option>Parceria empresarial</option>
+                                            <option>Outros</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold">Mensagem</label>
+                                    <textarea class="form-control" rows="5" placeholder="Digite sua mensagem aqui..." required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-solar-orange btn-lg px-5">
+                                    <i class="fas fa-paper-plane me-2"></i>Enviar Mensagem
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="card shadow-lg border-0 mb-4">
+                        <div class="card-body p-4 text-center">
+                            <i class="fas fa-phone fa-2x text-solar-orange mb-3"></i>
+                            <h5 class="fw-bold text-solar-blue mb-2">Telefone</h5>
+                            <p class="text-muted mb-0">(11) 9999-9999</p>
+                            <p class="text-muted">Segunda a Sexta: 8h às 18h</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card shadow-lg border-0 mb-4">
+                        <div class="card-body p-4 text-center">
+                            <i class="fas fa-envelope fa-2x text-solar-orange mb-3"></i>
+                            <h5 class="fw-bold text-solar-blue mb-2">E-mail</h5>
+                            <p class="text-muted mb-0">contato@solarenergy.com.br</p>
+                            <p class="text-muted">Respondemos em até 24h</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card shadow-lg border-0 mb-4">
+                        <div class="card-body p-4 text-center">
+                            <i class="fas fa-map-marker-alt fa-2x text-solar-orange mb-3"></i>
+                            <h5 class="fw-bold text-solar-blue mb-2">Endereço</h5>
+                            <p class="text-muted mb-0">São Paulo, SP</p>
+                            <p class="text-muted">Brasil</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card shadow-lg border-0">
+                        <div class="card-body p-4 text-center">
+                            <h5 class="fw-bold text-solar-blue mb-3">Redes Sociais</h5>
+                            <div class="d-flex justify-content-center gap-3">
+                                <a href="#" class="btn btn-outline-solar-orange btn-sm">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                                <a href="#" class="btn btn-outline-solar-orange btn-sm">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                                <a href="#" class="btn btn-outline-solar-orange btn-sm">
+                                    <i class="fab fa-linkedin-in"></i>
+                                </a>
+                                <a href="#" class="btn btn-outline-solar-orange btn-sm">
+                                    <i class="fab fa-youtube"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- FAQ Section -->
+            <div class="row mt-5">
+                <div class="col-12">
+                    <h3 class="text-solar-blue fw-bold mb-4 text-center">Perguntas Frequentes</h3>
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    Como funciona a plataforma Solar Energy?
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Nossa plataforma conecta consumidores interessados em energia solar com empresas qualificadas. Você pode buscar empresas em sua região, solicitar orçamentos e comparar propostas de forma gratuita e segura.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    É gratuito para usar a plataforma?
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Sim! O uso da plataforma é completamente gratuito para consumidores. Você pode cadastrar-se, buscar empresas, solicitar orçamentos e comparar propostas sem nenhum custo.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    Como as empresas são verificadas?
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Todas as empresas passam por um processo rigoroso de verificação que inclui análise de documentos, certificações, histórico de projetos e avaliações de clientes anteriores.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                    Quanto tempo leva para receber orçamentos?
+                                </button>
+                            </h2>
+                            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Normalmente você recebe os primeiros orçamentos entre 24h a 48h após a solicitação. O prazo pode variar dependendo da complexidade do projeto e da disponibilidade das empresas.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

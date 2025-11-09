@@ -1,0 +1,161 @@
+@model SolarEnergy.ViewModels.RequestQuoteViewModel
+@using SolarEnergy.Extensions
+@{
+    ViewData["Title"] = "Solicitar Orçamento";
+}
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="text-center mb-5">
+                    <span class="badge bg-solar-orange bg-opacity-75 text-uppercase fw-semibold px-3 py-2">Solicitar Orçamento</span>
+                    <h1 class="display-6 text-solar-blue fw-bold mt-3">Solicite um orçamento personalizado</h1>
+                    <p class="text-muted lead">Informe seus dados de consumo para receber uma proposta detalhada</p>
+                </div>
+
+                <!-- Informações da Empresa -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-solar-blue text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-building me-2"></i>Empresa Selecionada
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h6 class="fw-bold text-solar-blue mb-2">@Model.CompanyName</h6>
+                                @if (!string.IsNullOrWhiteSpace(Model.CompanyDescription))
+                                {
+                                    <p class="text-muted mb-2">@Model.CompanyDescription</p>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(Model.CompanyLocation))
+                                {
+                                    <p class="mb-1">
+                                        <i class="fas fa-map-marker-alt text-solar-orange me-2"></i>
+                                        @Model.CompanyLocation
+                                    </p>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(Model.CompanyWebsite))
+                                {
+                                    <p class="mb-1">
+                                        <i class="fas fa-globe text-solar-orange me-2"></i>
+                                        <a href="@Model.CompanyWebsite" target="_blank" class="text-decoration-none">Site oficial</a>
+                                    </p>
+                                }
+                            </div>
+                            <div class="col-md-4 text-md-end">
+                                @if (Model.ServiceTypeEnum.HasValue)
+                                {
+                                    <span class="badge @Model.ServiceTypeEnum.GetServiceTypeColor() text-white fs-6">
+                                        <i class="@Model.ServiceTypeEnum.GetServiceTypeIcon() me-1"></i>
+                                        @Model.ServiceTypeEnum.GetServiceTypeDisplayName()
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulário de Solicitação -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-transparent border-0 py-4">
+                        <h5 class="text-solar-blue fw-bold mb-0">
+                            <i class="fas fa-file-signature me-2"></i>Dados do Orçamento
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form asp-action="Request" method="post">
+                            <input asp-for="CompanyId" type="hidden" />
+                            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <label asp-for="MonthlyConsumptionKwh" class="form-label fw-semibold">
+                                        <i class="fas fa-bolt text-solar-orange me-1"></i>Consumo Médio Mensal (kWh) *
+                                    </label>
+                                    <div class="input-group">
+                                        <input asp-for="MonthlyConsumptionKwh" class="form-control form-control-lg" 
+                                               placeholder="Ex: 350" type="number" min="1" max="99999" />
+                                        <span class="input-group-text">kWh</span>
+                                    </div>
+                                    <span asp-validation-for="MonthlyConsumptionKwh" class="text-danger small"></span>
+                                    <div class="form-text">
+                                        <small class="text-muted">
+                                            <i class="fas fa-info-circle me-1"></i>
+                                            Consulte sua conta de energia elétrica para obter esse valor
+                                        </small>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-4">
+                                    <label asp-for="ServiceType" class="form-label fw-semibold">
+                                        <i class="fas fa-cogs text-solar-orange me-1"></i>Tipo de Serviço *
+                                    </label>
+                                    <select asp-for="ServiceType" class="form-select form-select-lg">
+                                        <option value="">Selecione o tipo de serviço</option>
+                                        @if (Model.ServiceTypeEnum == SolarEnergy.Models.SolarServiceType.PanelSales || Model.ServiceTypeEnum == SolarEnergy.Models.SolarServiceType.Both)
+                                        {
+                                            <option value="Venda de Painéis">Venda de Painéis Solares</option>
+                                        }
+                                        @if (Model.ServiceTypeEnum == SolarEnergy.Models.SolarServiceType.EnergyRental || Model.ServiceTypeEnum == SolarEnergy.Models.SolarServiceType.Both)
+                                        {
+                                            <option value="Aluguel de Energia">Aluguel de Energia Solar</option>
+                                        }
+                                        @if (Model.ServiceTypeEnum == SolarEnergy.Models.SolarServiceType.Both)
+                                        {
+                                            <option value="Consultoria">Consultoria (Venda ou Aluguel)</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="ServiceType" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label asp-for="Message" class="form-label fw-semibold">
+                                    <i class="fas fa-comment text-solar-orange me-1"></i>Mensagem Adicional
+                                </label>
+                                <textarea asp-for="Message" class="form-control" rows="4" 
+                                          placeholder="Descreva detalhes sobre sua propriedade, necessidades específicas, ou outras informações que possam ajudar na elaboração do orçamento..."></textarea>
+                                <span asp-validation-for="Message" class="text-danger small"></span>
+                                <div class="form-text">
+                                    <small class="text-muted">
+                                        <i class="fas fa-lightbulb me-1"></i>
+                                        Opcional: Informações adicionais ajudam a empresa a elaborar uma proposta mais precisa
+                                    </small>
+                                </div>
+                            </div>
+
+                            <!-- Informações sobre o processo -->
+                            <div class="alert alert-info border-0 bg-solar-blue bg-opacity-10">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-info-circle text-solar-blue fs-5"></i>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="text-solar-blue fw-bold mb-2">Como funciona:</h6>
+                                        <ul class="mb-0 small text-muted">
+                                            <li>Sua solicitação será enviada diretamente para a empresa</li>
+                                            <li>A empresa analisará seus dados e entrará em contato</li>
+                                            <li>Você receberá uma proposta personalizada</li>
+                                            <li>Você pode solicitar apenas <strong>um orçamento por empresa</strong></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a asp-controller="Home" asp-action="SearchCompanies" class="btn btn-outline-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>Voltar à Busca
+                                </a>
+                                <button type="submit" class="btn btn-solar-orange btn-lg px-5">
+                                    <i class="fas fa-paper-plane me-2"></i>Solicitar Orçamento
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

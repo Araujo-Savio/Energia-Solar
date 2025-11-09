@@ -1,0 +1,21 @@
+﻿# IDE
+.vs/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build
+bin/
+obj/
+Debug/
+Release/
+
+# Rider / JetBrains
+.idea/
+*.iml
+
+# OS
+Thumbs.db
+.DS_Store

@@ -1,0 +1,489 @@
+﻿@{
+    ViewData["Title"] = "Energia Solar Sustentável";
+    var userType = ViewData["UserType"] as SolarEnergy.Models.UserType?;
+    var isCompany = userType == SolarEnergy.Models.UserType.Company;
+    var isAuthenticated = User.Identity?.IsAuthenticated == true;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/landing-page.css" asp-append-version="true" />
+}
+
+@if (isAuthenticated && isCompany)
+{
+    <!-- Central da Empresa -->
+    <section class="company-dashboard-section py-4">
+        <div class="container-fluid px-4">
+            <!-- Header -->
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="display-6 fw-bold text-solar-blue mb-2">
+                        <i class="fas fa-building text-solar-orange me-3"></i>
+                        Central da Empresa
+                    </h1>
+                    <p class="lead text-muted mb-0">Gerencie sua empresa e acompanhe o desempenho</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a asp-controller="Profile" asp-action="Index" class="btn btn-outline-solar-orange">
+                        <i class="fas fa-user-edit me-1"></i>Editar Perfil
+                    </a>
+                    <a asp-controller="Quote" asp-action="MyQuotes" class="btn btn-solar-orange">
+                        <i class="fas fa-file-invoice me-1"></i>Ver Solicitações
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="card border-0 shadow-sm h-100 bg-gradient" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
+                        <div class="card-body text-white">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-subtitle mb-2 text-white-50">Solicitações</h6>
+                                    <h2 class="fw-bold mb-0">12</h2>
+                                    <small class="text-white-75">Pendentes</small>
+                                </div>
+                                <i class="fas fa-file-invoice fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card border-0 shadow-sm h-100 bg-gradient" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                        <div class="card-body text-white">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-subtitle mb-2 text-white-50">Propostas</h6>
+                                    <h2 class="fw-bold mb-0">8</h2>
+                                    <small class="text-white-75">Enviadas</small>
+                                </div>
+                                <i class="fas fa-handshake fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card border-0 shadow-sm h-100 bg-gradient" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                        <div class="card-body text-white">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-subtitle mb-2 text-white-50">Avaliações</h6>
+                                    <h2 class="fw-bold mb-0">4.8</h2>
+                                    <small class="text-white-75">Média geral</small>
+                                </div>
+                                <i class="fas fa-star fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card border-0 shadow-sm h-100 bg-gradient" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">
+                        <div class="card-body text-white">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-subtitle mb-2 text-white-50">Leads</h6>
+                                    <h2 class="fw-bold mb-0">24</h2>
+                                    <small class="text-white-75">Este mês</small>
+                                </div>
+                                <i class="fas fa-users fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <h5 class="card-title text-solar-blue mb-3">
+                                <i class="fas fa-bolt text-solar-orange me-2"></i>Ações Rápidas
+                            </h5>
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <a asp-controller="Quote" asp-action="MyQuotes" class="btn btn-outline-primary w-100 py-3 text-start">
+                                        <i class="fas fa-file-invoice d-block mb-2"></i>
+                                        <strong>Solicitações</strong>
+                                        <small class="d-block text-muted">Gerenciar orçamentos</small>
+                                    </a>
+                                </div>
+                                <div class="col-6">
+                                    <a asp-controller="Home" asp-action="Evaluations" class="btn btn-outline-warning w-100 py-3 text-start">
+                                        <i class="fas fa-star d-block mb-2"></i>
+                                        <strong>Avaliações</strong>
+                                        <small class="d-block text-muted">Ver feedback</small>
+                                    </a>
+                                </div>
+                                <div class="col-6">
+                                    <a asp-controller="Home" asp-action="Leads" class="btn btn-outline-success w-100 py-3 text-start">
+                                        <i class="fas fa-users d-block mb-2"></i>
+                                        <strong>Leads</strong>
+                                        <small class="d-block text-muted">Gerenciar prospects</small>
+                                    </a>
+                                </div>
+                                <div class="col-6">
+                                    <a asp-controller="Profile" asp-action="Index" class="btn btn-outline-info w-100 py-3 text-start">
+                                        <i class="fas fa-building d-block mb-2"></i>
+                                        <strong>Perfil</strong>
+                                        <small class="d-block text-muted">Editar empresa</small>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <h5 class="card-title text-solar-blue mb-3">
+                                <i class="fas fa-chart-line text-solar-orange me-2"></i>Desempenho Recente
+                            </h5>
+                            <div class="d-flex flex-column gap-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-muted">Taxa de Conversão</span>
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress me-2" style="width: 100px; height: 8px;">
+                                            <div class="progress-bar bg-success" style="width: 67%"></div>
+                                        </div>
+                                        <span class="fw-bold text-success">67%</span>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-muted">Tempo Médio de Resposta</span>
+                                    <span class="fw-bold text-solar-orange">2.5h</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-muted">Satisfação do Cliente</span>
+                                    <div class="d-flex align-items-center">
+                                        <div class="text-warning me-2">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <span class="fw-bold">4.8</span>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-muted">Orçamentos Este Mês</span>
+                                    <span class="fw-bold text-primary">12</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-solar-blue mb-3">
+                        <i class="fas fa-clock text-solar-orange me-2"></i>Atividades Recentes
+                    </h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Ação</th>
+                                    <th>Data</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div>
+                                            <strong>João Silva</strong>
+                                            <small class="d-block text-muted">joao@email.com</small>
+                                        </div>
+                                    </td>
+                                    <td>Solicitou orçamento</td>
+                                    <td>Há 2 horas</td>
+                                    <td><span class="badge bg-warning">Pendente</span></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div>
+                                            <strong>Maria Santos</strong>
+                                            <small class="d-block text-muted">maria@email.com</small>
+                                        </div>
+                                    </td>
+                                    <td>Avaliou empresa</td>
+                                    <td>Ontem</td>
+                                    <td><span class="badge bg-success">5 estrelas</span></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div>
+                                            <strong>Pedro Costa</strong>
+                                            <small class="d-block text-muted">pedro@email.com</small>
+                                        </div>
+                                    </td>
+                                    <td>Recebeu proposta</td>
+                                    <td>2 dias atrás</td>
+                                    <td><span class="badge bg-info">Em análise</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+else
+{
+    <!-- Página inicial pública com tema azul escuro -->
+    <!-- Hero Section -->
+    <section class="landing-hero-section text-white">
+        <div class="container">
+            <div class="row align-items-center min-vh-75">
+                <div class="col-lg-6">
+                    <div class="landing-hero-content">
+                        <h1 class="display-3 fw-bold mb-4">
+                            <i class="fas fa-solar-panel text-solar-orange me-3"></i>
+                            SOLAR ENERGY
+                        </h1>
+                        <p class="lead mb-4 fs-4">Energia limpa para um futuro sustentável</p>
+                        
+                        <div class="landing-features-list mb-4">
+                            <div class="feature-item d-flex align-items-center mb-3">
+                                <i class="fas fa-check-circle text-solar-orange me-3 fs-5"></i>
+                                <span class="fs-5">Reduza sua conta de energia em até 95%</span>
+                            </div>
+                            <div class="feature-item d-flex align-items-center mb-3">
+                                <i class="fas fa-check-circle text-solar-orange me-3 fs-5"></i>
+                                <span class="fs-5">Contribua para um planeta mais verde</span>
+                            </div>
+                            <div class="feature-item d-flex align-items-center mb-3">
+                                <i class="fas fa-check-circle text-solar-orange me-3 fs-5"></i>
+                                <span class="fs-5">Valorize seu imóvel</span>
+                            </div>
+                            <div class="feature-item d-flex align-items-center mb-3">
+                                <i class="fas fa-check-circle text-solar-orange me-3 fs-5"></i>
+                                <span class="fs-5">Independência energética</span>
+                            </div>
+                            <div class="feature-item d-flex align-items-center mb-3">
+                                <i class="fas fa-check-circle text-solar-orange me-3 fs-5"></i>
+                                <span class="fs-5">Retorno do investimento garantido</span>
+                            </div>
+                        </div>
+                        
+                        <div class="landing-hero-buttons">
+                            @if (User.Identity?.IsAuthenticated == true)
+                            {
+                                <a asp-controller="Home" asp-action="Dashboard" class="btn btn-solar-orange btn-lg me-3 px-4 py-3">
+                                    <i class="fas fa-tachometer-alt me-2"></i>Acessar Dashboard
+                                </a>
+                            }
+                            else
+                            {
+                                <a asp-controller="Auth" asp-action="Register" class="btn btn-solar-orange btn-lg me-3 px-4 py-3">
+                                    <i class="fas fa-user-plus me-2"></i>Começar Agora
+                                </a>
+                                <a asp-controller="Auth" asp-action="Login" class="btn btn-outline-light btn-lg px-4 py-3">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Fazer Login
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <div class="landing-hero-image">
+                        <i class="fas fa-solar-panel fa-10x text-solar-orange opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="landing-stats-section py-5">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-3 mb-4">
+                    <div class="landing-stat-item">
+                        <i class="fas fa-users fa-3x text-solar-orange mb-3"></i>
+                        <h3 class="fw-bold text-solar-blue">10,000+</h3>
+                        <p class="text-muted">Clientes Satisfeitos</p>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="landing-stat-item">
+                        <i class="fas fa-building fa-3x text-solar-orange mb-3"></i>
+                        <h3 class="fw-bold text-solar-blue">500+</h3>
+                        <p class="text-muted">Empresas Parceiras</p>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="landing-stat-item">
+                        <i class="fas fa-bolt fa-3x text-solar-orange mb-3"></i>
+                        <h3 class="fw-bold text-solar-blue">50MW</h3>
+                        <p class="text-muted">Energia Gerada</p>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="landing-stat-item">
+                        <i class="fas fa-leaf fa-3x text-solar-orange mb-3"></i>
+                        <h3 class="fw-bold text-solar-blue">25,000t</h3>
+                        <p class="text-muted">CO² Evitado</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="landing-services-section py-5">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-12 text-center">
+                    <h2 class="display-5 fw-bold text-solar-blue mb-3">Nossos Serviços</h2>
+                    <p class="lead text-muted">Soluções completas em energia solar para você</p>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <div class="landing-service-card card h-100 shadow-sm border-0">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-search fa-3x text-solar-orange mb-3"></i>
+                            <h4 class="fw-bold text-solar-blue mb-3">Encontre Empresas</h4>
+                            <p class="text-muted">Pesquise e compare empresas de energia solar em sua região com avaliações reais de clientes.</p>
+                            <a href="#" class="btn btn-outline-solar-orange">Buscar Empresas</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <div class="landing-service-card card h-100 shadow-sm border-0">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-calculator fa-3x text-solar-orange mb-3"></i>
+                            <h4 class="fw-bold text-solar-blue mb-3">Simule sua Economia</h4>
+                            <p class="text-muted">Calcule quanto você pode economizar com energia solar e o tempo de retorno do investimento.</p>
+                            <a href="#" class="btn btn-outline-solar-orange">Fazer Simulação</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <div class="landing-service-card card h-100 shadow-sm border-0">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-handshake fa-3x text-solar-orange mb-3"></i>
+                            <h4 class="fw-bold text-solar-blue mb-3">Compare Orçamentos</h4>
+                            <p class="text-muted">Receba e compare propostas de diferentes empresas para escolher a melhor opção.</p>
+                            <a href="#" class="btn btn-outline-solar-orange">Solicitar Orçamento</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it Works Section -->
+    <section class="landing-how-it-works-section py-5">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-12 text-center">
+                    <h2 class="display-5 fw-bold text-solar-blue mb-3">Como Funciona</h2>
+                    <p class="lead text-muted">Simples, rápido e seguro</p>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-3 mb-4 text-center">
+                    <div class="landing-step-item">
+                        <div class="landing-step-number bg-solar-orange text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                            <span class="fw-bold fs-4">1</span>
+                        </div>
+                        <h5 class="fw-bold text-solar-blue mb-2">Cadastre-se</h5>
+                        <p class="text-muted">Crie sua conta gratuitamente em menos de 2 minutos</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 mb-4 text-center">
+                    <div class="landing-step-item">
+                        <div class="landing-step-number bg-solar-orange text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                            <span class="fw-bold fs-4">2</span>
+                        </div>
+                        <h5 class="fw-bold text-solar-blue mb-2">Busque Empresas</h5>
+                        <p class="text-muted">Encontre empresas qualificadas em sua região</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 mb-4 text-center">
+                    <div class="landing-step-item">
+                        <div class="landing-step-number bg-solar-orange text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                            <span class="fw-bold fs-4">3</span>
+                        </div>
+                        <h5 class="fw-bold text-solar-blue mb-2">Compare Propostas</h5>
+                        <p class="text-muted">Receba e compare orçamentos detalhados</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 mb-4 text-center">
+                    <div class="landing-step-item">
+                        <div class="landing-step-number bg-solar-orange text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                            <span class="fw-bold fs-4">4</span>
+                        </div>
+                        <h5 class="fw-bold text-solar-blue mb-2">Contrate</h5>
+                        <p class="text-muted">Escolha a melhor opção e comece a economizar</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="landing-cta-section py-5 text-white">
+        <div class="container text-center">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h2 class="display-5 fw-bold mb-3">Pronto para Economizar?</h2>
+                    <p class="lead mb-4">Junte-se a milhares de pessoas que já estão economizando com energia solar</p>
+                    
+                    @if (User.Identity?.IsAuthenticated != true)
+                    {
+                        <a asp-controller="Auth" asp-action="Register" class="btn btn-solar-orange btn-lg px-5 py-3 me-3">
+                            <i class="fas fa-rocket me-2"></i>Começar Agora
+                        </a>
+                        <a asp-controller="Home" asp-action="Contact" class="btn btn-outline-light btn-lg px-5 py-3">
+                            <i class="fas fa-phone me-2"></i>Falar com Especialista
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Home" asp-action="Dashboard" class="btn btn-solar-orange btn-lg px-5 py-3">
+                            <i class="fas fa-tachometer-alt me-2"></i>Ir para Dashboard
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+@section Scripts {
+    <script>
+        // Animações suaves para os elementos quando entram na viewport
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('landing-fade-in-up');
+                }
+            });
+        }, observerOptions);
+
+        // Aplicar animação aos elementos da landing page
+        document.querySelectorAll('.landing-service-card, .landing-step-item, .landing-stat-item').forEach(element => {
+            observer.observe(element);
+        });
+
+        // Adicionar classe de float ao ícone do hero
+        document.querySelector('.landing-hero-image i')?.classList.add('landing-float');
+    </script>
+}

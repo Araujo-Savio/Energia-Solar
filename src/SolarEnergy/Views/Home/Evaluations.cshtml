@@ -1,0 +1,424 @@
+@model SolarEnergy.ViewModels.CompanyEvaluationsViewModel
+@{
+    ViewData["Title"] = "Avaliações da Empresa";
+}
+
+<div class="solar-page">
+    <div class="container-fluid px-4">
+        <div class="solar-page-header d-flex flex-wrap justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="solar-page-title">Avaliações Recebidas</h1>
+                <p class="solar-page-subtitle mb-0">Acompanhe o feedback dos seus clientes e monitore a reputação da empresa</p>
+            </div>
+            <div class="d-flex gap-2 align-items-center">
+                @if (Model.Stats.AverageRating > 0)
+                {
+                    <div class="text-end me-3">
+                        <div class="d-flex align-items-center justify-content-end mb-1">
+                            <span class="fs-4 fw-bold text-solar-orange me-2">@Model.Stats.AverageRating.ToString("F1")</span>
+                            <div class="solar-stars-display">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    @if (i <= Math.Floor(Model.Stats.AverageRating))
+                                    {
+                                        <i class="fas fa-star text-warning"></i>
+                                    }
+                                    else if (i == Math.Ceiling(Model.Stats.AverageRating) && Model.Stats.AverageRating % 1 >= 0.5)
+                                    {
+                                        <i class="fas fa-star-half-alt text-warning"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="far fa-star text-muted"></i>
+                                    }
+                                }
+                            </div>
+                        </div>
+                        <small class="text-muted">Baseado em @Model.Stats.TotalRatings avaliação(ões)</small>
+                    </div>
+                }
+                <button class="btn btn-outline-solar-orange" onclick="window.print()">
+                    <i class="fas fa-print me-1"></i> Exportar Relatório
+                </button>
+            </div>
+        </div>
+
+        <!-- Estatísticas -->
+        <div class="solar-stats-grid mb-4">
+            <div class="solar-stat-card">
+                <span class="solar-stat-label">Total de Avaliações</span>
+                <strong class="solar-stat-value text-primary">@Model.Stats.TotalReviews</strong>
+            </div>
+            <div class="solar-stat-card">
+                <span class="solar-stat-label">Com Nota</span>
+                <strong class="solar-stat-value text-success">@Model.Stats.TotalRatings</strong>
+            </div>
+            <div class="solar-stat-card">
+                <span class="solar-stat-label">Apenas Comentários</span>
+                <strong class="solar-stat-value text-info">@Model.Stats.CommentsOnly</strong>
+            </div>
+            <div class="solar-stat-card">
+                <span class="solar-stat-label">Últimos 30 dias</span>
+                <strong class="solar-stat-value text-warning">@Model.Stats.RecentReviews</strong>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <!-- Distribuição de Estrelas -->
+            @if (Model.Stats.TotalRatings > 0)
+            {
+                <div class="col-xl-5">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-transparent border-0 py-3">
+                            <h5 class="text-solar-blue fw-bold mb-0">
+                                <i class="fas fa-chart-bar me-2 text-solar-orange"></i>
+                                Distribuição das Avaliações
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="rating-distribution">
+                                <!-- 5 Estrelas -->
+                                <div class="rating-row d-flex align-items-center mb-3">
+                                    <div class="rating-label">
+                                        <span class="fw-semibold">5</span>
+                                        <i class="fas fa-star text-warning ms-1"></i>
+                                    </div>
+                                    <div class="rating-bar-container flex-grow-1 mx-3">
+                                        <div class="rating-bar">
+                                            <div class="rating-bar-fill bg-success" style="width: @Model.Stats.FiveStarsPercentage.ToString("F1", System.Globalization.CultureInfo.InvariantCulture)%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="rating-count">
+                                        <span class="fw-bold text-success">@Model.Stats.FiveStars</span>
+                                        <small class="text-muted">(@Model.Stats.FiveStarsPercentage.ToString("F0")%)</small>
+                                    </div>
+                                </div>
+
+                                <!-- 4 Estrelas -->
+                                <div class="rating-row d-flex align-items-center mb-3">
+                                    <div class="rating-label">
+                                        <span class="fw-semibold">4</span>
+                                        <i class="fas fa-star text-warning ms-1"></i>
+                                    </div>
+                                    <div class="rating-bar-container flex-grow-1 mx-3">
+                                        <div class="rating-bar">
+                                            <div class="rating-bar-fill bg-primary" style="width: @Model.Stats.FourStarsPercentage.ToString("F1", System.Globalization.CultureInfo.InvariantCulture)%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="rating-count">
+                                        <span class="fw-bold text-primary">@Model.Stats.FourStars</span>
+                                        <small class="text-muted">(@Model.Stats.FourStarsPercentage.ToString("F0")%)</small>
+                                    </div>
+                                </div>
+
+                                <!-- 3 Estrelas -->
+                                <div class="rating-row d-flex align-items-center mb-3">
+                                    <div class="rating-label">
+                                        <span class="fw-semibold">3</span>
+                                        <i class="fas fa-star text-warning ms-1"></i>
+                                    </div>
+                                    <div class="rating-bar-container flex-grow-1 mx-3">
+                                        <div class="rating-bar">
+                                            <div class="rating-bar-fill bg-warning" style="width: @Model.Stats.ThreeStarsPercentage.ToString("F1", System.Globalization.CultureInfo.InvariantCulture)%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="rating-count">
+                                        <span class="fw-bold text-warning">@Model.Stats.ThreeStars</span>
+                                        <small class="text-muted">(@Model.Stats.ThreeStarsPercentage.ToString("F0")%)</small>
+                                    </div>
+                                </div>
+
+                                <!-- 2 Estrelas -->
+                                <div class="rating-row d-flex align-items-center mb-3">
+                                    <div class="rating-label">
+                                        <span class="fw-semibold">2</span>
+                                        <i class="fas fa-star text-warning ms-1"></i>
+                                    </div>
+                                    <div class="rating-bar-container flex-grow-1 mx-3">
+                                        <div class="rating-bar">
+                                            <div class="rating-bar-fill bg-orange" style="width: @Model.Stats.TwoStarsPercentage.ToString("F1", System.Globalization.CultureInfo.InvariantCulture)%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="rating-count">
+                                        <span class="fw-bold" style="color: #fd7e14;">@Model.Stats.TwoStars</span>
+                                        <small class="text-muted">(@Model.Stats.TwoStarsPercentage.ToString("F0")%)</small>
+                                    </div>
+                                </div>
+
+                                <!-- 1 Estrela -->
+                                <div class="rating-row d-flex align-items-center">
+                                    <div class="rating-label">
+                                        <span class="fw-semibold">1</span>
+                                        <i class="fas fa-star text-warning ms-1"></i>
+                                    </div>
+                                    <div class="rating-bar-container flex-grow-1 mx-3">
+                                        <div class="rating-bar">
+                                            <div class="rating-bar-fill bg-danger" style="width: @Model.Stats.OneStarPercentage.ToString("F1", System.Globalization.CultureInfo.InvariantCulture)%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="rating-count">
+                                        <span class="fw-bold text-danger">@Model.Stats.OneStar</span>
+                                        <small class="text-muted">(@Model.Stats.OneStarPercentage.ToString("F0")%)</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- Resumo Rápido -->
+            <div class="@(Model.Stats.TotalRatings > 0 ? "col-xl-7" : "col-xl-12")">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-transparent border-0 py-3">
+                        <h5 class="text-solar-blue fw-bold mb-0">
+                            <i class="fas fa-info-circle me-2 text-solar-orange"></i>
+                            Resumo da Reputação
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.Stats.TotalReviews == 0)
+                        {
+                            <div class="text-center py-4">
+                                <i class="fas fa-star fa-4x text-muted opacity-25 mb-3"></i>
+                                <h5 class="text-muted">Nenhuma avaliação ainda</h5>
+                                <p class="text-muted">Quando clientes avaliarem sua empresa, as informações aparecerão aqui.</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="summary-card bg-light p-3 rounded">
+                                        <div class="d-flex align-items-center">
+                                            <div class="summary-icon me-3">
+                                                <i class="fas fa-thumbs-up text-success fa-2x"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-1">Avaliações Positivas</h6>
+                                                <strong class="text-success">@(Model.Stats.FiveStars + Model.Stats.FourStars)</strong>
+                                                <small class="text-muted d-block">4-5 estrelas</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="summary-card bg-light p-3 rounded">
+                                        <div class="d-flex align-items-center">
+                                            <div class="summary-icon me-3">
+                                                <i class="fas fa-chart-line text-primary fa-2x"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-1">Satisfação Geral</h6>
+                                                <strong class="text-primary">@((Model.Stats.AverageRating / 5 * 100).ToString("F0"))%</strong>
+                                                <small class="text-muted d-block">Baseado na média</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @if (Model.Stats.OneStar + Model.Stats.TwoStars > 0)
+                            {
+                                <div class="alert alert-warning mt-3 border-0">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    <strong>Atenção:</strong> Você tem @(Model.Stats.OneStar + Model.Stats.TwoStars) avaliação(ões) negativa(s). 
+                                    Considere entrar em contato com esses clientes para melhorar a experiência.
+                                </div>
+                            }
+
+                            @if (Model.Stats.RecentReviews > 0)
+                            {
+                                <div class="alert alert-info mt-3 border-0">
+                                    <i class="fas fa-clock me-2"></i>
+                                    <strong>@Model.Stats.RecentReviews</strong> nova(s) avaliação(ões) nos últimos 30 dias.
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de Avaliações -->
+        @if (Model.Reviews.Any())
+        {
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent border-0 py-3">
+                    <h5 class="text-solar-blue fw-bold mb-0">
+                        <i class="fas fa-comments me-2 text-solar-orange"></i>
+                        Todas as Avaliações (@Model.Reviews.Count)
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="reviews-list">
+                        @foreach (var review in Model.Reviews)
+                        {
+                            <div class="review-item border-bottom p-4 @(review.Rating.HasValue && review.Rating <= 2 ? "border-start border-danger border-3" : "")">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="reviewer-info">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <div class="reviewer-avatar bg-solar-orange bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px;">
+                                                    <i class="fas fa-user text-solar-orange"></i>
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-0 fw-bold">@review.ReviewerName</h6>
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-map-marker-alt me-1"></i>@review.ReviewerLocation
+                                                    </small>
+                                                </div>
+                                            </div>
+                                            @if (review.Rating.HasValue)
+                                            {
+                                                <div class="rating-display">
+                                                    @for (int i = 1; i <= 5; i++)
+                                                    {
+                                                        @if (i <= review.Rating.Value)
+                                                        {
+                                                            <i class="fas fa-star text-warning"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="far fa-star text-muted"></i>
+                                                        }
+                                                    }
+                                                    <span class="ms-2 fw-bold">@review.Rating.Value/5</span>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">Apenas comentário</span>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <div class="review-content">
+                                            <div class="review-text mb-3">
+                                                <p class="mb-0 lh-base">@review.Comment</p>
+                                            </div>
+                                            <div class="review-meta d-flex justify-content-between align-items-center">
+                                                <div class="review-date text-muted small">
+                                                    <i class="fas fa-clock me-1"></i>
+                                                    @review.TimeAgo
+                                                    @if (review.IsEdited)
+                                                    {
+                                                        <span class="badge bg-light text-dark ms-2">Editado</span>
+                                                    }
+                                                </div>
+                                                @if (review.Rating.HasValue && review.Rating <= 2)
+                                                {
+                                                    <span class="badge bg-warning">
+                                                        <i class="fas fa-flag me-1"></i>Requer atenção
+                                                    </span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center py-5">
+                    <div class="mb-4">
+                        <i class="fas fa-comments fa-4x text-solar-orange opacity-25"></i>
+                    </div>
+                    <h4 class="text-solar-blue fw-bold mb-3">Nenhuma avaliação ainda</h4>
+                    <p class="text-muted mb-4">
+                        Quando seus clientes avaliarem os serviços da empresa, elas aparecerão aqui.
+                        <br>Continue prestando um excelente atendimento para receber feedback positivo!
+                    </p>
+                    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                        <a asp-action="Leads" class="btn btn-solar-orange">
+                            <i class="fas fa-users me-2"></i>Ver Solicitações
+                        </a>
+                        <a asp-action="SearchCompanies" class="btn btn-outline-solar-orange">
+                            <i class="fas fa-eye me-2"></i>Ver Meu Perfil Público
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+.solar-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.solar-stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.solar-stat-label {
+    display: block;
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}
+
+.solar-stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.rating-distribution .rating-label {
+    width: 40px;
+    text-align: center;
+}
+
+.rating-bar-container {
+    height: 8px;
+}
+
+.rating-bar {
+    width: 100%;
+    height: 100%;
+    background-color: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.rating-bar-fill {
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+.rating-count {
+    min-width: 80px;
+    text-align: right;
+}
+
+.review-item:last-child {
+    border-bottom: none !important;
+}
+
+.reviewer-avatar {
+    flex-shrink: 0;
+}
+
+.rating-display {
+    font-size: 0.9rem;
+}
+
+.summary-card {
+    transition: transform 0.2s ease;
+}
+
+.summary-card:hover {
+    transform: translateY(-2px);
+}
+</style>

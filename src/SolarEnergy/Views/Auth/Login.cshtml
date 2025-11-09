@@ -1,0 +1,209 @@
+@model SolarEnergy.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Solar Energy</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/validation.css" asp-append-version="true" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="login-body">
+    <div class="login-container">
+        <!-- Lado Esquerdo - Informações do Site (Claro) -->
+        <div class="login-left-side">
+            <div class="login-brand-section">
+                <div class="login-logo">
+                    <i class="fas fa-solar-panel"></i>
+                </div>
+                <h1 class="login-brand-title">SOLAR ENERGY</h1>
+                <p class="login-brand-subtitle">Energia limpa para um futuro sustentável</p>
+            </div>
+            
+            <div class="login-features">
+                <div class="login-feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h4>Monitore sua produção</h4>
+                        <p>Acompanhe em tempo real a geração de energia do seu sistema solar</p>
+                    </div>
+                </div>
+                
+                <div class="login-feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h4>Economia garantida</h4>
+                        <p>Veja quanto você está economizando na conta de energia elétrica</p>
+                    </div>
+                </div>
+                
+                <div class="login-feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h4>Sustentabilidade</h4>
+                        <p>Contribua para um planeta mais verde com energia renovável</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="login-stats">
+                <div class="stat-item">
+                    <span class="stat-number">95%</span>
+                    <span class="stat-label">Redução na conta</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">1000+</span>
+                    <span class="stat-label">Clientes satisfeitos</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">24/7</span>
+                    <span class="stat-label">Monitoramento</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Lado Direito - Formulário de Login (Escuro) -->
+        <div class="login-right-side">
+            <div class="login-form-container">
+                <!-- Logo móvel -->
+                <div class="mobile-logo d-lg-none">
+                    <i class="fas fa-solar-panel"></i>
+                    <span>SOLAR ENERGY</span>
+                </div>
+                
+                <div class="login-form-header">
+                    <h2>Bem-vindo de volta!</h2>
+                    <p>Entre com seus dados para acessar sua conta</p>
+                </div>
+                
+                <form asp-action="Login" method="post" id="loginForm" class="login-form" novalidate>
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+                    
+                    <div class="form-group">
+                        <label asp-for="Email" class="form-label">
+                            <i class="fas fa-envelope me-2"></i>E-mail
+                        </label>
+                        <div class="input-wrapper">
+                            <input asp-for="Email" class="form-control" placeholder="Digite seu e-mail" required />
+                            <i class="fas fa-envelope input-icon"></i>
+                        </div>
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label asp-for="Password" class="form-label">
+                            <i class="fas fa-lock me-2"></i>Senha
+                        </label>
+                        <div class="input-wrapper">
+                            <input asp-for="Password" class="form-control" placeholder="Digite sua senha" type="password" required />
+                            <i class="fas fa-lock input-icon"></i>
+                            <button type="button" class="password-toggle" id="togglePassword">
+                                <i class="fas fa-eye" id="eyeIcon"></i>
+                            </button>
+                        </div>
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+                    
+                    <div class="form-options">
+                        <div class="remember-me">
+                            <input asp-for="RememberMe" class="form-check-input" id="rememberMe" />
+                            <label asp-for="RememberMe" class="form-check-label" for="rememberMe">
+                                Lembrar de mim
+                            </label>
+                        </div>
+                        <a href="#" class="forgot-password">Esqueceu sua senha?</a>
+                    </div>
+                    
+                    <button type="submit" class="login-btn">
+                        <i class="fas fa-sign-in-alt me-2"></i>
+                        <span>ENTRAR</span>
+                    </button>
+                </form>
+                
+                <div class="login-footer">
+                    <p>Não tem uma conta? <a asp-action="Register" class="register-link">Criar conta agora</a></p>
+                    <a asp-controller="Home" asp-action="Index" class="back-home">
+                        <i class="fas fa-arrow-left me-1"></i>Voltar ao início
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle password visibility
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordField = document.getElementById('Password');
+            const eyeIcon = document.getElementById('eyeIcon');
+            
+            if (togglePassword && passwordField && eyeIcon) {
+                togglePassword.addEventListener('click', function() {
+                    if (passwordField.type === 'password') {
+                        passwordField.type = 'text';
+                        eyeIcon.classList.remove('fa-eye');
+                        eyeIcon.classList.add('fa-eye-slash');
+                    } else {
+                        passwordField.type = 'password';
+                        eyeIcon.classList.remove('fa-eye-slash');
+                        eyeIcon.classList.add('fa-eye');
+                    }
+                });
+            }
+            
+            // Loading state on form submit
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    const submitButton = this.querySelector('button[type="submit"]');
+                    if (submitButton) {
+                        const span = submitButton.querySelector('span');
+                        if (span) {
+                            span.innerHTML = 'ENTRANDO...';
+                        }
+                        submitButton.classList.add('loading');
+                        submitButton.disabled = true;
+                    }
+                });
+            }
+            
+            // Input focus effects
+            const inputs = document.querySelectorAll('.form-control');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.classList.add('focused');
+                });
+                
+                input.addEventListener('blur', function() {
+                    if (!this.value) {
+                        this.parentElement.classList.remove('focused');
+                    }
+                });
+                
+                // Check if input has value on load
+                if (input.value) {
+                    input.parentElement.classList.add('focused');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

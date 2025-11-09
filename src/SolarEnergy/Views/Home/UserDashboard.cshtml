@@ -1,0 +1,124 @@
+@{
+    ViewData["Title"] = "Dashboard do Usuário";
+}
+
+<div class="solar-page">
+    <div class="container-fluid px-4">
+        <div class="solar-page-header d-flex flex-wrap justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="solar-page-title">Dashboard do Usuário</h1>
+                <p class="solar-page-subtitle mb-0">Monitoramento em tempo real da geração e consumo</p>
+            </div>
+            <div class="d-flex gap-2 align-items-center">
+                <div class="input-group w-auto">
+                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                    <select class="form-select">
+                        <option>Período: Diário</option>
+                        <option>Período: Semanal</option>
+                        <option>Período: Mensal</option>
+                    </select>
+                </div>
+                <div class="input-group w-auto">
+                    <span class="input-group-text"><i class="fas fa-building"></i></span>
+                    <select class="form-select">
+                        <option>Unidade 01</option>
+                        <option>Unidade 02</option>
+                        <option>Unidade 03</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-1">
+            <div class="col-xxl-3 col-md-6">
+                <div class="solar-card h-100">
+                    <span class="solar-stat-label">Potência (W)</span>
+                    <strong class="solar-stat-value">20,5</strong>
+                    <small class="text-muted">Nas últimas 24h</small>
+                </div>
+            </div>
+            <div class="col-xxl-3 col-md-6">
+                <div class="solar-card h-100">
+                    <span class="solar-stat-label">Geração no mês (kWh)</span>
+                    <strong class="solar-stat-value">750</strong>
+                    <small class="text-muted">Atualizado agora</small>
+                </div>
+            </div>
+            <div class="col-xxl-3 col-md-6">
+                <div class="solar-card h-100">
+                    <span class="solar-stat-label">Economia estimada (R$)</span>
+                    <strong class="solar-stat-value text-solar-orange">1.250</strong>
+                    <small class="text-muted">Período atual</small>
+                </div>
+            </div>
+            <div class="col-xxl-3 col-md-6">
+                <div class="solar-card h-100">
+                    <span class="solar-stat-label">Sistema</span>
+                    <div class="solar-status-pill bg-status-online">Online</div>
+                    <small class="text-muted">Último update há 2m</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-xl-7">
+                <div class="solar-card h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="solar-card-title mb-0">Potência nas últimas 24h</h5>
+                        <span class="badge bg-status-online">Estável</span>
+                    </div>
+                    <div class="solar-chart-area large">
+                        <div class="solar-chart-line"></div>
+                        <div class="solar-chart-label" style="left: 20%; bottom: 35%">18W</div>
+                        <div class="solar-chart-label" style="left: 55%; bottom: 70%">22W</div>
+                        <div class="solar-chart-label" style="left: 80%; bottom: 45%">19W</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-5">
+                <div class="solar-card h-100">
+                    <h5 class="solar-card-title">Resumo do Sistema</h5>
+                    <ul class="solar-system-summary">
+                        <li><span>Inversores ativos</span><strong>3</strong></li>
+                        <li><span>Temperatura do inversor</span><strong>48º</strong></li>
+                        <li><span>Unidades conectadas</span><strong>12</strong></li>
+                        <li><span>Alarmes críticos</span><strong class="text-danger">0</strong></li>
+                    </ul>
+                    <h6 class="solar-card-title mt-3">Notificações</h6>
+                    <ul class="solar-notification-list">
+                        <li><i class="fas fa-check-circle text-success me-2"></i>Sistema operando normalmente</li>
+                        <li><i class="fas fa-sun text-warning me-2"></i>Alta irradiação prevista para amanhã</li>
+                        <li><i class="fas fa-info-circle text-info me-2"></i>Próxima manutenção preventiva em 15 dias</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mt-1">
+            <div class="col-xl-4">
+                <div class="solar-card h-100">
+                    <h5 class="solar-card-title">Autoconsumo vs Exportação</h5>
+                    <div class="solar-radial">70%</div>
+                    <p class="text-center text-muted mb-0">Autoconsumo</p>
+                </div>
+            </div>
+            <div class="col-xl-4">
+                <div class="solar-card h-100">
+                    <h5 class="solar-card-title">Consumo x Geração</h5>
+                    <div class="solar-radial secondary">70%</div>
+                    <p class="text-center text-muted mb-0">Geração excedente</p>
+                </div>
+            </div>
+            <div class="col-xl-4">
+                <div class="solar-card h-100">
+                    <h5 class="solar-card-title">Próximo sol</h5>
+                    <div class="solar-card highlight text-center">
+                        <span class="solar-stat-label">Previsão</span>
+                        <strong class="solar-stat-value">5h</strong>
+                        <small class="text-muted">de irradiação contínua</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

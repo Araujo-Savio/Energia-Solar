@@ -1,0 +1,199 @@
+@model List<SolarEnergy.ViewModels.QuoteListViewModel>
+@{
+    ViewData["Title"] = "Meus Orçamentos";
+    var isCompany = User.IsInRole("Company");
+    var isAdmin = User.IsInRole("Administrator");
+}
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="badge bg-solar-orange bg-opacity-75 text-uppercase fw-semibold px-3 py-2">
+                @if (isCompany)
+                {
+                    <text>Orçamentos Recebidos</text>
+                }
+                else if (isAdmin)
+                {
+                    <text>Todos os Orçamentos</text>
+                }
+                else
+                {
+                    <text>Meus Orçamentos</text>
+                }
+            </span>
+            <h1 class="display-6 text-solar-blue fw-bold mt-3">
+                @if (isCompany)
+                {
+                    <text>Solicitações de Orçamento</text>
+                }
+                else if (isAdmin)
+                {
+                    <text>Gerenciar Orçamentos</text>
+                }
+                else
+                {
+                    <text>Meus Orçamentos Solicitados</text>
+                }
+            </h1>
+            <p class="text-muted lead">
+                @if (isCompany)
+                {
+                    <text>Gerencie as solicitações de orçamento recebidas</text>
+                }
+                else
+                {
+                    <text>Acompanhe o status dos seus orçamentos solicitados</text>
+                }
+            </p>
+        </div>
+
+        @if (Model.Any())
+        {
+            <div class="row">
+                @foreach (var quote in Model)
+                {
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card border-0 shadow-sm h-100 quote-card">
+                            <div class="card-header bg-transparent border-0 pb-0">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h6 class="fw-bold text-solar-blue mb-1">
+                                        @if (isAdmin)
+                                        {
+                                            <text>@quote.CompanyName</text>
+                                        }
+                                        else if (isCompany)
+                                        {
+                                            <text>Cliente: @quote.CompanyName</text>
+                                        }
+                                        else
+                                        {
+                                            <text>@quote.CompanyName</text>
+                                        }
+                                    </h6>
+                                    <span class="badge @GetStatusBadgeClass(quote.Status)">
+                                        @quote.Status
+                                    </span>
+                                </div>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    @quote.RequestDate.ToString("dd/MM/yyyy HH:mm")
+                                </small>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-bolt text-solar-orange me-2"></i>
+                                            <div>
+                                                <small class="text-muted d-block">Consumo</small>
+                                                <strong>@quote.MonthlyConsumptionKwh.ToString("N0") kWh</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-cogs text-solar-orange me-2"></i>
+                                            <div>
+                                                <small class="text-muted d-block">Serviço</small>
+                                                <strong>@quote.ServiceType</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @if (quote.HasProposal)
+                                {
+                                    <div class="alert alert-success border-0 py-2 px-3 mb-3">
+                                        <i class="fas fa-check-circle me-2"></i>
+                                        <strong>@quote.ProposalCount</strong> proposta(s) recebida(s)
+                                    </div>
+                                }
+                                else if (quote.Status == "Pendente")
+                                {
+                                    <div class="alert alert-warning border-0 py-2 px-3 mb-3">
+                                        <i class="fas fa-clock me-2"></i>
+                                        Aguardando resposta da empresa
+                                    </div>
+                                }
+                            </div>
+                            <div class="card-footer bg-transparent border-0 pt-0">
+                                <a asp-action="Details" asp-route-id="@quote.QuoteId" 
+                                   class="btn btn-solar-orange w-100">
+                                    <i class="fas fa-eye me-2"></i>Ver Detalhes
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center py-5">
+                            <div class="mb-4">
+                                <i class="fas fa-file-signature fa-4x text-solar-orange opacity-50"></i>
+                            </div>
+                            <h4 class="text-solar-blue fw-bold mb-3">
+                                @if (isCompany)
+                                {
+                                    <text>Nenhuma solicitação recebida</text>
+                                }
+                                else
+                                {
+                                    <text>Nenhum orçamento solicitado</text>
+                                }
+                            </h4>
+                            <p class="text-muted mb-4">
+                                @if (isCompany)
+                                {
+                                    <text>Quando clientes solicitarem orçamentos, eles aparecerão aqui.</text>
+                                }
+                                else
+                                {
+                                    <text>Você ainda não solicitou nenhum orçamento. Explore as empresas disponíveis.</text>
+                                }
+                            </p>
+                            @if (!isCompany)
+                            {
+                                <a asp-controller="Home" asp-action="SearchCompanies" class="btn btn-solar-orange">
+                                    <i class="fas fa-search me-2"></i>Buscar Empresas
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<style>
+.quote-card {
+    transition: all 0.3s ease;
+}
+
+.quote-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+}
+</style>
+
+@functions {
+    private string GetStatusBadgeClass(string status)
+    {
+        return status switch
+        {
+            "Pendente" => "bg-warning text-dark",
+            "Em Análise" => "bg-info text-white",
+            "Proposta Enviada" => "bg-success text-white",
+            "Aceito" => "bg-primary text-white",
+            "Recusado" => "bg-danger text-white",
+            "Cancelado" => "bg-secondary text-white",
+            _ => "bg-secondary text-white"
+        };
+    }
+}

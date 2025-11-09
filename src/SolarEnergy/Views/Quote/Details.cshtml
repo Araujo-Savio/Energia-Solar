@@ -1,0 +1,758 @@
+@model SolarEnergy.ViewModels.QuoteDetailsViewModel
+@{
+    ViewData["Title"] = $"Detalhes do Orçamento - {Model.CompanyName}";
+    var userType = ViewData["UserType"] as SolarEnergy.Models.UserType?;
+    var isClient = userType == SolarEnergy.Models.UserType.Client;
+    var canEdit = isClient && (Model.Status == "Pendente" || Model.Status == "Em Análise");
+    var hasResponse = Model.Proposals.Any() || Model.Status == "Respondido";
+}
+
+<section class="bg-light py-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <!-- Breadcrumb -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-transparent p-0 mb-3">
+                        <li class="breadcrumb-item">
+                            <a asp-controller="Quote" asp-action="MyQuotes" class="text-solar-orange text-decoration-none">
+                                <i class="fas fa-arrow-left me-1"></i>Voltar aos Orçamentos
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item active text-muted" aria-current="page">Detalhes</li>
+                    </ol>
+                </nav>
+
+                <!-- Header Card -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-solar-blue text-white py-3">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h4 class="mb-1">
+                                    <i class="fas fa-file-invoice me-2"></i>
+                                    Orçamento #@Model.QuoteId.ToString("D6")
+                                </h4>
+                                <p class="mb-0 opacity-75">
+                                    <i class="fas fa-building me-1"></i>
+                                    @Model.CompanyName
+                                </p>
+                            </div>
+                            <div class="col-md-4 text-md-end">
+                                <span class="badge @GetStatusBadgeClass(Model.Status) px-3 py-2 fs-6">
+                                    @Model.Status
+                                </span>
+                                <div class="small opacity-75 mt-1">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    Solicitado em @Model.RequestDate.ToString("dd/MM/yyyy")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Coluna Principal -->
+                    <div class="col-lg-8">
+                        <!-- Dados da Solicitação -->
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-header bg-transparent border-0 py-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="text-solar-blue fw-bold mb-0">
+                                        <i class="fas fa-info-circle me-2 text-solar-orange"></i>
+                                        Dados da Solicitação
+                                    </h5>
+                                    @if (canEdit && !hasResponse)
+                                    {
+                                        <button type="button" class="btn btn-outline-solar-orange btn-sm" onclick="toggleEditMode()">
+                                            <i class="fas fa-edit me-1"></i>
+                                            <span id="edit-btn-text">Editar</span>
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form id="quote-form" asp-action="UpdateQuote" method="post" style="display: none;">
+                                    <input type="hidden" name="QuoteId" value="@Model.QuoteId" />
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-semibold text-solar-blue">
+                                                <i class="fas fa-bolt me-1 text-solar-orange"></i>
+                                                Consumo Médio Mensal
+                                            </label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" name="MonthlyConsumptionKwh" 
+                                                       value="@Model.MonthlyConsumptionKwh" min="1" max="99999" required>
+                                                <span class="input-group-text bg-solar-orange text-white">kWh</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-semibold text-solar-blue">
+                                                <i class="fas fa-cogs me-1 text-solar-orange"></i>
+                                                Tipo de Serviço
+                                            </label>
+                                            <select class="form-select" name="ServiceType" required>
+                                                @{
+                                                    var isVendaPaineis = Model.ServiceType == "Venda de Painéis";
+                                                    var isAluguelEnergia = Model.ServiceType == "Aluguel de Energia";
+                                                    var isConsultoria = Model.ServiceType == "Consultoria";
+                                                }
+                                                <option value="Venda de Painéis" selected="@isVendaPaineis">Venda de Painéis Solares</option>
+                                                <option value="Aluguel de Energia" selected="@isAluguelEnergia">Aluguel de Energia Solar</option>
+                                                <option value="Consultoria" selected="@isConsultoria">Consultoria</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-12 mb-3">
+                                            <label class="form-label fw-semibold text-solar-blue">
+                                                <i class="fas fa-comment me-1 text-solar-orange"></i>
+                                                Mensagem Adicional
+                                            </label>
+                                            <textarea class="form-control" name="Message" rows="4" 
+                                                      placeholder="Descreva detalhes específicos sobre seu projeto...">@Model.Message</textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex gap-2">
+                                        <button type="submit" class="btn btn-solar-orange">
+                                            <i class="fas fa-save me-1"></i>Salvar Alterações
+                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary" onclick="cancelEdit()">
+                                            <i class="fas fa-times me-1"></i>Cancelar
+                                        </button>
+                                    </div>
+                                </form>
+
+                                <!-- Visualização dos dados -->
+                                <div id="quote-display">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-4">
+                                            <div class="info-card p-3 rounded bg-light border-start border-solar-orange border-4">
+                                                <div class="d-flex align-items-center mb-2">
+                                                    <div class="info-icon me-3">
+                                                        <i class="fas fa-bolt text-solar-orange fs-5"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="text-solar-blue fw-bold mb-0">Consumo Médio Mensal</h6>
+                                                        <small class="text-muted">Baseado na sua conta de energia</small>
+                                                    </div>
+                                                </div>
+                                                <p class="fs-4 fw-bold text-solar-orange mb-0">
+                                                    @Model.MonthlyConsumptionKwh.ToString("N0") <small class="fs-6 text-muted">kWh</small>
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-4">
+                                            <div class="info-card p-3 rounded bg-light border-start border-solar-orange border-4">
+                                                <div class="d-flex align-items-center mb-2">
+                                                    <div class="info-icon me-3">
+                                                        <i class="fas fa-cogs text-solar-orange fs-5"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="text-solar-blue fw-bold mb-0">Tipo de Serviço</h6>
+                                                        <small class="text-muted">Modalidade solicitada</small>
+                                                    </div>
+                                                </div>
+                                                <p class="fw-semibold text-secondary mb-0">@Model.ServiceType</p>
+                                            </div>
+                                        </div>
+
+                                        @if (!string.IsNullOrEmpty(Model.Message))
+                                        {
+                                            <div class="col-12 mb-3">
+                                                <div class="info-card p-3 rounded bg-light border-start border-solar-orange border-4">
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <div class="info-icon me-3">
+                                                            <i class="fas fa-comment text-solar-orange fs-5"></i>
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="text-solar-blue fw-bold mb-0">Mensagem Adicional</h6>
+                                                            <small class="text-muted">Informações fornecidas</small>
+                                                        </div>
+                                                    </div>
+                                                    <p class="text-secondary mb-0 lh-base">@Model.Message</p>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+
+                                    @if (canEdit && !hasResponse)
+                                    {
+                                        <div class="alert alert-info border-0 bg-info bg-opacity-10">
+                                            <div class="d-flex">
+                                                <i class="fas fa-info-circle text-info me-3 mt-1"></i>
+                                                <div>
+                                                    <h6 class="text-info fw-bold mb-1">Você pode editar</h6>
+                                                    <p class="mb-0 small">
+                                                        Enquanto sua solicitação não receber uma resposta, você pode alterar o consumo médio, 
+                                                        tipo de serviço ou adicionar informações adicionais.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Resposta da Empresa -->
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-transparent border-0 py-3">
+                                <h5 class="text-solar-blue fw-bold mb-0">
+                                    <i class="fas fa-reply me-2 text-solar-orange"></i>
+                                    Resposta da Empresa
+                                    @if (hasResponse)
+                                    {
+                                        <span class="badge bg-success ms-2">
+                                            <i class="fas fa-check me-1"></i>Respondido
+                                        </span>
+                                    }
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                @if (Model.Proposals.Any())
+                                {
+                                    <!-- Propostas Formais (Venda de Painéis) -->
+                                    <div class="response-header mb-4">
+                                        <div class="alert alert-success border-0 bg-success bg-opacity-10">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-file-contract text-success me-3 fs-4"></i>
+                                                <div>
+                                                    <h6 class="text-success fw-bold mb-1">Proposta(s) Formal(is) Recebida(s)</h6>
+                                                    <p class="mb-0 small">
+                                                        A empresa <strong>@Model.CompanyName</strong> enviou @Model.Proposals.Count proposta(s) detalhada(s) para seu projeto.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="proposals-list">
+                                        @foreach (var proposal in Model.Proposals.OrderByDescending(p => p.ProposalDate))
+                                        {
+                                            <div class="proposal-card border rounded p-4 mb-4 position-relative">
+                                                <!-- Status Badge -->
+                                                <div class="position-absolute top-0 end-0 m-3">
+                                                    <span class="badge @GetProposalStatusBadgeClass(proposal.Status)">
+                                                        @proposal.Status
+                                                    </span>
+                                                </div>
+
+                                                <div class="row">
+                                                    <!-- Valor da Proposta -->
+                                                    <div class="col-md-4 mb-3">
+                                                        <div class="text-center p-3 bg-solar-orange bg-opacity-10 rounded">
+                                                            <h3 class="text-solar-orange fw-bold mb-1">
+                                                                @proposal.Value.ToString("C", new System.Globalization.CultureInfo("pt-BR"))
+                                                            </h3>
+                                                            <small class="text-muted">Investimento Total</small>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Detalhes da Proposta -->
+                                                    <div class="col-md-8">
+                                                        <div class="row">
+                                                            @if (proposal.InstallationTimeframe.HasValue)
+                                                            {
+                                                                <div class="col-6 mb-3">
+                                                                    <div class="d-flex align-items-center">
+                                                                        <i class="fas fa-calendar-check text-success me-2"></i>
+                                                                        <div>
+                                                                            <small class="text-muted d-block">Prazo de Instalação</small>
+                                                                            <strong>@proposal.InstallationTimeframe dias</strong>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+
+                                                            @if (proposal.Warranty.HasValue)
+                                                            {
+                                                                <div class="col-6 mb-3">
+                                                                    <div class="d-flex align-items-center">
+                                                                        <i class="fas fa-shield-alt text-primary me-2"></i>
+                                                                        <div>
+                                                                            <small class="text-muted d-block">Garantia</small>
+                                                                            <strong>@proposal.Warranty anos</strong>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+
+                                                            @if (proposal.EstimatedMonthlySavings.HasValue)
+                                                            {
+                                                                <div class="col-12 mb-3">
+                                                                    <div class="alert alert-success border-0 bg-success bg-opacity-10 py-2">
+                                                                        <div class="d-flex align-items-center">
+                                                                            <i class="fas fa-piggy-bank text-success me-2"></i>
+                                                                            <div>
+                                                                                <small class="text-success d-block fw-semibold">Economia Mensal Estimada</small>
+                                                                                <strong class="text-success fs-5">
+                                                                                    @proposal.EstimatedMonthlySavings.Value.ToString("C", new System.Globalization.CultureInfo("pt-BR"))
+                                                                                </strong>
+                                                                                <small class="text-success d-block">
+                                                                                    Economia anual: @((proposal.EstimatedMonthlySavings.Value * 12).ToString("C", new System.Globalization.CultureInfo("pt-BR")))
+                                                                                </small>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                @if (!string.IsNullOrEmpty(proposal.Description))
+                                                {
+                                                    <div class="mt-3 pt-3 border-top">
+                                                        <h6 class="text-solar-blue fw-bold mb-2">
+                                                            <i class="fas fa-file-alt me-1"></i>Detalhes da Proposta
+                                                        </h6>
+                                                        <div class="proposal-description bg-light p-3 rounded">
+                                                            <p class="mb-0 lh-base">@proposal.Description</p>
+                                                        </div>
+                                                    </div>
+                                                }
+
+                                                <div class="mt-3 pt-3 border-top d-flex justify-content-between align-items-center flex-wrap">
+                                                    <div class="text-muted small mb-2 mb-md-0">
+                                                        <div class="d-flex flex-wrap gap-3">
+                                                            <span>
+                                                                <i class="fas fa-clock me-1"></i>
+                                                                Enviado em @proposal.ProposalDate.ToString("dd/MM/yyyy 'às' HH:mm")
+                                                            </span>
+                                                            @if (proposal.ValidUntil.HasValue)
+                                                            {
+                                                                <span class="@(proposal.ValidUntil.Value < DateTime.Now ? "text-danger" : "")">
+                                                                    <i class="fas fa-calendar-times me-1"></i>
+                                                                    @if (proposal.ValidUntil.Value < DateTime.Now)
+                                                                    {
+                                                                        <span>Expirou em @proposal.ValidUntil.Value.ToString("dd/MM/yyyy")</span>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <span>Válida até @proposal.ValidUntil.Value.ToString("dd/MM/yyyy")</span>
+                                                                    }
+                                                                </span>
+                                                            }
+                                                        </div>
+                                                    </div>
+
+                                                    @if (proposal.Status == "Ativa" && isClient && proposal.ValidUntil.HasValue && proposal.ValidUntil.Value >= DateTime.Now)
+                                                    {
+                                                        <div class="btn-group">
+                                                            <button type="button" class="btn btn-success btn-sm" onclick="acceptProposal(@proposal.ProposalId)">
+                                                                <i class="fas fa-check me-1"></i>Aceitar Proposta
+                                                            </button>
+                                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="rejectProposal(@proposal.ProposalId)">
+                                                                <i class="fas fa-times me-1"></i>Recusar
+                                                            </button>
+                                                        </div>
+                                                    }
+                                                    else if (proposal.ValidUntil.HasValue && proposal.ValidUntil.Value < DateTime.Now)
+                                                    {
+                                                        <span class="badge bg-secondary">
+                                                            <i class="fas fa-clock me-1"></i>Proposta Expirada
+                                                        </span>
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                                else if (Model.Status == "Respondido")
+                                {
+                                    <!-- Resposta por Mensagem (Aluguel de Energia) -->
+                                    <div class="response-header mb-4">
+                                        <div class="alert alert-info border-0 bg-info bg-opacity-10">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-comment-dots text-info me-3 fs-4"></i>
+                                                <div>
+                                                    <h6 class="text-info fw-bold mb-1">Mensagem Recebida da Empresa</h6>
+                                                    <p class="mb-0 small">
+                                                        A empresa <strong>@Model.CompanyName</strong> respondeu sua solicitação com informações personalizadas.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="message-response border rounded p-4 bg-white shadow-sm">
+                                        <div class="d-flex align-items-start">
+                                            <div class="company-avatar me-3">
+                                                @if (!string.IsNullOrEmpty(Model.CompanyProfileImagePath))
+                                                {
+                                                    <img src="@Model.CompanyProfileImagePath" alt="@Model.CompanyName" 
+                                                         class="rounded-circle border border-2 border-solar-orange" 
+                                                         style="width: 50px; height: 50px; object-fit: cover;" />
+                                                }
+                                                else
+                                                {
+                                                    <div class="bg-solar-orange bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center border border-2 border-solar-orange border-opacity-25" 
+                                                         style="width: 50px; height: 50px;">
+                                                        <i class="fas fa-building text-solar-orange"></i>
+                                                    </div>
+                                                }
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <h6 class="fw-bold text-solar-blue mb-0">@Model.CompanyName</h6>
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-clock me-1"></i>
+                                                        @if (Model.CompanyResponseDate.HasValue)
+                                                        {
+                                                            <span>Respondido em @Model.CompanyResponseDate.Value.ToString("dd/MM/yyyy 'às' HH:mm")</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span>Respondido hoje</span>
+                                                        }
+                                                    </small>
+                                                </div>
+                                                <div class="message-content bg-light p-3 rounded">
+                                                    <p class="mb-0 lh-base">
+                                                        @if (!string.IsNullOrEmpty(Model.CompanyResponseMessage))
+                                                        {
+                                                            @Html.Raw(Model.CompanyResponseMessage.Replace("\n", "<br>"))
+                                                        }
+                                                        else
+                                                        {
+                                                            @: Obrigado pelo seu interesse em nossos serviços de energia solar por aluguel! 
+                                                            @: Analisamos seu consumo de <strong>@Model.MonthlyConsumptionKwh kWh/mês</strong> e preparamos uma solução personalizada.
+                                                            <br><br>
+                                                            @: Nossa equipe entrará em contato em breve para agendar uma visita técnica gratuita e apresentar 
+                                                            @: as opções de aluguel mais adequadas para seu perfil. Você poderá economizar até 95% 
+                                                            @: na sua conta de energia sem nenhum investimento inicial!
+                                                            <br><br>
+                                                            @: Aguardamos seu contato pelos telefones ou emails disponíveis em nosso perfil.
+                                                        }
+                                                    </p>
+                                                </div>
+                                                <div class="mt-3">
+                                                    <div class="d-flex gap-2 flex-wrap">
+                                                        <a asp-controller="Home" asp-action="CompanyDetails" asp-route-id="@Model.CompanyId" 
+                                                           class="btn btn-outline-solar-orange btn-sm">
+                                                            <i class="fas fa-info-circle me-1"></i>Ver Perfil da Empresa
+                                                        </a>
+                                                        <button class="btn btn-solar-orange btn-sm" onclick="showContactInfo()">
+                                                            <i class="fas fa-phone me-1"></i>Entrar em Contato
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Próximos Passos -->
+                                    <div class="mt-4">
+                                        <div class="alert alert-warning border-0 bg-warning bg-opacity-10">
+                                            <div class="d-flex">
+                                                <i class="fas fa-lightbulb text-warning me-3 mt-1"></i>
+                                                <div>
+                                                    <h6 class="text-warning fw-bold mb-2">Próximos Passos</h6>
+                                                    <ul class="mb-0 small text-dark">
+                                                        <li>A empresa entrará em contato para agendar uma visita técnica</li>
+                                                        <li>Será feita uma análise detalhada do seu consumo e local</li>
+                                                        <li>Você receberá uma proposta personalizada de aluguel</li>
+                                                        <li>Após aprovação, a instalação será agendada sem custo</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <!-- Aguardando Resposta -->
+                                    <div class="text-center py-5">
+                                        <div class="mb-4">
+                                            <i class="fas fa-hourglass-half fa-4x text-muted opacity-50"></i>
+                                        </div>
+                                        <h5 class="text-muted mb-3">Aguardando Resposta</h5>
+                                        <p class="text-muted mb-4">
+                                            Sua solicitação foi enviada para <strong>@Model.CompanyName</strong>.
+                                            <br>A empresa analisará seus dados e enviará uma resposta personalizada em breve.
+                                        </p>
+
+                                        <!-- Status Timeline -->
+                                        <div class="status-timeline mx-auto" style="max-width: 500px;">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div class="status-step @(Model.Status != "Pendente" ? "completed" : "active")">
+                                                    <div class="status-circle">
+                                                        <i class="fas fa-paper-plane"></i>
+                                                    </div>
+                                                    <small>Enviado</small>
+                                                </div>
+                                                <div class="status-line @(Model.Status == "Em Análise" || hasResponse ? "active" : "")"></div>
+                                                <div class="status-step @(Model.Status == "Em Análise" ? "active" : hasResponse ? "completed" : "")">
+                                                    <div class="status-circle">
+                                                        <i class="fas fa-search"></i>
+                                                    </div>
+                                                    <small>Em Análise</small>
+                                                </div>
+                                                <div class="status-line @(hasResponse ? "active" : "")"></div>
+                                                <div class="status-step @(hasResponse ? "completed" : "")">
+                                                    <div class="status-circle">
+                                                        <i class="fas fa-check"></i>
+                                                    </div>
+                                                    <small>Respondido</small>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="alert alert-info bg-info bg-opacity-10 border-0 mt-4">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-info-circle text-info me-3"></i>
+                                                <div class="text-start">
+                                                    <strong>O que acontece agora?</strong>
+                                                    <ul class="mb-0 mt-2 small">
+                                                        <li>A empresa receberá seus dados e analisará suas necessidades</li>
+                                                        <li>Será elaborada uma proposta ou resposta personalizada</li>
+                                                        <li>Você receberá a resposta aqui mesmo nesta tela</li>
+                                                        <li>Poderá aceitar, recusar ou entrar em contato para mais detalhes</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar -->
+                    <div class="col-lg-4">
+                        <div class="sticky-top" style="top: 20px;">
+                            <!-- Informações da Empresa -->
+                            <div class="card border-0 shadow-sm mb-4">
+                                <div class="card-header bg-transparent border-0 py-3">
+                                    <h6 class="text-solar-blue fw-bold mb-0">
+                                        <i class="fas fa-building me-2 text-solar-orange"></i>
+                                        Sobre a Empresa
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="text-center mb-3">
+                                        @if (!string.IsNullOrEmpty(Model.CompanyProfileImagePath))
+                                        {
+                                            <img src="@Model.CompanyProfileImagePath" alt="@Model.CompanyName" 
+                                                 class="company-avatar rounded-circle border border-2 border-solar-orange" 
+                                                 style="width: 60px; height: 60px; object-fit: cover;" />
+                                        }
+                                        else
+                                        {
+                                            <div class="company-avatar bg-solar-orange bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center border border-2 border-solar-orange border-opacity-25" style="width: 60px; height: 60px;">
+                                                <i class="fas fa-building text-solar-orange fs-4"></i>
+                                            </div>
+                                        }
+                                        <h6 class="mt-2 mb-1 fw-bold text-solar-blue">@Model.CompanyName</h6>
+                                    </div>
+
+                                    <div class="d-grid gap-2">
+                                        <a asp-controller="Home" asp-action="CompanyDetails" asp-route-id="@Model.CompanyId" 
+                                           class="btn btn-outline-solar-orange">
+                                            <i class="fas fa-info-circle me-2"></i>Ver Perfil Completo
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Ações Rápidas -->
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-header bg-transparent border-0 py-3">
+                                    <h6 class="text-solar-blue fw-bold mb-0">
+                                        <i class="fas fa-bolt me-2 text-solar-orange"></i>
+                                        Ações Rápidas
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-grid gap-2">
+                                        @if (Model.HasChatMessages || !string.IsNullOrEmpty(Model.CompanyResponseMessage))
+                                        {
+                                            <a asp-controller="Chat" asp-action="Index" asp-route-quoteId="@Model.QuoteId" 
+                                               class="btn btn-primary">
+                                                <i class="fas fa-comments me-2"></i>
+                                                Abrir Chat
+                                                @if (Model.UnreadMessagesCount > 0)
+                                                {
+                                                    <span class="badge bg-danger ms-2">@Model.UnreadMessagesCount</span>
+                                                }
+                                            </a>
+                                        }
+                                        <a asp-controller="Quote" asp-action="MyQuotes" class="btn btn-outline-solar-orange">
+                                            <i class="fas fa-list me-2"></i>Todos os Orçamentos
+                                        </a>
+                                        <a asp-controller="Home" asp-action="SearchCompanies" class="btn btn-outline-secondary">
+                                            <i class="fas fa-search me-2"></i>Buscar Outras Empresas
+                                        </a>
+                                        @if (hasResponse)
+                                        {
+                                            <hr>
+                                            <button class="btn btn-solar-orange" onclick="showContactInfo()">
+                                                <i class="fas fa-phone me-2"></i>Entrar em Contato
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function toggleEditMode() {
+        const display = document.getElementById('quote-display');
+        const form = document.getElementById('quote-form');
+        const btnText = document.getElementById('edit-btn-text');
+        
+        if (form.style.display === 'none') {
+            display.style.display = 'none';
+            form.style.display = 'block';
+            btnText.textContent = 'Cancelar';
+        } else {
+            display.style.display = 'block';
+            form.style.display = 'none';
+            btnText.textContent = 'Editar';
+        }
+    }
+    
+    function cancelEdit() {
+        const display = document.getElementById('quote-display');
+        const form = document.getElementById('quote-form');
+        const btnText = document.getElementById('edit-btn-text');
+        
+        display.style.display = 'block';
+        form.style.display = 'none';
+        btnText.textContent = 'Editar';
+    }
+
+    function acceptProposal(proposalId) {
+        if (confirm('Tem certeza que deseja aceitar esta proposta? Esta ação não pode ser desfeita.')) {
+            // Implementar ação de aceitar proposta
+            alert('Funcionalidade de aceitar proposta será implementada em breve.');
+        }
+    }
+
+    function rejectProposal(proposalId) {
+        if (confirm('Tem certeza que deseja recusar esta proposta?')) {
+            // Implementar ação de recusar proposta
+            alert('Funcionalidade de recusar proposta será implementada em breve.');
+        }
+    }
+
+    function showContactInfo() {
+        alert('Redirecionando para o perfil da empresa com informações de contato...');
+        window.location.href = '@Url.Action("CompanyDetails", "Home", new { id = Model.CompanyId })';
+    }
+</script>
+
+<style>
+/* Status Timeline */
+.status-timeline {
+    padding: 2rem 0;
+}
+
+.status-step {
+    text-align: center;
+    position: relative;
+}
+
+.status-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+    background: #e9ecef;
+    color: #6c757d;
+    transition: all 0.3s ease;
+}
+
+.status-step.active .status-circle {
+    background: #ff6b35;
+    color: white;
+}
+
+.status-step.completed .status-circle {
+    background: #28a745;
+    color: white;
+}
+
+.status-line {
+    flex: 1;
+    height: 2px;
+    background: #dee2e6;
+    margin: 0 1rem;
+    align-self: center;
+    margin-top: -20px;
+    transition: all 0.3s ease;
+}
+
+.status-line.active {
+    background: #28a745;
+}
+
+/* Proposal Cards */
+.proposal-card {
+    transition: all 0.3s ease;
+    background: #fff;
+}
+
+.proposal-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Message Response */
+.message-response {
+    transition: all 0.3s ease;
+}
+
+.message-response:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* Company Avatar */
+.company-avatar {
+    transition: all 0.3s ease;
+}
+
+.company-avatar:hover {
+    transform: scale(1.05);
+}
+</style>
+
+@functions {
+    private string GetStatusBadgeClass(string status)
+    {
+        return status switch
+        {
+            "Pendente" => "bg-warning text-dark",
+            "Em Análise" => "bg-info text-white",
+            "Proposta Enviada" => "bg-success text-white",
+            "Respondido" => "bg-success text-white",
+            "Aceito" => "bg-primary text-white",
+            "Recusado" => "bg-danger text-white",
+            "Cancelado" => "bg-secondary text-white",
+            _ => "bg-secondary text-white"
+        };
+    }
+    
+    private string GetProposalStatusBadgeClass(string status)
+    {
+        return status switch
+        {
+            "Ativa" => "bg-success",
+            "Aceita" => "bg-primary",
+            "Recusada" => "bg-danger",
+            "Expirada" => "bg-secondary",
+            _ => "bg-secondary"
+        };
+    }
+}

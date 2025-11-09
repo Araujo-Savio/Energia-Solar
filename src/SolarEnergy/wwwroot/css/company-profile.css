@@ -1,0 +1,252 @@
+/* Company Profile Styles */
+
+/* Cores e gradientes personalizados */
+.bg-gradient-light {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    min-height: 100vh;
+}
+
+/* Header da empresa */
+.company-profile-header {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(26, 43, 61, 0.08);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+/* Avatar */
+.company-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border: 3px solid #ffffff;
+}
+
+.company-avatar img,
+.company-avatar-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.company-avatar-large {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+    border: 4px solid #ffffff;
+}
+
+/* Typography */
+.company-name {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #1a202c !important;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+}
+
+.text-muted-dark {
+    color: #4a5568 !important;
+}
+
+/* Cards */
+.profile-info-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f7fafc 100%);
+    border: 2px solid rgba(59, 130, 246, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.profile-critical-card {
+    background: linear-gradient(135deg, #fef2f2 0%, #fef7f7 100%);
+    border: 2px solid rgba(239, 68, 68, 0.2);
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.1);
+}
+
+.profile-critical-card .card-header {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    color: white !important;
+    border-radius: 14px 14px 0 0;
+    padding: 1rem 1.5rem;
+    border: none;
+}
+
+.profile-edit-card {
+    background: #ffffff !important;
+    border: 2px solid rgba(226, 232, 240, 0.6);
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+}
+
+.profile-edit-card .card-header {
+    padding: 1.25rem 1.5rem;
+    border: none;
+    border-radius: 0;
+}
+
+.profile-edit-card .card-header.bg-primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+}
+
+.profile-edit-card .card-header.bg-warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+}
+
+.profile-edit-card .card-header.bg-info {
+    background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%) !important;
+}
+
+.profile-edit-card .card-body {
+    padding: 2rem 1.5rem;
+    background-color: #ffffff !important;
+}
+
+/* Form fields - Garantindo visibilidade */
+.profile-edit-card .form-control,
+.profile-edit-card .form-select {
+    color: #1f2937 !important;
+    background-color: #ffffff !important;
+    border: 2px solid #e5e7eb !important;
+    border-radius: 8px !important;
+    padding: 0.75rem 1rem !important;
+    font-size: 0.95rem !important;
+}
+
+.profile-edit-card .form-control:focus,
+.profile-edit-card .form-select:focus {
+    color: #1f2937 !important;
+    background-color: #ffffff !important;
+    border-color: #ff6b35 !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25) !important;
+    outline: 0 !important;
+}
+
+.profile-edit-card .form-control::placeholder {
+    color: #9ca3af !important;
+    opacity: 1 !important;
+}
+
+.profile-edit-card .form-label {
+    font-weight: 600 !important;
+    margin-bottom: 0.75rem !important;
+    color: #374151 !important;
+    font-size: 0.95rem !important;
+}
+
+/* Textarea específico */
+.profile-edit-card textarea.form-control {
+    resize: vertical !important;
+    min-height: 100px !important;
+}
+
+/* Select específico */
+.profile-edit-card select.form-select option {
+    color: #1f2937 !important;
+    background-color: #ffffff !important;
+}
+
+/* Critical fields */
+.critical-field {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(239, 68, 68, 0.1);
+}
+
+.critical-field:last-child {
+    border-bottom: none;
+}
+
+.critical-label {
+    font-size: 0.825rem !important;
+    font-weight: 600 !important;
+    color: #7c2d12 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+.critical-value {
+    font-size: 0.95rem !important;
+    color: #1f2937 !important;
+    font-weight: 500 !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* Stats */
+.company-info-stats {
+    background: rgba(59, 130, 246, 0.05);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-top: 1rem;
+}
+
+.info-stat-item {
+    text-align: center;
+}
+
+.info-stat-label {
+    display: block;
+    font-size: 0.825rem !important;
+    color: #6b7280 !important;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+}
+
+.info-stat-value {
+    display: block;
+    font-weight: 700 !important;
+    color: #1f2937 !important;
+    font-size: 1rem !important;
+}
+
+/* Força cor dos textos para garantir visibilidade */
+.text-dark {
+    color: #1f2937 !important;
+}
+
+.company-email {
+    color: #4a5568 !important;
+}
+
+/* Form text help */
+.form-text {
+    color: #6b7280 !important;
+    font-size: 0.875rem !important;
+}
+
+/* Validation errors */
+.text-danger {
+    color: #dc2626 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .company-profile-header {
+        padding: 1.5rem;
+    }
+    
+    .company-name {
+        font-size: 1.5rem;
+    }
+    
+    .profile-edit-card .card-body {
+        padding: 1.5rem 1rem;
+    }
+    
+    .profile-edit-card .form-control,
+    .profile-edit-card .form-select {
+        font-size: 1rem !important;
+        padding: 0.875rem 1rem !important;
+    }
+}

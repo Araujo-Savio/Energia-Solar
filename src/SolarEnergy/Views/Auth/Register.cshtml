@@ -1,0 +1,392 @@
+@model SolarEnergy.Models.RegisterViewModel
+@{
+    ViewData["Title"] = "Cadastro";
+    Layout = null;
+    var selectedUserType = Model?.UserType ?? SolarEnergy.Models.UserType.Client;
+    var clientSectionClass = selectedUserType == SolarEnergy.Models.UserType.Client ? string.Empty : "d-none";
+    var companySectionClass = selectedUserType == SolarEnergy.Models.UserType.Company ? string.Empty : "d-none";
+}
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadastro - Solar Energy</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/register.css" asp-append-version="true" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="register-body">
+    <div class="register-container">
+        <!-- Left Side - Light Theme Premium (Informações do Site) -->
+        <div class="register-left-side">
+            <div class="register-brand-section">
+                <div class="register-logo">
+                    <i class="fas fa-solar-panel"></i>
+                </div>
+                <h1 class="register-brand-title">SOLAR ENERGY</h1>
+                <p class="register-brand-subtitle">Energia limpa para um futuro sustentável</p>
+            </div>
+            
+            <div class="register-features">
+                <div class="register-feature-item">
+                    <div class="register-feature-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <div class="register-feature-content">
+                        <h4>Sustentabilidade Total</h4>
+                        <p>Reduza sua pegada de carbono e contribua para um planeta mais verde</p>
+                    </div>
+                </div>
+                
+                <div class="register-feature-item">
+                    <div class="register-feature-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <div class="register-feature-content">
+                        <h4>Economia Garantida</h4>
+                        <p>Reduza sua conta de energia em até 95% com tecnologia solar</p>
+                    </div>
+                </div>
+                
+                <div class="register-feature-item">
+                    <div class="register-feature-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <div class="register-feature-content">
+                        <h4>Valorize seu Imóvel</h4>
+                        <p>Aumente o valor do seu imóvel com energia solar instalada</p>
+                    </div>
+                </div>
+                
+                <div class="register-feature-item">
+                    <div class="register-feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="register-feature-content">
+                        <h4>Investimento Seguro</h4>
+                        <p>Proteção contra aumentos na tarifa de energia elétrica</p>
+                    </div>
+                </div>
+                
+                <div class="register-feature-item">
+                    <div class="register-feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="register-feature-content">
+                        <h4>Retorno Garantido</h4>
+                        <p>ROI comprovado em 4-6 anos com 25 anos de vida útil</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="register-stats">
+                <div class="register-stat-item">
+                    <span class="register-stat-number">95%</span>
+                    <span class="register-stat-label">Economia</span>
+                </div>
+                <div class="register-stat-item">
+                    <span class="register-stat-number">1000+</span>
+                    <span class="register-stat-label">Clientes</span>
+                </div>
+                <div class="register-stat-item">
+                    <span class="register-stat-number">24/7</span>
+                    <span class="register-stat-label">Suporte</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Side - White Theme Premium (Formulário) -->
+        <div class="register-right-side">
+            <div class="register-form-container">
+                <!-- Logo móvel -->
+                <div class="register-mobile-logo d-lg-none">
+                    <i class="fas fa-solar-panel"></i>
+                    <span>SOLAR ENERGY</span>
+                </div>
+                
+                <div class="register-card">
+                    <div class="register-card-body">
+                        <div class="register-form-header">
+                            <h3>Criar Conta</h3>
+                            <p>Preencha os dados para começar sua jornada solar</p>
+                        </div>
+
+                        <!-- User Type Selection Enhanced -->
+                        <div class="register-user-type">
+                            <div class="btn-group w-100" role="group">
+                                <input type="radio" class="btn-check" name="userTypeOptions" id="btnConsumidor" value="@((int)SolarEnergy.Models.UserType.Client)" @(selectedUserType == SolarEnergy.Models.UserType.Client ? "checked" : string.Empty)>
+                                <label class="btn btn-outline-solar-orange" for="btnConsumidor">
+                                    <i class="fas fa-user me-2"></i>Consumidor
+                                </label>
+
+                                <input type="radio" class="btn-check" name="userTypeOptions" id="btnEmpresa" value="@((int)SolarEnergy.Models.UserType.Company)" @(selectedUserType == SolarEnergy.Models.UserType.Company ? "checked" : string.Empty)>
+                                <label class="btn btn-outline-solar-orange" for="btnEmpresa">
+                                    <i class="fas fa-building me-2"></i>Empresa
+                                </label>
+                            </div>
+                        </div>
+
+                        <form asp-action="Register" method="post" id="registerForm" class="register-form">
+                            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+                            <input asp-for="UserType" type="hidden" id="userTypeHidden" value="@((int)selectedUserType)" />
+
+                            <!-- Basic Information -->
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="FullName" class="form-label" id="fullNameLabel" data-client-label="Nome Completo" data-company-label="Nome do Responsável">
+                                        <i class="fas fa-user text-solar-orange me-1"></i>Nome Completo
+                                    </label>
+                                    <input asp-for="FullName" class="form-control" placeholder="Seu nome completo" id="FullName" data-client-placeholder="Seu nome completo" data-company-placeholder="Nome completo do responsável" />
+                                    <span asp-validation-for="FullName" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="Email" class="form-label" id="emailLabel" data-client-label="E-mail" data-company-label="E-mail corporativo">
+                                        <i class="fas fa-envelope text-solar-orange me-1"></i>E-mail
+                                    </label>
+                                    <input asp-for="Email" class="form-control" placeholder="seu@email.com" id="Email" data-client-placeholder="seu@email.com" data-company-placeholder="contato@empresa.com" />
+                                    <span asp-validation-for="Email" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <!-- Client Fields -->
+                            <div id="clientFields" class="user-type-section @clientSectionClass">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3" id="cpfField">
+                                        <label asp-for="CPF" class="form-label">
+                                            <i class="fas fa-id-card text-solar-orange me-1"></i>CPF
+                                        </label>
+                                        <input asp-for="CPF" class="form-control" placeholder="000.000.000-00" maxlength="14" id="cpfInput" data-required-client="true" />
+                                        <span asp-validation-for="CPF" class="text-danger small"></span>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label asp-for="Phone" class="form-label">
+                                            <i class="fas fa-phone text-solar-orange me-1"></i>Telefone
+                                        </label>
+                                        <input asp-for="Phone" class="form-control" placeholder="(00) 00000-0000" id="Phone" data-required-client="true" />
+                                        <span asp-validation-for="Phone" class="text-danger small"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Company Fields -->
+                            <div id="companyFields" class="user-type-section @companySectionClass">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label asp-for="CompanyLegalName" class="form-label">
+                                            <i class="fas fa-building text-solar-orange me-1"></i>Razão Social
+                                        </label>
+                                        <input asp-for="CompanyLegalName" class="form-control" placeholder="Nome jurídico da empresa" id="CompanyLegalName" data-required-company="true" />
+                                        <span asp-validation-for="CompanyLegalName" class="text-danger small"></span>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label asp-for="CompanyTradeName" class="form-label">
+                                            <i class="fas fa-store text-solar-orange me-1"></i>Nome Fantasia
+                                        </label>
+                                        <input asp-for="CompanyTradeName" class="form-control" placeholder="Como sua empresa é conhecida" id="CompanyTradeName" data-required-company="true" />
+                                        <span asp-validation-for="CompanyTradeName" class="text-danger small"></span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3" id="cnpjField">
+                                        <label asp-for="CNPJ" class="form-label">
+                                            <i class="fas fa-file-alt text-solar-orange me-1"></i>CNPJ
+                                        </label>
+                                        <input asp-for="CNPJ" class="form-control" placeholder="00.000.000/0000-00" maxlength="18" id="cnpjInput" data-required-company="true" />
+                                        <span asp-validation-for="CNPJ" class="text-danger small"></span>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label asp-for="StateRegistration" class="form-label">
+                                            <i class="fas fa-certificate text-solar-orange me-1"></i>Inscrição Estadual
+                                        </label>
+                                        <input asp-for="StateRegistration" class="form-control" placeholder="000.000.000.000" id="StateRegistration" />
+                                        <span asp-validation-for="StateRegistration" class="text-danger small"></span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label asp-for="CompanyPhone" class="form-label">
+                                            <i class="fas fa-phone-office text-solar-orange me-1"></i>Telefone Comercial
+                                        </label>
+                                        <input asp-for="CompanyPhone" class="form-control" placeholder="(00) 00000-0000" id="CompanyPhone" data-required-company="true" />
+                                        <span asp-validation-for="CompanyPhone" class="text-danger small"></span>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label asp-for="ResponsibleName" class="form-label">
+                                            <i class="fas fa-user-tie text-solar-orange me-1"></i>Responsável Comercial
+                                        </label>
+                                        <input asp-for="ResponsibleName" class="form-control" placeholder="Contato principal da empresa" id="ResponsibleName" data-required-company="true" />
+                                        <span asp-validation-for="ResponsibleName" class="text-danger small"></span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label asp-for="ResponsibleCPF" class="form-label">
+                                            <i class="fas fa-id-badge text-solar-orange me-1"></i>CPF do Responsável
+                                        </label>
+                                        <input asp-for="ResponsibleCPF" class="form-control" placeholder="000.000.000-00" maxlength="14" id="responsibleCpfInput" data-required-company="true" />
+                                        <span asp-validation-for="ResponsibleCPF" class="text-danger small"></span>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label asp-for="CompanyWebsite" class="form-label">
+                                            <i class="fas fa-globe text-solar-orange me-1"></i>Site da Empresa
+                                        </label>
+                                        <input asp-for="CompanyWebsite" class="form-control" placeholder="https://www.empresa.com" id="CompanyWebsite" />
+                                        <span asp-validation-for="CompanyWebsite" class="text-danger small"></span>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="CompanyDescription" class="form-label">
+                                        <i class="fas fa-align-left text-solar-orange me-1"></i>Descrição da Empresa
+                                    </label>
+                                    <textarea asp-for="CompanyDescription" class="form-control" rows="3" placeholder="Conte-nos um pouco sobre sua empresa e seus serviços..."></textarea>
+                                    <span asp-validation-for="CompanyDescription" class="text-danger small"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="ServiceType" class="form-label">
+                                        <i class="fas fa-solar-panel text-solar-orange me-1"></i>Tipo de Serviço Solar
+                                    </label>
+                                    <select asp-for="ServiceType" class="form-select" id="ServiceType">
+                                        <option value="">Selecione o tipo de serviço</option>
+                                        <option value="@((int)SolarEnergy.Models.SolarServiceType.PanelSales)">Venda de Painéis Solares</option>
+                                        <option value="@((int)SolarEnergy.Models.SolarServiceType.EnergyRental)">Aluguel de Energia Solar</option>
+                                        <option value="@((int)SolarEnergy.Models.SolarServiceType.Both)">Venda e Aluguel</option>
+                                    </select>
+                                    <span asp-validation-for="ServiceType" class="text-danger small"></span>
+                                    <div class="form-text">
+                                        <small class="text-muted">
+                                            <i class="fas fa-info-circle me-1"></i>
+                                            Selecione o tipo de serviço que sua empresa oferece aos clientes.
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Password Fields -->
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="Password" class="form-label">
+                                        <i class="fas fa-lock text-solar-orange me-1"></i>Senha
+                                    </label>
+                                    <div class="input-group password-input-group">
+                                        <input asp-for="Password" class="form-control" placeholder="Mínimo 8 caracteres" id="Password" type="password" />
+                                        <button type="button" class="btn btn-outline-secondary password-toggle" data-target="Password">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <span asp-validation-for="Password" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="ConfirmPassword" class="form-label">
+                                        <i class="fas fa-lock text-solar-orange me-1"></i>Confirmar Senha
+                                    </label>
+                                    <div class="input-group password-input-group">
+                                        <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirme a senha" id="ConfirmPassword" type="password" />
+                                        <button type="button" class="btn btn-outline-secondary password-toggle" data-target="ConfirmPassword">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <!-- Terms and Conditions -->
+                            <div class="mb-4">
+                                <div class="form-check">
+                                    <input asp-for="AcceptTerms" class="form-check-input" />
+                                    <label asp-for="AcceptTerms" class="form-check-label">
+                                        Li e concordo com os <a href="#" class="text-solar-orange">Termos de Uso</a> e a
+                                        <a href="#" class="text-solar-orange">Política de Privacidade</a>
+                                    </label>
+                                </div>
+                                <span asp-validation-for="AcceptTerms" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" class="btn register-btn w-100 mb-3">
+                                <i class="fas fa-user-plus me-2"></i>
+                                <span>Criar Conta</span>
+                            </button>
+                        </form>
+
+                        <!-- Footer Links -->
+                        <div class="register-footer">
+                            <p>Já tem uma conta?
+                                <a asp-action="Login">Fazer Login</a>
+                            </p>
+                            <div class="mt-3">
+                                <a asp-controller="Home" asp-action="Index" class="text-muted text-decoration-none small">
+                                    <i class="fas fa-arrow-left me-1"></i>Voltar ao início
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/register.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle password visibility
+            document.querySelectorAll('.password-toggle').forEach(button => {
+                button.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const targetInput = document.getElementById(targetId);
+                    const icon = this.querySelector('i');
+                    
+                    if (targetInput.type === 'password') {
+                        targetInput.type = 'text';
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                    } else {
+                        targetInput.type = 'password';
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                    }
+                });
+            });
+
+            // Loading state on form submit
+            const registerForm = document.getElementById('registerForm');
+            if (registerForm) {
+                registerForm.addEventListener('submit', function(e) {
+                    const submitButton = this.querySelector('button[type="submit"]');
+                    if (submitButton) {
+                        const span = submitButton.querySelector('span');
+                        if (span) {
+                            span.innerHTML = 'Criando Conta...';
+                        }
+                        submitButton.classList.add('loading');
+                        submitButton.disabled = true;
+                    }
+                });
+            }
+
+            // Input focus effects for password groups
+            document.querySelectorAll('.password-input-group input').forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.closest('.password-input-group').classList.add('focused');
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.closest('.password-input-group').classList.remove('focused');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,261 @@
+@model SolarEnergy.ViewModels.UserProfileViewModel
+@{
+    ViewData["Title"] = "Perfil do Usuário";
+    var profileImage = string.IsNullOrWhiteSpace(Model.ProfileImagePath)
+        ? Url.Content("~/images/default-profile.svg")
+        : Url.Content(Model.ProfileImagePath.StartsWith("/") ? "~" + Model.ProfileImagePath : Model.ProfileImagePath);
+
+    var userTypeLabel = Model.UserType switch
+    {
+        SolarEnergy.Models.UserType.Administrator => "Administrador",
+        SolarEnergy.Models.UserType.Company => "Empresa",
+        _ => "Cliente"
+    };
+}
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <!-- Header do Usuário -->
+        <div class="user-profile-header mb-5">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center">
+                        <div class="user-avatar me-4">
+                            <img src="@profileImage" alt="Foto de perfil de @Model.FullName" class="img-fluid" />
+                        </div>
+                        <div>
+                            <h1 class="user-name mb-1">@Model.FullName</h1>
+                            <p class="user-email text-muted mb-2">@Model.Email</p>
+                            <div class="user-status">
+                                <span class="badge bg-primary fs-6">
+                                    <i class="fas fa-user me-1"></i>@userTypeLabel
+                                </span>
+                                <span class="badge @(Model.IsActive ? "bg-success" : "bg-secondary") fs-6 ms-2">
+                                    <i class="fas @(Model.IsActive ? "fa-check-circle" : "fa-times-circle") me-1"></i>
+                                    @(Model.IsActive ? "Ativo" : "Inativo")
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <div class="d-flex flex-wrap gap-2 justify-content-md-end">
+                        <a asp-controller="Home" asp-action="Dashboard" class="btn btn-outline-primary">
+                            <i class="fas fa-arrow-left me-1"></i>Voltar
+                        </a>
+                        <button type="submit" form="profileForm" class="btn btn-solar-orange">
+                            <i class="fas fa-save me-1"></i>Salvar Alterações
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informações do Usuário -->
+        <div class="row g-4">
+            <!-- Foto e Informações Básicas -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <div class="user-avatar-large mb-3">
+                            <img src="@profileImage" alt="Foto de perfil de @Model.FullName" class="img-fluid" />
+                        </div>
+                        <h5 class="text-solar-blue fw-bold">@Model.FullName</h5>
+                        <p class="text-muted">@userTypeLabel</p>
+                        <div class="user-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Membro desde</span>
+                                <span class="stat-value">@Model.CreatedAt.ToString("dd/MM/yyyy")</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulário de Edição -->
+            <div class="col-lg-8">
+                <form asp-action="Update" method="post" enctype="multipart/form-data" id="profileForm">
+                    <input type="hidden" asp-for="Id" />
+                    <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
+
+                    <!-- Informações de Contato -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-solar-blue text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-address-book me-2"></i>Informações de Contato
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label asp-for="Email" class="form-label fw-semibold">
+                                        <i class="fas fa-envelope text-solar-orange me-1"></i>E-mail
+                                    </label>
+                                    <input asp-for="Email" class="form-control" />
+                                    <span asp-validation-for="Email" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="Phone" class="form-label fw-semibold">
+                                        <i class="fas fa-phone text-solar-orange me-1"></i>Telefone
+                                    </label>
+                                    <input asp-for="Phone" class="form-control" placeholder="(00) 00000-0000" />
+                                    <span asp-validation-for="Phone" class="text-danger small"></span>
+                                </div>
+                                <div class="col-12">
+                                    <label asp-for="Location" class="form-label fw-semibold">
+                                        <i class="fas fa-map-marker-alt text-solar-orange me-1"></i>Localização
+                                    </label>
+                                    <input asp-for="Location" class="form-control" data-city-search="true" placeholder="Digite o nome da cidade (ex: Monte Sião, MG)" />
+                                    <span asp-validation-for="Location" class="text-danger small"></span>
+                                    <div class="form-text">
+                                        <i class="fas fa-info-circle me-1"></i>Digite o nome da cidade e selecione uma das opções sugeridas para padronizar a localização.
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <label asp-for="ProfileImageFile" class="form-label fw-semibold">
+                                        <i class="fas fa-upload text-solar-orange me-1"></i>Foto de Perfil
+                                    </label>
+                                    <input asp-for="ProfileImageFile" class="form-control" type="file" accept="image/*" />
+                                    <span asp-validation-for="ProfileImageFile" class="text-danger small"></span>
+                                    <div class="form-text">Formatos: JPG, PNG, GIF, SVG. Tamanho máximo: 2MB.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dados Cadastrais (Somente Leitura) -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-light text-dark">
+                            <h5 class="mb-0">
+                                <i class="fas fa-file-alt me-2"></i>Dados Cadastrais (Somente Leitura)
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                @if (!string.IsNullOrWhiteSpace(Model.CPF))
+                                {
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">CPF</label>
+                                        <input class="form-control" value="@Model.CPF" readonly />
+                                    </div>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(Model.CNPJ))
+                                {
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">CNPJ</label>
+                                        <input class="form-control" value="@Model.CNPJ" readonly />
+                                    </div>
+                                }
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Status da Conta</label>
+                                    <input class="form-control" value="@(Model.IsActive ? "Ativa" : "Inativa")" readonly />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Tipo de Usuário</label>
+                                    <input class="form-control" value="@userTypeLabel" readonly />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.user-profile-header {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(26, 43, 61, 0.08);
+}
+
+.user-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-avatar-large {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.user-avatar-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-name {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--solar-blue-primary);
+    margin-bottom: 0.5rem;
+}
+
+.user-email {
+    font-size: 1.1rem;
+}
+
+.user-status .badge {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+}
+
+.user-stats {
+    background: rgba(26, 43, 61, 0.03);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin-bottom: 0.25rem;
+}
+
+.stat-value {
+    display: block;
+    font-weight: 700;
+    color: var(--solar-blue-primary);
+    font-size: 1.1rem;
+}
+
+.card-header {
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.form-label {
+    margin-bottom: 0.75rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--solar-orange);
+    box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
+}
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,102 @@
+@{
+    ViewData["Title"] = "Orçamentos";
+}
+
+<section class="py-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+            <div>
+                <h1 class="text-solar-blue fw-bold mb-1">Orçamentos Recentes</h1>
+                <p class="text-muted mb-0">Acompanhe os orçamentos em andamento e organize seus próximos passos.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a asp-controller="Home" asp-action="Simulation" class="btn btn-outline-solar-orange">
+                    <i class="fas fa-calculator me-1"></i>Novo simulador
+                </a>
+                <a asp-controller="Home" asp-action="Leads" class="btn btn-solar-orange text-white">
+                    <i class="fas fa-user-plus me-1"></i>Buscar empresas
+                </a>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white border-0 py-3">
+                        <h5 class="mb-0 text-solar-blue fw-semibold"><i class="fas fa-file-invoice-dollar me-2"></i>Resumo dos Orçamentos</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0 align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Projeto</th>
+                                        <th>Empresa</th>
+                                        <th>Valor</th>
+                                        <th>Status</th>
+                                        <th>Atualizado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="fw-semibold">Residencial - Zona Sul</td>
+                                        <td>EcoSolar Energia</td>
+                                        <td class="text-solar-orange fw-semibold">R$ 24.500</td>
+                                        <td><span class="badge bg-warning text-dark">Aguardando análise</span></td>
+                                        <td>há 2 dias</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-semibold">Comercial - Loja Centro</td>
+                                        <td>SunPower Brasil</td>
+                                        <td class="text-solar-orange fw-semibold">R$ 58.200</td>
+                                        <td><span class="badge bg-success">Aprovado</span></td>
+                                        <td>há 5 dias</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-semibold">Residencial - Alto da Serra</td>
+                                        <td>Energia Viva</td>
+                                        <td class="text-solar-orange fw-semibold">R$ 31.890</td>
+                                        <td><span class="badge bg-secondary">Revisão solicitada</span></td>
+                                        <td>há 1 semana</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white border-0 py-3">
+                        <h5 class="mb-0 text-solar-blue fw-semibold"><i class="fas fa-lightbulb me-2"></i>Dicas rápidas</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-0">
+                            <li class="d-flex align-items-start gap-3 mb-3">
+                                <div class="text-solar-orange"><i class="fas fa-star"></i></div>
+                                <div>
+                                    <h6 class="mb-1 fw-semibold">Compare propostas</h6>
+                                    <p class="text-muted mb-0 small">Avalie prazos de instalação, garantias e condições de pagamento antes de aceitar.</p>
+                                </div>
+                            </li>
+                            <li class="d-flex align-items-start gap-3 mb-3">
+                                <div class="text-solar-orange"><i class="fas fa-plug"></i></div>
+                                <div>
+                                    <h6 class="mb-1 fw-semibold">Solicite personalização</h6>
+                                    <p class="text-muted mb-0 small">Ajuste a potência do sistema de acordo com a evolução do seu consumo.</p>
+                                </div>
+                            </li>
+                            <li class="d-flex align-items-start gap-3">
+                                <div class="text-solar-orange"><i class="fas fa-user-check"></i></div>
+                                <div>
+                                    <h6 class="mb-1 fw-semibold">Mantenha contato</h6>
+                                    <p class="text-muted mb-0 small">Use o chat da plataforma para tirar dúvidas diretamente com a empresa escolhida.</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
