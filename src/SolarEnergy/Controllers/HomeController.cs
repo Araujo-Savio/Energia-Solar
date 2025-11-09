@@ -96,8 +96,189 @@ namespace SolarEnergy.Controllers
                 return RedirectToAction(nameof(Leads));
             }
 
+            // Redirecionar admin para AdminDashboard
+            if (user != null && user.UserType == UserType.Administrator)
+            {
+                return RedirectToAction(nameof(AdminDashboard));
+            }
+
+            if (user == null || user.UserType != UserType.Client)
+            {
+                return RedirectToAction(nameof(SearchCompanies));
+            }
+
             await SetUserTypeInViewData();
-            return View();
+
+            // Buscar estatísticas dos orçamentos do cliente
+            var userQuotes = await _context.Quotes
+                .Include(q => q.Company)
+                .Include(q => q.Proposals)
+                .Include(q => q.Messages)
+                .Where(q => q.ClientId == user.Id)
+                // .OrderByDescending(q => q.RequestDate)
+                .ToListAsync();
+
+            // Calcular estatísticas
+            var statistics = new ClientStatisticsViewModel
+            {
+                TotalQuotes = userQuotes.Count,
+                PendingQuotes = userQuotes.Count(q => q.Status == "Pendente"),
+                ReceivedQuotes = userQuotes.Count(q => q.Status == "Respondido" || q.Status == "Proposta Enviada" || q.Proposals.Any()),
+                AcceptedQuotes = userQuotes.Count(q => q.Status == "Aceito")
+            };
+
+            // Preparar lista dos orçamentos mais recentes (apenas empresa, status e data)
+            var recentQuotes = userQuotes.Take(5).Select(q => new QuoteListViewModel
+            {
+                QuoteId = q.QuoteId,
+                CompanyName = q.Company.CompanyTradeName ?? q.Company.CompanyLegalName ?? q.Company.FullName,
+                RequestDate = q.RequestDate,
+                Status = GetStatusDescription(q),
+                HasProposal = q.Proposals.Any(),
+                ProposalCount = q.Proposals.Count(),
+                UnreadMessagesCount = q.Messages.Where(m => m.SenderId != user.Id && !m.ReadDate.HasValue).Count(),
+                LastMessageDate = q.Messages.Any() ? q.Messages.OrderByDescending(m => m.SentDate).First().SentDate : null,
+                CompanyResponseMessage = q.CompanyResponseMessage
+            }).ToList();
+
+            // Buscar atividades recentes do usuário
+            var recentActivities = new List<ActivityItemViewModel>();
+
+            // Adicionar atividades de orçamentos solicitados
+            foreach (var quote in userQuotes.OrderByDescending(q => q.RequestDate).Take(10))
+            {
+                recentActivities.Add(new ActivityItemViewModel
+                {
+                    Type = ActivityType.QuoteRequested,
+                    Title = "Orçamento solicitado",
+                    Description = $"Solicitação enviada para {quote.Company.CompanyTradeName ?? quote.Company.CompanyLegalName ?? quote.Company.FullName}",
+                    Date = quote.RequestDate,
+                    RelatedCompanyName = quote.Company.CompanyTradeName ?? quote.Company.CompanyLegalName ?? quote.Company.FullName,
+                    RelatedQuoteId = quote.QuoteId
+                });
+
+                // Adicionar atividades de resposta da empresa
+                if (quote.CompanyResponseDate.HasValue)
+                {
+                    recentActivities.Add(new ActivityItemViewModel
+                    {
+                        Type = ActivityType.QuoteReceived,
+                        Title = "Orçamento respondido",
+                        Description = $"Resposta recebida da {quote.Company.CompanyTradeName ?? quote.Company.CompanyLegalName ?? quote.Company.FullName}",
+                        Date = quote.CompanyResponseDate.Value,
+                        RelatedCompanyName = quote.Company.CompanyTradeName ?? quote.Company.CompanyLegalName ?? quote.Company.FullName,
+                        RelatedQuoteId = quote.QuoteId
+                    });
+                }
+
+                // Adicionar atividades de propostas recebidas
+                foreach (var proposal in quote.Proposals.OrderByDescending(p => p.ProposalDate).Take(3))
+                {
+                    recentActivities.Add(new ActivityItemViewModel
+                    {
+                        Type = ActivityType.ProposalReceived,
+                        Title = "Proposta recebida",
+                        Description = $"Proposta de R$ {proposal.Value:N2} recebida da {quote.Company.CompanyTradeName ?? quote.Company.CompanyLegalName ?? quote.Company.FullName}",
+                        Date = proposal.ProposalDate,
+                        RelatedCompanyName = quote.Company.CompanyTradeName ?? quote.Company.CompanyLegalName ?? quote.Company.FullName,
+                        RelatedQuoteId = quote.QuoteId
+                    });
+                }
+            }
+
+            // Buscar avaliações enviadas pelo usuário
+            var userReviews = await _context.CompanyReviews
+                .Include(r => r.Company)
+                .Where(r => r.ReviewerId == user.Id)
+                .OrderByDescending(r => r.CreatedAt)
+                .Take(5)
+                .ToListAsync();
+
+            foreach (var review in userReviews)
+            {
+                recentActivities.Add(new ActivityItemViewModel
+                {
+                    Type = ActivityType.ReviewSubmitted,
+                    Title = "Avaliação enviada",
+                    Description = $"Você avaliou a {review.Company.CompanyTradeName ?? review.Company.CompanyLegalName ?? review.Company.FullName}" + 
+                                 (review.Rating.HasValue ? $" com {review.Rating} estrelas" : ""),
+                    Date = review.CreatedAt,
+                    RelatedCompanyName = review.Company.CompanyTradeName ?? review.Company.CompanyLegalName ?? review.Company.FullName
+                });
+            }
+
+            // Buscar mensagens recentes
+            var recentMessages = await _context.QuoteMessages
+                .Include(m => m.Quote)
+                    .ThenInclude(q => q.Company)
+                .Where(m => m.Quote.ClientId == user.Id)
+                .OrderByDescending(m => m.SentDate)
+                .Take(10)
+                .ToListAsync();
+
+            foreach (var message in recentMessages)
+            {
+                var isFromUser = message.SenderId == user.Id;
+                recentActivities.Add(new ActivityItemViewModel
+                {
+                    Type = isFromUser ? ActivityType.MessageSent : ActivityType.MessageReceived,
+                    Title = isFromUser ? "Mensagem enviada" : "Mensagem recebida",
+                    Description = isFromUser 
+                        ? $"Você enviou uma mensagem para {message.Quote.Company.CompanyTradeName ?? message.Quote.Company.CompanyLegalName ?? message.Quote.Company.FullName}"
+                        : $"Mensagem recebida de {message.Quote.Company.CompanyTradeName ?? message.Quote.Company.CompanyLegalName ?? message.Quote.Company.FullName}",
+                    Date = message.SentDate,
+                    RelatedCompanyName = message.Quote.Company.CompanyTradeName ?? message.Quote.Company.CompanyLegalName ?? message.Quote.Company.FullName,
+                    RelatedQuoteId = message.QuoteId
+                });
+            }
+
+            // Ordenar atividades por data e pegar as 15 mais recentes
+            recentActivities = recentActivities
+                .OrderByDescending(a => a.Date)
+                .Take(15)
+                .ToList();
+
+            var model = new ClientDashboardViewModel
+            {
+                ClientName = user.FullName,
+                Statistics = statistics,
+                RecentQuotes = recentQuotes,
+                RecentActivities = recentActivities
+            };
+
+            return View(model);
+        }
+
+        private string GetStatusDescription(Quote quote)
+        {
+            // Se tem proposta, mostrar que foi respondido
+            if (quote.Proposals.Any())
+            {
+                return "Respondido";
+            }
+
+            // Se tem resposta da empresa
+            if (!string.IsNullOrEmpty(quote.CompanyResponseMessage))
+            {
+                return "Respondido";
+            }
+
+            // Se está em análise
+            if (quote.Status == "Em Análise")
+            {
+                return "Pendente";
+            }
+
+            // Outros status
+            return quote.Status switch
+            {
+                "Pendente" => "Pendente",
+                "Respondido" => "Respondido",
+                "Proposta Enviada" => "Respondido",
+                "Aceito" => "Aceito",
+                "Recusado" => "Recusado",
+                _ => "Pendente"
+            };
         }
 
         [Authorize]
@@ -184,8 +365,16 @@ namespace SolarEnergy.Controllers
         [Authorize]
         public async Task<IActionResult> AdminDashboard()
         {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null || user.UserType != UserType.Administrator)
+            {
+                return RedirectToAction(nameof(SearchCompanies));
+            }
+
             await SetUserTypeInViewData();
-            return View();
+            
+            // Redirecionar para o novo AdminController
+            return RedirectToAction("Dashboard", "Admin");
         }
 
         [Authorize]
@@ -246,13 +435,6 @@ namespace SolarEnergy.Controllers
 
             await SetUserTypeInViewData();
             return View(model);
-        }
-
-        [Authorize]
-        public async Task<IActionResult> Quotes()
-        {
-            await SetUserTypeInViewData();
-            return View();
         }
 
         [Authorize]
@@ -620,6 +802,120 @@ namespace SolarEnergy.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Leads));
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Settings()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            await SetUserTypeInViewData();
+
+            var model = new UserSettingsViewModel
+            {
+                UserId = user.Id,
+                FullName = user.FullName,
+                Email = user.Email ?? "",
+                Phone = user.Phone,
+                Location = user.Location,
+                ProfileImagePath = user.ProfileImagePath,
+                UserType = user.UserType,
+                
+                // Campos específicos para empresas
+                CompanyLegalName = user.CompanyLegalName,
+                CompanyTradeName = user.CompanyTradeName,
+                CompanyPhone = user.CompanyPhone,
+                CompanyWebsite = user.CompanyWebsite,
+                CompanyDescription = user.CompanyDescription,
+                ServiceType = user.ServiceType,
+                
+                // Configurações de notificação (valores padrão)
+                EmailNotifications = true,
+                SmsNotifications = false,
+                ProposalNotifications = true,
+                MessageNotifications = true,
+                MarketingEmails = false,
+                SecurityAlerts = true
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateSettings(UserSettingsViewModel model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Atualizar dados da empresa se for empresa (apenas campos da empresa são editáveis nas configurações)
+            if (user.UserType == UserType.Company && !string.IsNullOrEmpty(model.CompanyLegalName))
+            {
+                user.CompanyLegalName = model.CompanyLegalName;
+                user.CompanyTradeName = model.CompanyTradeName;
+                user.CompanyPhone = model.CompanyPhone;
+                user.CompanyWebsite = model.CompanyWebsite;
+                user.CompanyDescription = model.CompanyDescription;
+                user.ServiceType = model.ServiceType;
+
+                var result = await _userManager.UpdateAsync(user);
+
+                if (result.Succeeded)
+                {
+                    TempData["SuccessMessage"] = "Configurações da empresa atualizadas com sucesso!";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Erro ao atualizar configurações: " + string.Join(", ", result.Errors.Select(e => e.Description));
+                }
+            }
+            else
+            {
+                // Para notificações, apenas salvamos uma mensagem de sucesso
+                // (as preferências de notificação seriam salvas em uma tabela separada futuramente)
+                TempData["SuccessMessage"] = "Preferências de notificação atualizadas com sucesso!";
+            }
+
+            return RedirectToAction(nameof(Settings));
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = "Por favor, corrija os erros no formulário de senha.";
+                return RedirectToAction(nameof(Settings));
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+
+            if (result.Succeeded)
+            {
+                TempData["SuccessMessage"] = "Senha alterada com sucesso!";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Erro ao alterar senha: " + string.Join(", ", result.Errors.Select(e => e.Description));
+            }
+
+            return RedirectToAction(nameof(Settings));
         }
 
         private async Task SetUserTypeInViewData()

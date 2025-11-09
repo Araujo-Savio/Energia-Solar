@@ -6,9 +6,12 @@
     <title>@ViewData["Title"] - Solar Energy</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/SolarEnergy.styles.css" asp-append-version="true" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    @await RenderSectionAsync("Styles", required: false)
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    @if (ViewData["UserType"]?.ToString() == "Administrator")
+    {
+        <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+    }
+    @RenderSection("Styles", required: false)
 </head>
 <body>
 @{
@@ -16,22 +19,22 @@
     var currentController = ViewContext.RouteData.Values["Controller"]?.ToString() ?? string.Empty;
     var isAuthenticated = User.Identity?.IsAuthenticated == true;
     
-    // Verificar tipo de usuÃ¡rio pelo ViewData
+    // Verificar tipo de usuário pelo ViewData
     var userTypeEnum = ViewData["UserType"] as SolarEnergy.Models.UserType?;
     var isCompany = userTypeEnum == SolarEnergy.Models.UserType.Company;
     var isAdmin = userTypeEnum == SolarEnergy.Models.UserType.Administrator;
     var isClient = userTypeEnum == SolarEnergy.Models.UserType.Client;
 
-    // Active state para InÃ­cio - ajustar conforme tipo de usuÃ¡rio
+    // Active state para Início - ajustar conforme tipo de usuário
     var isHomeActive = false;
     if (isCompany)
     {
-        // Para empresas: InÃ­cio estÃ¡ ativo quando estiver na tela de Leads
+        // Para empresas: Início está ativo quando estiver na tela de Leads
         isHomeActive = (currentController == "Home" && currentAction == "Leads");
     }
     else if (isAdmin)
     {
-        // Para admin: InÃ­cio estÃ¡ ativo quando estiver no Index ou AdminDashboard
+        // Para admin: Início está ativo quando estiver no Index ou AdminDashboard
         isHomeActive = (currentController == "Home" && (currentAction == "Index" || currentAction == "AdminDashboard"));
     }
 }
@@ -51,11 +54,11 @@
                         {
                             @if (isCompany)
                             {
-                                <!-- Menu especÃ­fico para EMPRESAS - Sem Painel, apenas funcionalidades essenciais -->
+                                <!-- Menu específico para EMPRESAS - Sem Painel, apenas funcionalidades essenciais -->
                                 <li class="nav-item">
                                     <a class="nav-link nav-link-enhanced @(isHomeActive ? "active" : string.Empty)" asp-controller="Home" asp-action="Leads">
                                         <i class="fas fa-home me-2"></i>
-                                        <span>InÃ­cio</span>
+                                        <span>Início</span>
                                     </a>
                                 </li>
                                 <li class="nav-item dropdown">
@@ -76,7 +79,7 @@
                                                 <i class="fas fa-shopping-cart text-success me-3"></i>
                                                 <div>
                                                     <strong>Comprar Leads</strong>
-                                                    <small class="d-block text-muted">Adquira crÃ©ditos premium</small>
+                                                    <small class="d-block text-muted">Adquira créditos premium</small>
                                                 </div>
                                             </a>
                                         </li>
@@ -84,26 +87,8 @@
                                             <a class="dropdown-item d-flex align-items-center" asp-controller="Leads" asp-action="Management">
                                                 <i class="fas fa-chart-line text-info me-3"></i>
                                                 <div>
-                                <li class="nav-item">
-                                    <a class="nav-link nav-link-enhanced @(currentController == "Scheduling" ? "active" : string.Empty)" asp-controller="Scheduling" asp-action="Index">
-                                        <i class="fas fa-calendar-check me-2"></i>
-                                        <span>Agendamento</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link nav-link-enhanced @(currentController == "Scheduling" ? "active" : string.Empty)" asp-controller="Scheduling" asp-action="Index">
-                                        <i class="fas fa-calendar-check me-2"></i>
-                                        <span>Agendamento</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link nav-link-enhanced @(currentController == "Scheduling" ? "active" : string.Empty)" asp-controller="Scheduling" asp-action="Index">
-                                        <i class="fas fa-calendar-check me-2"></i>
-                                        <span>Agendamento</span>
-                                    </a>
-                                </li>
-                                                    <strong>Central de InteligÃªncia</strong>
-                                                    <small class="d-block text-muted">Analytics e relatÃ³rios</small>
+                                                    <strong>Central de Inteligência</strong>
+                                                    <small class="d-block text-muted">Analytics e relatórios</small>
                                                 </div>
                                             </a>
                                         </li>
@@ -113,7 +98,7 @@
                                                 <i class="fas fa-users text-primary me-3"></i>
                                                 <div>
                                                     <strong>Ver Todos os Leads</strong>
-                                                    <small class="d-block text-muted">Gerencie suas solicitaÃ§Ãµes</small>
+                                                    <small class="d-block text-muted">Gerencie suas solicitações</small>
                                                 </div>
                                             </a>
                                         </li>
@@ -128,23 +113,23 @@
                                 <li class="nav-item">
                                     <a class="nav-link nav-link-enhanced @(currentController == "Home" && currentAction == "Evaluations" ? "active" : string.Empty)" asp-controller="Home" asp-action="Evaluations">
                                         <i class="fas fa-star me-2"></i>
-                                        <span>AvaliaÃ§Ãµes</span>
+                                        <span>Avaliações</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link nav-link-enhanced @(currentController == "Reports" && currentAction == "MonthlyReport" ? "active" : string.Empty)" asp-controller="Reports" asp-action="MonthlyReport">
                                         <i class="fas fa-chart-bar me-2"></i>
-                                        <span>RelatÃ³rios</span>
+                                        <span>Relatórios</span>
                                     </a>
                                 </li>
                             }
                             else if (isAdmin)
                             {
-                                <!-- Menu especÃ­fico para ADMINISTRADORES -->
+                                <!-- Menu específico para ADMINISTRADORES -->
                                 <li class="nav-item">
                                     <a class="nav-link nav-link-enhanced @(isHomeActive ? "active" : string.Empty)" asp-controller="Home" asp-action="AdminDashboard">
                                         <i class="fas fa-home me-2"></i>
-                                        <span>InÃ­cio</span>
+                                        <span>Início</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
@@ -162,7 +147,7 @@
                                 <li class="nav-item">
                                     <a class="nav-link nav-link-enhanced @(currentController == "Quote" && currentAction == "MyQuotes" ? "active" : string.Empty)" asp-controller="Quote" asp-action="MyQuotes">
                                         <i class="fas fa-list me-2"></i>
-                                        <span>Todos os OrÃ§amentos</span>
+                                        <span>Todos os Orçamentos</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
@@ -174,7 +159,7 @@
                                 <li class="nav-item">
                                     <a class="nav-link nav-link-enhanced @(currentController == "Home" && currentAction == "Evaluations" ? "active" : string.Empty)" asp-controller="Home" asp-action="Evaluations">
                                         <i class="fas fa-star me-2"></i>
-                                        <span>AvaliaÃ§Ãµes</span>
+                                        <span>Avaliações</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
@@ -189,10 +174,84 @@
                                         <span>Admin</span>
                                     </a>
                                 </li>
+                                @* Área Administrativa - só aparece para administradores *@
+                                @if (ViewData["UserType"]?.ToString() == "Administrator")
+                                {
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle nav-link-enhanced" href="#" id="adminDropdown" role="button" 
+                                           data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-shield-alt me-2"></i>
+                                            <span>Administração</span>
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-menu-enhanced" aria-labelledby="adminDropdown">
+                                            <li>
+                                                <h6 class="dropdown-header">
+                                                    <i class="fas fa-tachometer-alt me-2"></i>
+                                                    Painel Administrativo
+                                                </h6>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="@Url.Action("Dashboard", "Admin")">
+                                                    <i class="fas fa-chart-line text-primary"></i>
+                                                    <div>
+                                                        <strong>Dashboard</strong>
+                                                        <small>Visão geral da plataforma</small>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="@Url.Action("Users", "Admin")">
+                                                    <i class="fas fa-users text-info"></i>
+                                                    <div>
+                                                        <strong>Gerenciar Usuários</strong>
+                                                        <small>Administrar clientes e empresas</small>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="@Url.Action("Companies", "Admin")">
+                                                    <i class="fas fa-building text-success"></i>
+                                                    <div>
+                                                        <strong>Verificar Empresas</strong>
+                                                        <small>Aprovar empresas parceiras</small>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="@Url.Action("Reviews", "Admin")">
+                                                    <i class="fas fa-star text-warning"></i>
+                                                    <div>
+                                                        <strong>Moderar Avaliações</strong>
+                                                        <small>Gerenciar comentários</small>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="@Url.Action("Reports", "Admin")">
+                                                    <i class="fas fa-chart-bar text-purple"></i>
+                                                    <div>
+                                                        <strong>Relatórios</strong>
+                                                        <small>Analytics e métricas</small>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <a class="dropdown-item" href="@Url.Action("Settings", "Admin")">
+                                                    <i class="fas fa-cog text-secondary"></i>
+                                                    <div>
+                                                        <strong>Configurações</strong>
+                                                        <small>Configurar sistema</small>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                }
                             }
                             else if (isClient)
                             {
-                                <!-- Menu especÃ­fico para CLIENTES -->
+                                <!-- Menu específico para CLIENTES - Nova organização -->
                                 <li class="nav-item">
                                     <a class="nav-link nav-link-enhanced @(currentController == "Home" && currentAction == "SearchCompanies" ? "active" : string.Empty)" asp-controller="Home" asp-action="SearchCompanies">
                                         <i class="fas fa-search me-2"></i>
@@ -200,21 +259,21 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link nav-link-enhanced @(currentAction == "Dashboard" ? "active" : string.Empty)" asp-controller="Home" asp-action="Dashboard">
-                                        <i class="fas fa-tachometer-alt me-2"></i>
-                                        <span>Painel</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
                                     <a class="nav-link nav-link-enhanced @(currentController == "Quote" && currentAction == "MyQuotes" ? "active" : string.Empty)" asp-controller="Quote" asp-action="MyQuotes">
                                         <i class="fas fa-file-invoice me-2"></i>
-                                        <span>Meus OrÃ§amentos</span>
+                                        <span>Meus Orçamentos</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link nav-link-enhanced @(currentController == "Home" && currentAction == "Simulation" ? "active" : string.Empty)" asp-controller="Home" asp-action="Simulation">
                                         <i class="fas fa-calculator me-2"></i>
                                         <span>Simulador</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-enhanced @(currentAction == "Dashboard" ? "active" : string.Empty)" asp-controller="Home" asp-action="Dashboard">
+                                        <i class="fas fa-tachometer-alt me-2"></i>
+                                        <span>Painel</span>
                                     </a>
                                 </li>
                             }
@@ -226,7 +285,7 @@
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle d-flex align-items-center nav-user-dropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fas fa-user-circle me-2 fs-5"></i>
-                                    <span class="d-none d-lg-inline fw-semibold">@(User.Identity?.Name ?? "UsuÃ¡rio")</span>
+                                    <span class="d-none d-lg-inline fw-semibold">@(User.Identity?.Name ?? "Usuário")</span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-enhanced">
                                     <li>
@@ -256,9 +315,9 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item d-flex align-items-center" href="#">
+                                        <a class="dropdown-item d-flex align-items-center" asp-controller="Home" asp-action="Settings">
                                             <i class="fas fa-cog me-3"></i>
-                                            <span>ConfiguraÃ§Ãµes</span>
+                                            <span>Configurações</span>
                                         </a>
                                     </li>
                                     <li><hr class="dropdown-divider"></li>
@@ -294,7 +353,7 @@
         </nav>
     </header>
     
-    <!-- NotificaÃ§Ãµes -->
+    <!-- Notificações -->
     @if (TempData["SuccessMessage"] != null)
     {
         <div class="alert alert-success alert-dismissible fade show m-3" role="alert">
@@ -335,7 +394,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <h5><i class="fas fa-solar-panel me-2"></i>Solar Energy</h5>
-                    <p class="mb-1">Energia limpa para um futuro sustentÃ¡vel</p>
+                    <p class="mb-1">Energia limpa para um futuro sustentável</p>
                     <p class="text-muted small">&copy; @DateTime.Now.Year - Solar Energy. Todos os direitos reservados.</p>
                 </div>
                 <div class="col-md-6 text-md-end">

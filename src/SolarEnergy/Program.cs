@@ -82,6 +82,7 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         
         // Apply pending migrations and ensure database schema is up-to-date
         await context.Database.MigrateAsync();
@@ -94,6 +95,29 @@ using (var scope = app.Services.CreateScope())
             if (!roleExist)
             {
                 await roleManager.CreateAsync(new IdentityRole(roleName));
+            }
+        }
+
+        // Criar usuário administrador padrão se não existir
+        var adminEmail = "admin@solarenergy.com";
+        var adminUser = await userManager.FindByEmailAsync(adminEmail);
+        if (adminUser == null)
+        {
+            adminUser = new ApplicationUser
+            {
+                UserName = adminEmail,
+                Email = adminEmail,
+                FullName = "Administrador do Sistema",
+                UserType = UserType.Administrator,
+                EmailConfirmed = true,
+                IsActive = true,
+                CreatedAt = DateTime.Now
+            };
+
+            var result = await userManager.CreateAsync(adminUser, "Admin123!@#");
+            if (result.Succeeded)
+            {
+                await userManager.AddToRoleAsync(adminUser, "Administrator");
             }
         }
     }

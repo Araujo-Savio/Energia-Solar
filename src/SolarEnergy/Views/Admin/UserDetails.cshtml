@@ -1,0 +1,357 @@
+@model SolarEnergy.ViewModels.AdminUserDetailsViewModel
+@{
+    ViewData["Title"] = "Detalhes do Usuário";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="admin-user-details">
+    <div class="container-fluid px-4">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h3 mb-0 text-gray-800">
+                    <i class="fas fa-user me-2 text-solar-orange"></i>
+                    Detalhes do Usuário
+                </h1>
+                <p class="mb-0 text-muted">Informações completas de @Model.FullName</p>
+            </div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Dashboard", "Admin")">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="@Url.Action("Users", "Admin")">Usuários</a></li>
+                    <li class="breadcrumb-item active">Detalhes</li>
+                </ol>
+            </nav>
+        </div>
+
+        <div class="row">
+            <!-- Informações pessoais -->
+            <div class="col-xl-8">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-user-circle me-2"></i>Informações Pessoais
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label font-weight-bold text-primary">Nome Completo</label>
+                                    <p class="mb-0">@Model.FullName</p>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label font-weight-bold text-primary">Email</label>
+                                    <p class="mb-0">@Model.Email</p>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label font-weight-bold text-primary">Telefone</label>
+                                    <p class="mb-0">@(Model.Phone ?? "Não informado")</p>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label font-weight-bold text-primary">Localização</label>
+                                    <p class="mb-0">@(Model.Location ?? "Não informado")</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label font-weight-bold text-primary">Tipo de Usuário</label>
+                                    <p class="mb-0">
+                                        @switch (Model.UserType)
+                                        {
+                                            case UserType.Client:
+                                                <span class="badge bg-primary">Cliente</span>
+                                                break;
+                                            case UserType.Company:
+                                                <span class="badge bg-success">Empresa</span>
+                                                break;
+                                            case UserType.Administrator:
+                                                <span class="badge bg-warning">Administrador</span>
+                                                break;
+                                        }
+                                    </p>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label font-weight-bold text-primary">Status</label>
+                                    <p class="mb-0">
+                                        <span class="badge @(Model.IsActive ? "bg-success" : "bg-danger")">
+                                            @(Model.IsActive ? "Ativo" : "Inativo")
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label font-weight-bold text-primary">Data de Cadastro</label>
+                                    <p class="mb-0">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+                                </div>
+                                @if (!string.IsNullOrEmpty(Model.CPF))
+                                {
+                                    <div class="mb-3">
+                                        <label class="form-label font-weight-bold text-primary">CPF</label>
+                                        <p class="mb-0">@Model.CPF</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Informações da empresa (se aplicável) -->
+                @if (Model.UserType == UserType.Company)
+                {
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-success">
+                                <i class="fas fa-building me-2"></i>Informações da Empresa
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label font-weight-bold text-success">Razão Social</label>
+                                        <p class="mb-0">@(Model.CompanyLegalName ?? "Não informado")</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label font-weight-bold text-success">Nome Fantasia</label>
+                                        <p class="mb-0">@(Model.CompanyTradeName ?? "Não informado")</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label font-weight-bold text-success">CNPJ</label>
+                                        <p class="mb-0">@(Model.CNPJ ?? "Não informado")</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label font-weight-bold text-success">Telefone Comercial</label>
+                                        <p class="mb-0">@(Model.CompanyPhone ?? "Não informado")</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label font-weight-bold text-success">Website</label>
+                                        <p class="mb-0">
+                                            @if (!string.IsNullOrEmpty(Model.CompanyWebsite))
+                                            {
+                                                <a href="@Model.CompanyWebsite" target="_blank" rel="noopener">@Model.CompanyWebsite</a>
+                                            }
+                                            else
+                                            {
+                                                <span>Não informado</span>
+                                            }
+                                        </p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label font-weight-bold text-success">Tipo de Serviço</label>
+                                        <p class="mb-0">
+                                            @if (Model.ServiceType.HasValue)
+                                            {
+                                                switch (Model.ServiceType.Value)
+                                                {
+                                                    case SolarServiceType.PanelSales:
+                                                        <span class="badge bg-info">Venda de Painéis</span>
+                                                        break;
+                                                    case SolarServiceType.EnergyRental:
+                                                        <span class="badge bg-warning">Aluguel de Energia</span>
+                                                        break;
+                                                    case SolarServiceType.Both:
+                                                        <span class="badge bg-success">Venda e Aluguel</span>
+                                                        break;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span>Não informado</span>
+                                            }
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model.CompanyDescription))
+                            {
+                                <div class="mb-3">
+                                    <label class="form-label font-weight-bold text-success">Descrição</label>
+                                    <p class="mb-0">@Model.CompanyDescription</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Sidebar com estatísticas e ações -->
+            <div class="col-xl-4">
+                <!-- Ações administrativas -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-tools me-2"></i>Ações Administrativas
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <button type="button" 
+                                    class="btn @(Model.IsActive ? "btn-outline-warning" : "btn-outline-success")"
+                                    onclick="toggleUserStatus('@Model.Id', @Model.IsActive.ToString().ToLower())">
+                                <i class="fas @(Model.IsActive ? "fa-ban" : "fa-check") me-2"></i>
+                                @(Model.IsActive ? "Desativar Usuário" : "Ativar Usuário")
+                            </button>
+
+                            @if (Model.UserType == UserType.Company && !Model.IsActive)
+                            {
+                                <button type="button" 
+                                        class="btn btn-outline-success"
+                                        onclick="verifyCompany('@Model.Id')">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    Verificar Empresa
+                                </button>
+                            }
+
+                            <a href="@Url.Action("Users", "Admin")" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>
+                                Voltar à Lista
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estatísticas (se for empresa) -->
+                @if (Model.UserType == UserType.Company && Model.CompanyStats != null)
+                {
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-success">
+                                <i class="fas fa-chart-bar me-2"></i>Estatísticas da Empresa
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-6 border-end">
+                                    <div class="mb-2">
+                                        <h4 class="mb-1">@Model.CompanyStats.TotalQuotes</h4>
+                                        <small class="text-muted">Orçamentos</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-2">
+                                        <h4 class="mb-1">@Model.CompanyStats.TotalProposals</h4>
+                                        <small class="text-muted">Propostas</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row text-center">
+                                <div class="col-6 border-end">
+                                    <div class="mb-2">
+                                        <h4 class="mb-1">@Model.CompanyStats.TotalReviews</h4>
+                                        <small class="text-muted">Avaliações</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-2">
+                                        <h4 class="mb-1">@Model.CompanyStats.AverageRating.ToString("F1")</h4>
+                                        <small class="text-muted">Nota Média</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <!-- Estatísticas (se for cliente) -->
+                @if (Model.UserType == UserType.Client && Model.ClientStats != null)
+                {
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                <i class="fas fa-chart-bar me-2"></i>Estatísticas do Cliente
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-6 border-end">
+                                    <div class="mb-2">
+                                        <h4 class="mb-1">@Model.ClientStats.TotalQuotes</h4>
+                                        <small class="text-muted">Orçamentos Solicitados</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-2">
+                                        <h4 class="mb-1">@Model.ClientStats.TotalReviews</h4>
+                                        <small class="text-muted">Avaliações Feitas</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script>
+        function toggleUserStatus(userId, isActive) {
+            const action = isActive ? 'desativar' : 'ativar';
+            
+            if (confirm(`Tem certeza que deseja ${action} este usuário?`)) {
+                $.ajax({
+                    url: '@Url.Action("ToggleUserStatus", "Admin")',
+                    type: 'POST',
+                    data: {
+                        id: userId,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert('Erro: ' + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert('Erro ao processar a solicitação');
+                    }
+                });
+            }
+        }
+
+        function verifyCompany(companyId) {
+            if (confirm('Tem certeza que deseja verificar esta empresa? Esta ação ativará a empresa na plataforma.')) {
+                $.ajax({
+                    url: '@Url.Action("VerifyCompany", "Admin")',
+                    type: 'POST',
+                    data: {
+                        id: companyId,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert('Erro: ' + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert('Erro ao processar a solicitação');
+                    }
+                });
+            }
+        }
+    </script>
+}
+
+<style>
+    .admin-user-details .card {
+        border: none;
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15) !important;
+    }
+
+    .form-label {
+        font-size: 0.85rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .border-end {
+        border-right: 1px solid #e3e6f0 !important;
+    }
+</style>

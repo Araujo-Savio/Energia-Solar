@@ -21,8 +21,6 @@ namespace SolarEnergy.Data
         public DbSet<LeadPurchase> LeadPurchases { get; set; }
         public DbSet<LeadConsumption> LeadConsumptions { get; set; }
 
-        public DbSet<TechnicalVisit> TechnicalVisits { get; set; }
-
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -214,55 +212,6 @@ namespace SolarEnergy.Data
                 entity.HasIndex(e => e.QuoteId);
                 entity.HasIndex(e => new { e.CompanyId, e.QuoteId }).IsUnique();
                 entity.HasIndex(e => e.ConsumedAt);
-            });
-
-            builder.Entity<TechnicalVisit>(entity =>
-            {
-                entity.ToTable("TechnicalVisits");
-                entity.HasKey(e => e.Id);
-
-                entity.Property(e => e.CompanyId)
-                    .IsRequired()
-                    .HasMaxLength(450);
-
-                entity.Property(e => e.ClientId)
-                    .IsRequired()
-                    .HasMaxLength(450);
-
-                entity.Property(e => e.ServiceType)
-                    .IsRequired()
-                    .HasMaxLength(60);
-
-                entity.Property(e => e.Address)
-                    .IsRequired()
-                    .HasMaxLength(200);
-
-                entity.Property(e => e.VisitDate)
-                    .HasColumnType("date");
-
-                entity.Property(e => e.VisitTime)
-                    .HasColumnType("time");
-
-                entity.Property(e => e.Status)
-                    .HasConversion<int>();
-
-                entity.Property(e => e.CreatedAt)
-                    .HasDefaultValueSql("GETUTCDATE()");
-
-                entity.HasOne(e => e.Company)
-                    .WithMany()
-                    .HasForeignKey(e => e.CompanyId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
-                entity.HasOne(e => e.Client)
-                    .WithMany()
-                    .HasForeignKey(e => e.ClientId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
-                entity.HasIndex(e => e.CompanyId);
-                entity.HasIndex(e => e.ClientId);
-                entity.HasIndex(e => e.VisitDate);
-                entity.HasIndex(e => e.Status);
             });
         }
     }

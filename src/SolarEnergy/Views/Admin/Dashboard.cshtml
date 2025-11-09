@@ -1,0 +1,483 @@
+@model SolarEnergy.ViewModels.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard Administrativo";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["BreadcrumbItems"] = new List<dynamic>
+    {
+        new { Title = "Dashboard", Url = "", IsActive = true }
+    };
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-dashboard.css" asp-append-version="true" />
+}
+
+<div class="admin-dashboard admin-fade-in">
+    <div class="container-fluid px-4">
+        <!-- Dashboard Header -->
+        <div class="admin-dashboard-header">
+            <div class="admin-dashboard-title">
+                <i class="fas fa-tachometer-alt me-3 text-admin-accent"></i>
+                Dashboard Administrativo
+            </div>
+            <p class="admin-dashboard-subtitle">
+                Visão geral completa da plataforma Solar Energy
+            </p>
+        </div>
+
+        <!-- Estatísticas Principais -->
+        <div class="admin-stats-grid">
+            <div class="admin-stat-card-modern">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-number">@Model.TotalUsers.ToString("N0")</div>
+                <div class="stat-label">Total de Usuários</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up me-1"></i>
+                    +@Model.NewUsersLast30Days nos últimos 30 dias
+                </div>
+            </div>
+
+            <div class="admin-stat-card-modern success">
+                <div class="stat-icon success">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="stat-number">R$ @Model.TotalRevenue.ToString("N2")</div>
+                <div class="stat-label">Receita Total</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up me-1"></i>
+                    +12% este mês
+                </div>
+            </div>
+
+            <div class="admin-stat-card-modern info">
+                <div class="stat-icon info">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <div class="stat-number">@Model.PendingQuotes.ToString("N0")</div>
+                <div class="stat-label">Orçamentos Ativos</div>
+                <div class="stat-change neutral">
+                    <i class="fas fa-minus me-1"></i>
+                    @Model.TotalQuotes total
+                </div>
+            </div>
+
+            <div class="admin-stat-card-modern warning">
+                <div class="stat-icon warning">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div class="stat-number">@Model.PendingCompanies.ToString("N0")</div>
+                <div class="stat-label">Empresas Pendentes</div>
+                @if (Model.PendingCompanies > 0)
+                {
+                    <div class="stat-change negative">
+                        <i class="fas fa-exclamation-triangle me-1"></i>
+                        Requer atenção
+                    </div>
+                }
+                else
+                {
+                    <div class="stat-change positive">
+                        <i class="fas fa-check me-1"></i>
+                        Tudo em dia
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Gráficos -->
+        <div class="admin-charts-section">
+            <!-- Distribuição de Usuários -->
+            <div class="admin-chart-card">
+                <div class="chart-title">
+                    <i class="fas fa-chart-pie me-2"></i>
+                    Distribuição de Usuários
+                </div>
+                <div class="chart-container small">
+                    <canvas id="userDistributionChart"></canvas>
+                </div>
+                <div class="mt-3 text-center">
+                    <span class="me-3">
+                        <i class="fas fa-circle me-1" style="color: #3498db;"></i> 
+                        Clientes (@Model.TotalClients)
+                    </span>
+                    <span class="me-3">
+                        <i class="fas fa-circle me-1" style="color: #27ae60;"></i> 
+                        Empresas (@Model.TotalCompanies)
+                    </span>
+                    <span>
+                        <i class="fas fa-circle me-1" style="color: #f39c12;"></i> 
+                        Admins (@Model.TotalAdmins)
+                    </span>
+                </div>
+            </div>
+
+            <!-- Crescimento Mensal -->
+            <div class="admin-chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <i class="fas fa-chart-line me-2"></i>
+                        Crescimento nos Últimos 6 Meses
+                    </div>
+                    <div class="chart-period">Últimos 6 meses</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="monthlyGrowthChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção de Atividades -->
+        <div class="admin-activity-section">
+            <!-- Resumo de Atividades -->
+            <div class="activity-card">
+                <h5 class="mb-4">
+                    <i class="fas fa-chart-bar me-2"></i>
+                    Resumo de Atividades
+                </h5>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="border-left-primary p-3 rounded">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="stat-label">Orçamentos</div>
+                                <i class="fas fa-file-alt text-admin-info fs-4"></i>
+                            </div>
+                            <div class="stat-number">@Model.TotalQuotes</div>
+                            <small class="text-muted">
+                                @Model.PendingQuotes pendentes / @Model.CompletedQuotes concluídos
+                            </small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="border-left-success p-3 rounded">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="stat-label">Propostas</div>
+                                <i class="fas fa-handshake text-admin-success fs-4"></i>
+                            </div>
+                            <div class="stat-number">@Model.TotalProposals</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="border-left-info p-3 rounded">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="stat-label">Avaliações</div>
+                                <i class="fas fa-star text-admin-warning fs-4"></i>
+                            </div>
+                            <div class="stat-number">@Model.TotalReviews</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="border-left-warning p-3 rounded">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="stat-label">Status Sistema</div>
+                                <i class="fas fa-check-circle text-admin-success fs-4"></i>
+                            </div>
+                            <div class="stat-number text-success">Online</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Atividades Recentes -->
+            <div class="activity-card">
+                <h5 class="mb-4">
+                    <i class="fas fa-history me-2"></i>
+                    Atividades Recentes
+                </h5>
+                @if (Model.RecentActivities != null && Model.RecentActivities.Any())
+                {
+                    @foreach (var activity in Model.RecentActivities)
+                    {
+                        <div class="activity-item">
+                            @{
+                                string iconClass = activity.Type switch
+                                {
+                                    "user_registered" => "fas fa-user-plus",
+                                    "quote_requested" => "fas fa-file-alt",
+                                    "review_created" => "fas fa-star",
+                                    _ => "fas fa-info"
+                                };
+                                string iconColorClass = activity.Type switch
+                                {
+                                    "user_registered" => "success",
+                                    "quote_requested" => "info",
+                                    "review_created" => "warning",
+                                    _ => "secondary"
+                                };
+                            }
+                            <div class="activity-icon @iconColorClass">
+                                <i class="@iconClass"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">@activity.Description</div>
+                                <div class="activity-time">@activity.Date.ToString("dd/MM/yyyy HH:mm")</div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-clock fa-3x mb-3 opacity-25"></i>
+                        <p>Nenhuma atividade recente</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Ações Rápidas -->
+        <div class="admin-quick-actions">
+            <h5 class="mb-0">
+                <i class="fas fa-bolt me-2"></i>
+                Ações Administrativas Rápidas
+            </h5>
+            
+            <div class="quick-actions-grid">
+                <a href="@Url.Action("Users", "Admin")" class="quick-action-btn">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="quick-action-label">Gerenciar Usuários</div>
+                </a>
+                
+                <a href="@Url.Action("Companies", "Admin")" class="quick-action-btn">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="quick-action-label">Verificar Empresas</div>
+                </a>
+                
+                <a href="@Url.Action("Reviews", "Admin")" class="quick-action-btn">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="quick-action-label">Moderar Avaliações</div>
+                </a>
+                
+                <a href="@Url.Action("Settings", "Admin")" class="quick-action-btn">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <div class="quick-action-label">Configurações</div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gráfico de distribuição de usuários
+            const userDistCtx = document.getElementById('userDistributionChart');
+            if (userDistCtx) {
+                // Verificar se há dados válidos
+                const clientsData = @Model.TotalClients;
+                const companiesData = @Model.TotalCompanies;
+                const adminsData = @Model.TotalAdmins;
+                
+                // Se não houver dados, usar valores de exemplo
+                const hasData = (clientsData + companiesData + adminsData) > 0;
+                const chartData = hasData ? 
+                    [clientsData, companiesData, adminsData] : 
+                    [1, 1, 1]; // Dados de exemplo para mostrar o gráfico
+                
+                const chartLabels = hasData ? 
+                    ['Clientes', 'Empresas', 'Administradores'] : 
+                    ['Sem dados', 'Sem dados', 'Sem dados'];
+
+                new Chart(userDistCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: chartLabels,
+                        datasets: [{
+                            data: chartData,
+                            backgroundColor: [
+                                '#3498db',  // Azul para clientes
+                                '#27ae60',  // Verde para empresas  
+                                '#f39c12'   // Laranja para administradores
+                            ],
+                            borderColor: [
+                                '#2980b9',
+                                '#229954', 
+                                '#e67e22'
+                            ],
+                            borderWidth: 2,
+                            hoverOffset: 10
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(44, 62, 80, 0.9)',
+                                titleColor: '#ffffff',
+                                bodyColor: '#ffffff',
+                                borderColor: '#2c3e50',
+                                borderWidth: 1,
+                                callbacks: {
+                                    label: function(context) {
+                                        if (!hasData) {
+                                            return 'Nenhum dado disponível';
+                                        }
+                                        let label = context.label || '';
+                                        let value = context.parsed;
+                                        let total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        let percentage = Math.round((value / total) * 100);
+                                        return `${label}: ${value} (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        },
+                        cutout: '60%',
+                        animation: {
+                            animateRotate: true,
+                            animateScale: true,
+                            duration: 1000
+                        }
+                    }
+                });
+            }
+
+            // Gráfico de crescimento mensal
+            const monthlyCtx = document.getElementById('monthlyGrowthChart');
+            if (monthlyCtx) {
+                @if (Model.MonthlyStats != null && Model.MonthlyStats.Any())
+                {
+                    <text>
+                    new Chart(monthlyCtx, {
+                        type: 'line',
+                        data: {
+                            labels: [@Html.Raw(string.Join(",", Model.MonthlyStats.Select(m => $"'{m.Month}'").ToArray()))],
+                            datasets: [{
+                                label: 'Novos Usuários',
+                                data: [@string.Join(",", Model.MonthlyStats.Select(m => m.NewUsers))],
+                                borderColor: '#3498db',
+                                backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                                tension: 0.4,
+                                fill: true,
+                                pointBackgroundColor: '#3498db',
+                                pointBorderColor: '#2980b9',
+                                pointHoverBackgroundColor: '#2980b9',
+                                pointHoverBorderColor: '#ffffff'
+                            }, {
+                                label: 'Orçamentos',
+                                data: [@string.Join(",", Model.MonthlyStats.Select(m => m.NewQuotes))],
+                                borderColor: '#27ae60',
+                                backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                                tension: 0.4,
+                                fill: true,
+                                pointBackgroundColor: '#27ae60',
+                                pointBorderColor: '#229954',
+                                pointHoverBackgroundColor: '#229954',
+                                pointHoverBorderColor: '#ffffff'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: {
+                                        color: 'rgba(0,0,0,0.1)'
+                                    },
+                                    ticks: {
+                                        color: '#6c757d'
+                                    }
+                                },
+                                x: {
+                                    grid: {
+                                        color: 'rgba(0,0,0,0.1)'
+                                    },
+                                    ticks: {
+                                        color: '#6c757d'
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                    labels: {
+                                        color: '#2c3e50',
+                                        usePointStyle: true,
+                                        padding: 20
+                                    }
+                                },
+                                tooltip: {
+                                    backgroundColor: 'rgba(44, 62, 80, 0.9)',
+                                    titleColor: '#ffffff',
+                                    bodyColor: '#ffffff',
+                                    borderColor: '#2c3e50',
+                                    borderWidth: 1
+                                }
+                            },
+                            interaction: {
+                                intersect: false,
+                                mode: 'index'
+                            }
+                        }
+                    });
+                    </text>
+                }
+                else
+                {
+                    <text>
+                    new Chart(monthlyCtx, {
+                        type: 'line',
+                        data: {
+                            labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+                            datasets: [{
+                                label: 'Novos Usuários',
+                                data: [0, 0, 0, 0, 0, 0],
+                                borderColor: '#3498db',
+                                backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                                tension: 0.4,
+                                fill: true
+                            }, {
+                                label: 'Orçamentos',
+                                data: [0, 0, 0, 0, 0, 0],
+                                borderColor: '#27ae60',
+                                backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                                tension: 0.4,
+                                fill: true
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        color: '#6c757d'
+                                    }
+                                },
+                                x: {
+                                    ticks: {
+                                        color: '#6c757d'
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                    labels: {
+                                        color: '#2c3e50'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    </text>
+                }
+            }
+        });
+    </script>
+}

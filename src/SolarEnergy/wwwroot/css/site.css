@@ -409,7 +409,7 @@ input[type="search"].form-control:focus {
     left: 0;
     right: 0;
     bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="0.5" fill="rgba(255,255,255,0.03)"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" x="0" y="0" width="15" height="15" patternUnits="userSpaceOnUse"><circle cx="7.5" cy="7.5" r="0.8" fill="rgba(255,255,255,0.08)"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
 }
 
 .login-form-container {
@@ -516,7 +516,7 @@ input[type="search"].form-control:focus {
     transform: translateY(-50%);
     background: none;
     border: none;
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--solar-orange);
     cursor: pointer;
     padding: 0.5rem;
     border-radius: 8px;
@@ -1858,86 +1858,123 @@ footer .footer-links a:hover {
 }
 
 /* ========================================
-   Agendamentos - Cards e componentes
+   Contact Page - Social Media Links
    ======================================== */
 
-.schedule-card {
-  border-radius: 18px;
-  overflow: hidden;
-  background: #ffffff;
+.social-links-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    max-width: 100%;
+    margin: 0 auto;
 }
 
-.schedule-card-header {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  color: #ffffff;
-  padding: 1.5rem 2rem;
+.social-link-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    background: transparent;
+    border: 2px solid var(--solar-orange);
+    border-radius: 50%;
+    color: var(--solar-orange);
+    font-size: 1.1rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
 }
 
-.schedule-card-header .icon-wrapper {
-  width: 52px;
-  height: 52px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
+.social-link-btn:hover {
+    background: var(--solar-orange);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+    text-decoration: none;
 }
 
-.schedule-card .form-control,
-.schedule-card .form-select {
-  border-radius: 10px;
-  border-width: 2px;
+.social-link-btn i {
+    font-size: 1rem;
+    line-height: 1;
 }
 
-.schedule-filter .form-label {
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #2563eb !important;
+/* Ensure social links stay within card bounds */
+@media (max-width: 576px) {
+    .social-links-container {
+        gap: 0.5rem;
+    }
+    
+    .social-link-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .social-link-btn i {
+        font-size: 0.9rem;
+    }
 }
 
-.btn-schedule-primary {
-  background-color: #2563eb;
-  border: none;
-  color: #ffffff;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
+/* Contact page general improvements */
+.contact-page .card {
+    overflow: hidden;
+    border-radius: 12px;
+    transition: all 0.3s ease;
 }
 
-.btn-schedule-primary:hover,
-.btn-schedule-primary:focus {
-  background-color: #1d4ed8;
-  color: #ffffff;
-  transform: translateY(-1px);
-  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.25);
+.contact-page .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
 }
 
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.25rem 0.75rem;
-  border-radius: 999px;
-  font-weight: 600;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+.contact-page .card-body {
+    padding: 1.5rem;
+    position: relative;
 }
 
-.status-pending {
-  background: rgba(234, 109, 19, 0.12);
-  color: #ea6d13;
+/* Ensure all content stays within bounds */
+.contact-page .card-body > * {
+    max-width: 100%;
+    word-wrap: break-word;
 }
 
-.status-confirmed {
-  background: rgba(37, 99, 235, 0.12);
-  color: #2563eb;
+.contact-page .card-body h5 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
 }
 
-.status-done {
-  background: rgba(16, 185, 129, 0.15);
-  color: #0f9d58;
+.contact-page .card-body p {
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.contact-page .card-body small {
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+/* Icons styling */
+.contact-page .card-body i.fa-2x {
+    transition: all 0.3s ease;
+}
+
+.contact-page .card:hover .card-body i.fa-2x {
+    transform: scale(1.1);
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .contact-page .card-body {
+        padding: 1.25rem;
+    }
+    
+    .contact-page .card-body i.fa-2x {
+        font-size: 1.75rem !important;
+    }
+    
+    .contact-page .card-body h5 {
+        font-size: 1rem;
+    }
 }
