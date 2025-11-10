@@ -49,11 +49,20 @@ namespace SolarEnergy.ViewModels
             if (VisitTime.HasValue)
             {
                 var min = new TimeSpan(8, 0, 0);
-                var max = new TimeSpan(18, 0, 0);
-                if (VisitTime.Value < min || VisitTime.Value > max)
+                var max = new TimeSpan(17, 0, 0);
+                var value = VisitTime.Value;
+
+                if (value < min || value > max)
                 {
                     yield return new ValidationResult(
-                        "O horário deve estar entre 08:00 e 18:00.",
+                        "O horário deve estar entre 08:00 e 17:00.",
+                        new[] { nameof(VisitTime) });
+                }
+
+                if (value.Seconds != 0 || value.Minutes % 10 != 0 || value.Minutes > 50)
+                {
+                    yield return new ValidationResult(
+                        "Selecione um horário com minutos em 00, 10, 20, 30, 40 ou 50.",
                         new[] { nameof(VisitTime) });
                 }
             }
