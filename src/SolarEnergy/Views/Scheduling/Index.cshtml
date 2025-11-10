@@ -22,7 +22,7 @@
                     </div>
                     <div>
                         <h3 class="mb-1">Agendar Visita Técnica</h3>
-                        <p class="mb-0 text-muted">Defina a empresa, o cliente e o horário para a próxima visita técnica.</p>
+                        <p class="mb-0 text-muted">Defina a empresa e o horário para a próxima visita técnica.</p>
                     </div>
                 </div>
                 <div class="card-body p-4">
@@ -39,17 +39,6 @@
                                 <option value="">Selecione uma empresa</option>
                             </select>
                             <span asp-validation-for="CompanyId" class="text-danger"></span>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label asp-for="ClientId" class="form-label">
-                                @Html.DisplayNameFor(m => m.ClientId)
-                                <span class="text-danger" aria-hidden="true">*</span>
-                            </label>
-                            <select asp-for="ClientId" class="form-select" asp-items="Model.Clients" data-testid="select-client">
-                                <option value="">Selecione um cliente</option>
-                            </select>
-                            <span asp-validation-for="ClientId" class="text-danger"></span>
                         </div>
 
                         <div class="col-md-6">

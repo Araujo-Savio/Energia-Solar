@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -24,10 +25,12 @@ namespace SolarEnergy.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
+            var currentUser = await _userManager.GetUserAsync(User);
+            SetUserContext(currentUser);
+
             var viewModel = new ScheduleVisitViewModel
             {
                 Companies = await GetCompaniesAsync(),
-                Clients = await GetClientsAsync(),
                 VisitDate = DateTime.Today
             };
 
@@ -38,10 +41,24 @@ namespace SolarEnergy.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ScheduleVisitViewModel viewModel)
         {
+            var currentUser = await _userManager.GetUserAsync(User);
+            SetUserContext(currentUser);
+
+            if (currentUser == null)
+            {
+                TempData["ErrorMessage"] = "Não foi possível identificar o usuário autenticado.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (currentUser.UserType != UserType.Client)
+            {
+                TempData["ErrorMessage"] = "Somente clientes podem solicitar agendamentos.";
+                return RedirectToAction(nameof(List));
+            }
+
             if (!ModelState.IsValid)
             {
                 viewModel.Companies = await GetCompaniesAsync();
-                viewModel.Clients = await GetClientsAsync();
                 return View("Index", viewModel);
             }
 
@@ -57,14 +74,13 @@ namespace SolarEnergy.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Já existe um agendamento para esta empresa neste horário.");
                 viewModel.Companies = await GetCompaniesAsync();
-                viewModel.Clients = await GetClientsAsync();
                 return View("Index", viewModel);
             }
 
             var visit = new TechnicalVisit
             {
                 CompanyId = viewModel.CompanyId!,
-                ClientId = viewModel.ClientId!,
+                ClientId = currentUser.Id,
                 ServiceType = viewModel.ServiceType?.Trim() ?? string.Empty,
                 VisitDate = visitDate,
                 VisitTime = visitTime,
@@ -84,6 +100,14 @@ namespace SolarEnergy.Controllers
         [HttpGet]
         public async Task<IActionResult> List(DateTime? visitDate, string? companyId, string? clientId, TechnicalVisitStatus? status, int page = 1)
         {
+            var currentUser = await _userManager.GetUserAsync(User);
+            SetUserContext(currentUser);
+
+            if (currentUser?.UserType == UserType.Client)
+            {
+                clientId = currentUser.Id;
+            }
+
             const int pageSize = 10;
             var query = _context.TechnicalVisits
                 .AsNoTracking()
@@ -135,6 +159,20 @@ namespace SolarEnergy.Controllers
                 })
                 .ToListAsync();
 
+            var clientOptions = currentUser?.UserType == UserType.Client
+                ? new List<SelectListItem>
+                {
+                    new SelectListItem
+                    {
+                        Value = currentUser.Id,
+                        Text = !string.IsNullOrWhiteSpace(currentUser.FullName)
+                            ? currentUser.FullName
+                            : currentUser.Email ?? "Você",
+                        Selected = true
+                    }
+                }
+                : await GetClientsAsync(true);
+
             var viewModel = new TechnicalVisitListViewModel
             {
                 VisitDate = visitDate,
@@ -146,7 +184,7 @@ namespace SolarEnergy.Controllers
                 TotalPages = totalPages,
                 TotalItems = totalItems,
                 CompanyOptions = await GetCompaniesAsync(true),
-                ClientOptions = await GetClientsAsync(true),
+                ClientOptions = clientOptions,
                 StatusOptions = GetStatusOptions()
             };
 
@@ -296,6 +334,14 @@ namespace SolarEnergy.Controllers
             options.Insert(0, new SelectListItem { Value = string.Empty, Text = "Todos" });
 
             return options;
+        }
+
+        private void SetUserContext(ApplicationUser? user)
+        {
+            if (user != null)
+            {
+                ViewData["UserType"] = user.UserType;
+            }
         }
     }
 }

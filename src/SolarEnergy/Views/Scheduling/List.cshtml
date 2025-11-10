@@ -17,6 +17,7 @@
         _ => status.ToString()
     };
     var exibindo = Model.Visits.Count();
+    var userType = ViewData["UserType"] as SolarEnergy.Models.UserType?;
 }
 
 <div class="container py-5">
@@ -47,10 +48,13 @@
                     <label asp-for="CompanyId" class="form-label">@Html.DisplayNameFor(m => m.CompanyId)</label>
                     <select asp-for="CompanyId" class="form-select" asp-items="Model.CompanyOptions"></select>
                 </div>
-                <div class="col-md-3">
-                    <label asp-for="ClientId" class="form-label">@Html.DisplayNameFor(m => m.ClientId)</label>
-                    <select asp-for="ClientId" class="form-select" asp-items="Model.ClientOptions"></select>
-                </div>
+                @if (userType != SolarEnergy.Models.UserType.Client)
+                {
+                    <div class="col-md-3">
+                        <label asp-for="ClientId" class="form-label">@Html.DisplayNameFor(m => m.ClientId)</label>
+                        <select asp-for="ClientId" class="form-select" asp-items="Model.ClientOptions"></select>
+                    </div>
+                }
                 <div class="col-md-2">
                     <label asp-for="Status" class="form-label">@Html.DisplayNameFor(m => m.Status)</label>
                     <select asp-for="Status" class="form-select" asp-items="Model.StatusOptions"></select>

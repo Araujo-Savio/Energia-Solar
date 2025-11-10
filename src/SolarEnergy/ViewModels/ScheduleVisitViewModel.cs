@@ -12,10 +12,6 @@ namespace SolarEnergy.ViewModels
         [Display(Name = "Empresa")]
         public string? CompanyId { get; set; }
 
-        [Required(ErrorMessage = "Selecione o cliente que receberá a visita.")]
-        [Display(Name = "Cliente")]
-        public string? ClientId { get; set; }
-
         [Required(ErrorMessage = "Informe o tipo de serviço.")]
         [StringLength(60, ErrorMessage = "O tipo de serviço pode ter no máximo 60 caracteres.")]
         [Display(Name = "Tipo de Serviço")]
@@ -40,7 +36,6 @@ namespace SolarEnergy.ViewModels
         public string? Notes { get; set; }
 
         public IEnumerable<SelectListItem> Companies { get; set; } = Enumerable.Empty<SelectListItem>();
-        public IEnumerable<SelectListItem> Clients { get; set; } = Enumerable.Empty<SelectListItem>();
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
