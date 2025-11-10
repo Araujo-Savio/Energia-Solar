@@ -148,14 +148,16 @@
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
-                        @for (var page = 1; page <= Model.TotalPages; page++)
+                        @for (var p = 1; p <= Model.TotalPages; p++)
                         {
-                            <li class="page-item @(page == Model.PageNumber ? "active" : string.Empty)">
-                                <a class="page-link" asp-action="List" asp-route-page="@page"
-                                   asp-route-visitDate="@Model.VisitDate?.ToString("yyyy-MM-dd")"
-                                   asp-route-companyId="@Model.CompanyId"
-                                   asp-route-clientId="@Model.ClientId"
-                                   asp-route-status="@Model.Status?.ToString()">@page</a>
+                            <li class="page-item @(p == Model.PageNumber ? "active" : string.Empty)">
+                                <a class="page-link"
+                                   asp-action="List"
+                                   asp-route-page="@(p)"
+                                   asp-route-visitDate="@(Model.VisitDate?.ToString("yyyy-MM-dd"))"
+                                   asp-route-companyId="@(Model.CompanyId)"
+                                   asp-route-clientId="@(Model.ClientId)"
+                                   asp-route-status="@(Model.Status?.ToString())">@p</a>
                             </li>
                         }
                         <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : string.Empty)">

@@ -889,6 +889,3 @@ namespace SolarEnergy.Migrations
         }
     }
 }
-
-    }
-}
