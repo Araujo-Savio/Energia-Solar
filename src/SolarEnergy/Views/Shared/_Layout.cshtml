@@ -61,57 +61,40 @@
                                         <span>Início</span>
                                     </a>
                                 </li>
-                                <li class="nav-item dropdown">
+                                <li class="nav-item dropdown leads-dropdown">
                                     <a class="nav-link dropdown-toggle nav-link-enhanced @(currentController == "Leads" ? "active" : string.Empty)" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="fas fa-coins me-2 text-warning"></i>
                                         <span>Leads</span>
                                     </a>
-                                    <ul class="dropdown-menu dropdown-menu-enhanced">
+                                    <ul class="dropdown-menu dropdown-menu-enhanced leads-dropdown-menu">
                                         <li>
                                             <h6 class="dropdown-header d-flex align-items-center">
                                                 <i class="fas fa-rocket text-primary me-2"></i>
                                                 Sistema de Leads
                                             </h6>
                                         </li>
-                                        <li><hr class="dropdown-divider"></li>
                                         <li>
-                                            <a class="dropdown-item d-flex align-items-center" asp-controller="Leads" asp-action="Purchase">
-                                                <i class="fas fa-shopping-cart text-success me-3"></i>
-                                                <div>
-                                                    <strong>Comprar Leads</strong>
-                                                    <small class="d-block text-muted">Adquira créditos premium</small>
-                                                </div>
+                                            <a class="dropdown-item leads-dropdown-item" asp-controller="Leads" asp-action="Purchase">
+                                                <i class="fas fa-shopping-cart text-success"></i>
+                                                <span>Comprar Leads</span>
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item d-flex align-items-center" asp-controller="Leads" asp-action="Management">
-                                                <i class="fas fa-chart-line text-info me-3"></i>
-                                                <div>
-                                <li class="nav-item">
-                                    <a class="nav-link nav-link-enhanced @(currentController == "Scheduling" ? "active" : string.Empty)" asp-controller="Scheduling" asp-action="List">
-                                        <i class="fas fa-calendar-check me-2"></i>
-                                        <span>Agendamentos</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link nav-link-enhanced @(currentController == "Scheduling" ? "active" : string.Empty)" asp-controller="Scheduling" asp-action="List">
-                                        <i class="fas fa-calendar-check me-2"></i>
-                                        <span>Agendamentos</span>
-                                    </a>
-                                </li>
-                                                    <strong>Central de Inteligência</strong>
-                                                    <small class="d-block text-muted">Analytics e relatórios</small>
-                                                </div>
+                                            <a class="dropdown-item leads-dropdown-item" asp-controller="Leads" asp-action="Management">
+                                                <i class="fas fa-chart-line text-info"></i>
+                                                <span>Central de Inteligência</span>
                                             </a>
                                         </li>
-                                        <li><hr class="dropdown-divider"></li>
                                         <li>
-                                            <a class="dropdown-item d-flex align-items-center" asp-controller="Home" asp-action="Leads">
-                                                <i class="fas fa-users text-primary me-3"></i>
-                                                <div>
-                                                    <strong>Ver Todos os Leads</strong>
-                                                    <small class="d-block text-muted">Gerencie suas solicitações</small>
-                                                </div>
+                                            <a class="dropdown-item leads-dropdown-item" asp-controller="Home" asp-action="Leads">
+                                                <i class="fas fa-users text-primary"></i>
+                                                <span>Ver Todos os Leads</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item leads-dropdown-item" asp-controller="Scheduling" asp-action="List">
+                                                <i class="fas fa-calendar-check text-warning"></i>
+                                                <span>Agendamentos</span>
                                             </a>
                                         </li>
                                     </ul>
