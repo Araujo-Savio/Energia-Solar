@@ -36,6 +36,41 @@ namespace SolarEnergy.ViewModels
         public string? Notes { get; set; }
 
         public IEnumerable<SelectListItem> Companies { get; set; } = Enumerable.Empty<SelectListItem>();
+        public IEnumerable<SelectListItem> VisitTimeOptions { get; set; } = Enumerable.Empty<SelectListItem>();
+
+        public static IEnumerable<SelectListItem> GetVisitTimeOptions(TimeSpan? selectedTime = null)
+        {
+            var options = new List<SelectListItem>
+            {
+                new SelectListItem
+                {
+                    Value = string.Empty,
+                    Text = "Selecione um horário",
+                    Selected = !selectedTime.HasValue
+                }
+            };
+
+            var start = new TimeSpan(8, 0, 0);
+            var end = new TimeSpan(17, 0, 0);
+
+            for (var time = start; time <= end; time = time.Add(TimeSpan.FromMinutes(10)))
+            {
+                if (time != end && time.Minutes > 50)
+                {
+                    continue;
+                }
+
+                var displayValue = time.ToString(@"hh\:mm");
+                options.Add(new SelectListItem
+                {
+                    Value = displayValue,
+                    Text = displayValue,
+                    Selected = selectedTime.HasValue && selectedTime.Value == time
+                });
+            }
+
+            return options;
+        }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

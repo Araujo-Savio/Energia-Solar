@@ -34,6 +34,8 @@ namespace SolarEnergy.Controllers
                 VisitDate = DateTime.Today
             };
 
+            viewModel.VisitTimeOptions = ScheduleVisitViewModel.GetVisitTimeOptions();
+
             return View(viewModel);
         }
 
@@ -59,6 +61,7 @@ namespace SolarEnergy.Controllers
             if (!ModelState.IsValid)
             {
                 viewModel.Companies = await GetCompaniesAsync();
+                viewModel.VisitTimeOptions = ScheduleVisitViewModel.GetVisitTimeOptions(viewModel.VisitTime);
                 return View("Index", viewModel);
             }
 
@@ -74,6 +77,7 @@ namespace SolarEnergy.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Já existe um agendamento para esta empresa neste horário.");
                 viewModel.Companies = await GetCompaniesAsync();
+                viewModel.VisitTimeOptions = ScheduleVisitViewModel.GetVisitTimeOptions(viewModel.VisitTime);
                 return View("Index", viewModel);
             }
 
