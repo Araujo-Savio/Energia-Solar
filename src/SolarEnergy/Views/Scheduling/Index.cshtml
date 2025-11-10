@@ -1,9 +1,18 @@
 @model SolarEnergy.ViewModels.ScheduleVisitViewModel
 @{
-    ViewData["Title"] = "Agendamento de Visita Técnica";
+    ViewData["Title"] = "Agendar Visita Técnica";
 }
 
 <div class="container py-5">
+    <div class="mb-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb small text-muted mb-0">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-decoration-none">Início</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Agendamentos</li>
+            </ol>
+        </nav>
+    </div>
+
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="card shadow-lg border-0 schedule-card">
@@ -13,58 +22,80 @@
                     </div>
                     <div>
                         <h3 class="mb-1">Agendar Visita Técnica</h3>
-                        <p class="mb-0 text-muted">Defina a empresa, cliente e horário para a visita técnica.</p>
+                        <p class="mb-0 text-muted">Defina a empresa, o cliente e o horário para a próxima visita técnica.</p>
                     </div>
                 </div>
                 <div class="card-body p-4">
-                    <form asp-action="Create" method="post" class="row g-4">
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                    <form asp-action="Create" method="post" class="row g-4" data-testid="form-agendamento" data-loading-form>
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert" aria-live="polite"></div>
+
                         <div class="col-md-6">
-                            <label asp-for="CompanyId" class="form-label"></label>
-                            <select asp-for="CompanyId" class="form-select" asp-items="Model.Companies">
+                            <label asp-for="CompanyId" class="form-label">
+                                @Html.DisplayNameFor(m => m.CompanyId)
+                                <span class="text-danger" aria-hidden="true">*</span>
+                            </label>
+                            <select asp-for="CompanyId" class="form-select" asp-items="Model.Companies" data-testid="select-company">
                                 <option value="">Selecione uma empresa</option>
                             </select>
                             <span asp-validation-for="CompanyId" class="text-danger"></span>
                         </div>
+
                         <div class="col-md-6">
-                            <label asp-for="ClientId" class="form-label"></label>
-                            <select asp-for="ClientId" class="form-select" asp-items="Model.Clients">
+                            <label asp-for="ClientId" class="form-label">
+                                @Html.DisplayNameFor(m => m.ClientId)
+                                <span class="text-danger" aria-hidden="true">*</span>
+                            </label>
+                            <select asp-for="ClientId" class="form-select" asp-items="Model.Clients" data-testid="select-client">
                                 <option value="">Selecione um cliente</option>
                             </select>
                             <span asp-validation-for="ClientId" class="text-danger"></span>
                         </div>
+
                         <div class="col-md-6">
-                            <label asp-for="ServiceType" class="form-label"></label>
-                            <input asp-for="ServiceType" class="form-control" placeholder="Ex.: Instalação residencial" />
+                            <label asp-for="ServiceType" class="form-label">
+                                @Html.DisplayNameFor(m => m.ServiceType)
+                                <span class="text-danger" aria-hidden="true">*</span>
+                            </label>
+                            <input asp-for="ServiceType" class="form-control" placeholder="Ex.: Instalação residencial" data-testid="input-servicetype" />
                             <span asp-validation-for="ServiceType" class="text-danger"></span>
                         </div>
+
                         <div class="col-md-3">
-                            <label asp-for="VisitDate" class="form-label"></label>
-                            <input asp-for="VisitDate" class="form-control" type="date" />
+                            <label asp-for="VisitDate" class="form-label">
+                                @Html.DisplayNameFor(m => m.VisitDate)
+                                <span class="text-danger" aria-hidden="true">*</span>
+                            </label>
+                            <input asp-for="VisitDate" class="form-control" type="date" data-testid="input-visitdate" />
                             <span asp-validation-for="VisitDate" class="text-danger"></span>
                         </div>
+
                         <div class="col-md-3">
-                            <label asp-for="VisitTime" class="form-label"></label>
-                            <input asp-for="VisitTime" class="form-control" type="time" />
+                            <label asp-for="VisitTime" class="form-label">
+                                @Html.DisplayNameFor(m => m.VisitTime)
+                                <span class="text-danger" aria-hidden="true">*</span>
+                            </label>
+                            <input asp-for="VisitTime" class="form-control" type="time" data-testid="input-visittime" />
                             <span asp-validation-for="VisitTime" class="text-danger"></span>
                         </div>
+
                         <div class="col-12">
-                            <label asp-for="Address" class="form-label"></label>
-                            <input asp-for="Address" class="form-control" placeholder="Rua, número, bairro, cidade" />
+                            <label asp-for="Address" class="form-label">@Html.DisplayNameFor(m => m.Address)</label>
+                            <input asp-for="Address" class="form-control" placeholder="Rua, número, bairro, cidade" data-testid="input-address" />
                             <span asp-validation-for="Address" class="text-danger"></span>
                         </div>
+
                         <div class="col-12">
-                            <label asp-for="Notes" class="form-label"></label>
-                            <textarea asp-for="Notes" class="form-control" rows="4" placeholder="Observações adicionais (opcional)"></textarea>
+                            <label asp-for="Notes" class="form-label">@Html.DisplayNameFor(m => m.Notes)</label>
+                            <textarea asp-for="Notes" class="form-control" rows="4" placeholder="Observações adicionais (opcional)" data-testid="input-notes"></textarea>
                             <span asp-validation-for="Notes" class="text-danger"></span>
                         </div>
-                        <div class="col-12 d-flex justify-content-between align-items-center pt-3">
-                            <div>
-                                <a asp-action="List" class="btn btn-outline-secondary">
-                                    <i class="fas fa-list me-2"></i>Ver Agendamentos
-                                </a>
-                            </div>
-                            <button type="submit" class="btn btn-solar-orange px-4">
+
+                        <div class="col-12 d-flex flex-column flex-md-row justify-content-between align-items-md-center pt-3 gap-3">
+                            <a asp-action="List" class="btn btn-outline-secondary">
+                                <i class="fas fa-list me-2"></i>Ver Agendamentos
+                            </a>
+                            <button type="submit" class="btn btn-solar-orange px-4" data-testid="btn-salvar" data-loading-text="Agendando...">
                                 <i class="fas fa-paper-plane me-2"></i>Agendar Visita
                             </button>
                         </div>
@@ -77,4 +108,5 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/scheduling.js" asp-append-version="true"></script>
 }

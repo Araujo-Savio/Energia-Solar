@@ -45,14 +45,30 @@ namespace SolarEnergy.Controllers
                 return View("Index", viewModel);
             }
 
+            var visitDate = viewModel.VisitDate!.Value.Date;
+            var visitTime = viewModel.VisitTime!.Value;
+
+            var hasConflict = await _context.TechnicalVisits
+                .AnyAsync(tv => tv.CompanyId == viewModel.CompanyId &&
+                                tv.VisitDate == visitDate &&
+                                tv.VisitTime == visitTime);
+
+            if (hasConflict)
+            {
+                ModelState.AddModelError(string.Empty, "Já existe um agendamento para esta empresa neste horário.");
+                viewModel.Companies = await GetCompaniesAsync();
+                viewModel.Clients = await GetClientsAsync();
+                return View("Index", viewModel);
+            }
+
             var visit = new TechnicalVisit
             {
                 CompanyId = viewModel.CompanyId!,
                 ClientId = viewModel.ClientId!,
-                ServiceType = viewModel.ServiceType!,
-                VisitDate = viewModel.VisitDate!.Value.Date,
-                VisitTime = viewModel.VisitTime!.Value,
-                Address = viewModel.Address!,
+                ServiceType = viewModel.ServiceType?.Trim() ?? string.Empty,
+                VisitDate = visitDate,
+                VisitTime = visitTime,
+                Address = string.IsNullOrWhiteSpace(viewModel.Address) ? null : viewModel.Address.Trim(),
                 Notes = string.IsNullOrWhiteSpace(viewModel.Notes) ? null : viewModel.Notes.Trim(),
                 Status = TechnicalVisitStatus.Pending,
                 CreatedAt = DateTime.UtcNow
@@ -70,6 +86,7 @@ namespace SolarEnergy.Controllers
         {
             const int pageSize = 10;
             var query = _context.TechnicalVisits
+                .AsNoTracking()
                 .Include(tv => tv.Company)
                 .Include(tv => tv.Client)
                 .AsQueryable();
@@ -100,17 +117,17 @@ namespace SolarEnergy.Controllers
             page = Math.Clamp(page, 1, totalPages);
 
             var visits = await query
-                .OrderBy(tv => tv.VisitDate)
-                .ThenBy(tv => tv.VisitTime)
+                .OrderByDescending(tv => tv.VisitDate)
+                .ThenByDescending(tv => tv.VisitTime)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .Select(tv => new TechnicalVisitListItemViewModel
                 {
                     Id = tv.Id,
-                    CompanyName = !string.IsNullOrWhiteSpace(tv.Company.CompanyTradeName)
+                    CompanyName = tv.Company != null && !string.IsNullOrWhiteSpace(tv.Company.CompanyTradeName)
                         ? tv.Company.CompanyTradeName!
-                        : tv.Company.FullName,
-                    ClientName = tv.Client.FullName,
+                        : tv.Company != null ? tv.Company.FullName : string.Empty,
+                    ClientName = tv.Client != null ? tv.Client.FullName : string.Empty,
                     ServiceType = tv.ServiceType,
                     VisitDate = tv.VisitDate,
                     VisitTime = tv.VisitTime,
@@ -136,11 +153,93 @@ namespace SolarEnergy.Controllers
             return View(viewModel);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Confirm(long id)
+        {
+            var visit = await _context.TechnicalVisits.FindAsync(id);
+
+            if (visit == null)
+            {
+                TempData["ErrorMessage"] = "Agendamento não encontrado.";
+                return RedirectToAction(nameof(List));
+            }
+
+            if (visit.Status == TechnicalVisitStatus.Done)
+            {
+                TempData["WarningMessage"] = "Não é possível confirmar uma visita já concluída.";
+                return RedirectToAction(nameof(List));
+            }
+
+            if (visit.Status == TechnicalVisitStatus.Confirmed)
+            {
+                TempData["InfoMessage"] = "O agendamento já está confirmado.";
+                return RedirectToAction(nameof(List));
+            }
+
+            visit.Status = TechnicalVisitStatus.Confirmed;
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Agendamento confirmado com sucesso.";
+            return RedirectToAction(nameof(List));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Done(long id)
+        {
+            var visit = await _context.TechnicalVisits.FindAsync(id);
+
+            if (visit == null)
+            {
+                TempData["ErrorMessage"] = "Agendamento não encontrado.";
+                return RedirectToAction(nameof(List));
+            }
+
+            if (visit.Status == TechnicalVisitStatus.Done)
+            {
+                TempData["InfoMessage"] = "O agendamento já foi concluído.";
+                return RedirectToAction(nameof(List));
+            }
+
+            visit.Status = TechnicalVisitStatus.Done;
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Visita técnica marcada como concluída.";
+            return RedirectToAction(nameof(List));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Cancel(long id)
+        {
+            var visit = await _context.TechnicalVisits.FindAsync(id);
+
+            if (visit == null)
+            {
+                TempData["ErrorMessage"] = "Agendamento não encontrado.";
+                return RedirectToAction(nameof(List));
+            }
+
+            if (visit.Status == TechnicalVisitStatus.Done)
+            {
+                TempData["WarningMessage"] = "Não é possível cancelar uma visita concluída.";
+                return RedirectToAction(nameof(List));
+            }
+
+            visit.Status = TechnicalVisitStatus.Pending;
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Agendamento cancelado e marcado como pendente.";
+            return RedirectToAction(nameof(List));
+        }
+
         private async Task<IEnumerable<SelectListItem>> GetCompaniesAsync(bool includeEmptyOption = false)
         {
             var companies = await _userManager.Users
                 .Where(u => u.UserType == UserType.Company && u.IsActive)
                 .OrderBy(u => u.CompanyTradeName ?? u.FullName)
+                .AsNoTracking()
                 .Select(u => new SelectListItem
                 {
                     Value = u.Id,
@@ -161,6 +260,7 @@ namespace SolarEnergy.Controllers
             var clients = await _userManager.Users
                 .Where(u => u.UserType == UserType.Client && u.IsActive)
                 .OrderBy(u => u.FullName)
+                .AsNoTracking()
                 .Select(u => new SelectListItem
                 {
                     Value = u.Id,

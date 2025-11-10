@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using SolarEnergy.Models;
 using SolarEnergy.Services;
 using SolarEnergy.ViewModels;
-using System.Globalization;
+
+// using SolarEnergy.ViewModels; // remova se não for usado
+using System;
 
 namespace SolarEnergy.Controllers
 {
@@ -13,11 +16,16 @@ namespace SolarEnergy.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IReportService _reportService;
+        private readonly ILogger<ReportsController> _logger;
 
-        public ReportsController(UserManager<ApplicationUser> userManager, IReportService reportService)
+        public ReportsController(
+            UserManager<ApplicationUser> userManager,
+            IReportService reportService,
+            ILogger<ReportsController> logger)
         {
             _userManager = userManager;
             _reportService = reportService;
+            _logger = logger;
         }
 
         public async Task<IActionResult> MonthlyReport(DateTime? month)
@@ -30,7 +38,6 @@ namespace SolarEnergy.Controllers
                 return RedirectToAction("SearchCompanies", "Home");
             }
 
-            // Add UserType to ViewData for navbar display
             ViewData["UserType"] = user.UserType;
 
             var reportMonth = month ?? DateTime.Now;
@@ -40,7 +47,7 @@ namespace SolarEnergy.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ExportReport([FromBody] ReportExportRequest request)
+        public async Task<IActionResult> ExportReport([FromBody] ReportExportRequest? request)
         {
             try
             {
@@ -50,26 +57,29 @@ namespace SolarEnergy.Controllers
                     return BadRequest("Usuário não autorizado para exportar relatórios");
                 }
 
-                if (request == null)
+                if (request is null)
                 {
                     return BadRequest("Dados de requisição inválidos");
                 }
 
-                byte[] reportData = null;
-                
+                byte[]? reportData = null;
+
                 try
                 {
                     reportData = await _reportService.ExportReportAsync(user.Id, request);
                 }
                 catch (Exception ex)
                 {
-                    // Try to generate a simple fallback report
+                    _logger.LogError(ex,
+                        "ExportReportAsync falhou para userId {UserId}, mês {Month}, formato {Format}. Tentando fallback.",
+                        user.Id, request.Month, request.Format);
+
                     try
                     {
                         var report = await _reportService.GenerateMonthlyReportAsync(user.Id, request.Month);
                         var simpleExportService = new SimpleExportService();
-                        
-                        if (request.Format.ToLower() == "pdf")
+
+                        if (string.Equals(request.Format, "pdf", StringComparison.OrdinalIgnoreCase))
                         {
                             reportData = await simpleExportService.ExportToPdfAsync(report);
                         }
@@ -80,35 +90,41 @@ namespace SolarEnergy.Controllers
                     }
                     catch (Exception fallbackEx)
                     {
+                        _logger.LogError(fallbackEx,
+                            "Fallback simples também falhou para userId {UserId}.", user.Id);
                         return BadRequest($"Falha na geração do relatório: {fallbackEx.Message}");
                     }
                 }
-                
-                if (reportData == null || reportData.Length == 0)
+
+                if (reportData is null || reportData.Length == 0)
                 {
                     return BadRequest("Falha na geração do relatório - dados vazios");
                 }
-                
-                var fileName = $"relatorio-{request.Month:yyyy-MM}-{user.CompanyTradeName?.Replace(" ", "-") ?? "empresa"}.{request.Format.ToLower()}";
-                var contentType = request.Format.ToLower() switch
+
+                var ext = (request.Format ?? "pdf").ToLowerInvariant();
+                var fileName =
+                    $"relatorio-{request.Month:yyyy-MM}-{(user.CompanyTradeName ?? "empresa").Replace(" ", "-")}.{ext}";
+
+                var contentType = ext switch
                 {
                     "pdf" => "application/pdf",
                     "csv" => "text/csv; charset=utf-8",
                     _ => "application/octet-stream"
                 };
 
-                // For PDF fallback (HTML), set proper content type
-                if (request.Format.ToLower() == "pdf" && reportData.Length < 10000) // Likely HTML fallback
+                // Se o "PDF" for um HTML de fallback curto, ajusta o content-type e extensão
+                if (string.Equals(ext, "pdf", StringComparison.OrdinalIgnoreCase) && reportData.Length < 10000)
                 {
                     contentType = "text/html; charset=utf-8";
                     fileName = fileName.Replace(".pdf", ".html");
                 }
 
-                Response.Headers.Add("Content-Disposition", $"attachment; filename=\"{fileName}\"");
-                return File(reportData, contentType, fileName);
+                // NÃO adiciona header manualmente (evita ASP0019 e duplicidade)
+                return File(reportData!, contentType, fileName);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro inesperado em ExportReport");
                 return BadRequest($"Erro na exportação: {ex.Message}");
             }
         }
@@ -133,19 +149,21 @@ namespace SolarEnergy.Controllers
                 };
 
                 var reportData = await _reportService.ExportReportAsync(user.Id, request);
-                
-                var fileName = $"relatorio-{month:yyyy-MM}-{user.CompanyTradeName?.Replace(" ", "-") ?? "empresa"}.{format}";
-                var contentType = format.ToLower() switch
-                {
-                    "pdf" => "application/pdf",
-                    "csv" => "text/csv",
-                    _ => "application/octet-stream"
-                };
+
+                var fileName =
+                    $"relatorio-{month:yyyy-MM}-{(user.CompanyTradeName ?? "empresa").Replace(" ", "-")}.{format.ToLowerInvariant()}";
+
+                var contentType = format.Equals("pdf", StringComparison.OrdinalIgnoreCase)
+                    ? "application/pdf"
+                    : format.Equals("csv", StringComparison.OrdinalIgnoreCase)
+                        ? "text/csv; charset=utf-8"
+                        : "application/octet-stream";
 
                 return File(reportData, contentType, fileName);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro em ExportReportGet para {Month}", month);
                 TempData["ErrorMessage"] = $"Erro ao exportar relatório: {ex.Message}";
                 return RedirectToAction("MonthlyReport", new { month });
             }
@@ -167,6 +185,7 @@ namespace SolarEnergy.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao carregar dados mensais para {Month}", month);
                 return Json(new { success = false, message = $"Erro ao carregar dados: {ex.Message}" });
             }
         }
@@ -187,6 +206,7 @@ namespace SolarEnergy.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao obter meses disponíveis");
                 return Json(new { success = false, message = $"Erro: {ex.Message}" });
             }
         }

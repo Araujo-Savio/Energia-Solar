@@ -1,8 +1,7 @@
 @model SolarEnergy.ViewModels.TechnicalVisitListViewModel
 @using SolarEnergy.Models
-@using System.Linq
 @{
-    ViewData["Title"] = "Agendamentos";
+    ViewData["Title"] = "Agendamentos de Visita Técnica";
     string StatusBadge(TechnicalVisitStatus status) => status switch
     {
         TechnicalVisitStatus.Pending => "status-badge status-pending",
@@ -17,147 +16,166 @@
         TechnicalVisitStatus.Done => "Concluída",
         _ => status.ToString()
     };
+    var exibindo = Model.Visits.Count();
 }
 
 <div class="container py-5">
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow-lg border-0 schedule-card">
-                <div class="card-header schedule-card-header d-flex flex-column flex-md-row align-items-md-center justify-content-between">
-                    <div class="d-flex align-items-center mb-3 mb-md-0">
-                        <div class="icon-wrapper me-3">
-                            <i class="fas fa-clipboard-list"></i>
-                        </div>
-                        <div>
-                            <h3 class="mb-1">Agendamentos de Visitas Técnicas</h3>
-                            <p class="mb-0 text-muted">Visualize e filtre todos os agendamentos criados.</p>
-                        </div>
-                    </div>
-                    <a asp-action="Index" class="btn btn-solar-orange">
-                        <i class="fas fa-plus-circle me-2"></i>Novo Agendamento
-                    </a>
-                </div>
-                <div class="card-body p-4">
-                    <form method="get" class="row g-3 schedule-filter mb-4">
-                        <div class="col-md-3">
-                            <label asp-for="VisitDate" class="form-label"></label>
-                            <input asp-for="VisitDate" class="form-control" type="date" />
-                        </div>
-                        <div class="col-md-3">
-                            <label asp-for="CompanyId" class="form-label"></label>
-                            <select asp-for="CompanyId" class="form-select" asp-items="Model.CompanyOptions"></select>
-                        </div>
-                        <div class="col-md-3">
-                            <label asp-for="ClientId" class="form-label"></label>
-                            <select asp-for="ClientId" class="form-select" asp-items="Model.ClientOptions"></select>
-                        </div>
-                        <div class="col-md-2">
-                            <label asp-for="Status" class="form-label"></label>
-                            <select asp-for="Status" class="form-select" asp-items="Model.StatusOptions"></select>
-                        </div>
-                        <div class="col-md-1 d-flex align-items-end">
-                            <button type="submit" class="btn btn-schedule-primary w-100">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
-                    </form>
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb small text-muted mb-1">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-decoration-none">Início</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Agendamentos</li>
+                </ol>
+            </nav>
+            <h2 class="h4 mb-0 text-solar-blue">Agendamentos de Visitas Técnicas</h2>
+            <p class="text-muted small mb-0">Gerencie os agendamentos e acompanhe o status das visitas.</p>
+        </div>
+        <a asp-action="Index" class="btn btn-solar-orange">
+            <i class="fas fa-plus-circle me-2"></i>Novo Agendamento
+        </a>
+    </div>
 
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle">
-                            <thead class="table-light">
+    <div class="card shadow-lg border-0 schedule-card">
+        <div class="card-body p-4">
+            <form method="get" class="row g-3 align-items-end schedule-filter" autocomplete="off">
+                <div class="col-md-3">
+                    <label asp-for="VisitDate" class="form-label">@Html.DisplayNameFor(m => m.VisitDate)</label>
+                    <input asp-for="VisitDate" class="form-control" type="date" />
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="CompanyId" class="form-label">@Html.DisplayNameFor(m => m.CompanyId)</label>
+                    <select asp-for="CompanyId" class="form-select" asp-items="Model.CompanyOptions"></select>
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="ClientId" class="form-label">@Html.DisplayNameFor(m => m.ClientId)</label>
+                    <select asp-for="ClientId" class="form-select" asp-items="Model.ClientOptions"></select>
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="Status" class="form-label">@Html.DisplayNameFor(m => m.Status)</label>
+                    <select asp-for="Status" class="form-select" asp-items="Model.StatusOptions"></select>
+                </div>
+                <div class="col-md-1 d-grid">
+                    <button type="submit" class="btn btn-solar-orange" data-testid="btn-filtrar">
+                        <i class="fas fa-search"></i>
+                        <span class="visually-hidden">Filtrar</span>
+                    </button>
+                </div>
+            </form>
+
+            <div class="table-responsive mt-4">
+                <table class="table table-hover align-middle" data-testid="table-agendamentos">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Empresa</th>
+                            <th>Cliente</th>
+                            <th>Serviço</th>
+                            <th class="text-center">Data</th>
+                            <th class="text-center">Hora</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Visits.Any())
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center py-5 text-muted">
+                                    <i class="fas fa-calendar-times fa-2x mb-3"></i>
+                                    <div>Nenhum agendamento encontrado para os filtros selecionados.</div>
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var visit in Model.Visits)
+                            {
+                                var isPending = visit.Status == TechnicalVisitStatus.Pending;
+                                var isDone = visit.Status == TechnicalVisitStatus.Done;
                                 <tr>
-                                    <th>Empresa</th>
-                                    <th>Cliente</th>
-                                    <th>Serviço</th>
-                                    <th class="text-center">Data</th>
-                                    <th class="text-center">Hora</th>
-                                    <th class="text-center">Status</th>
-                                    <th class="text-center">Ações</th>
+                                    <td>@visit.CompanyName</td>
+                                    <td>@visit.ClientName</td>
+                                    <td>@visit.ServiceType</td>
+                                    <td class="text-center">@visit.VisitDate.ToString("dd/MM/yyyy")</td>
+                                    <td class="text-center">@visit.VisitTime.ToString("hh\\:mm")</td>
+                                    <td class="text-center">
+                                        <span class="@StatusBadge(visit.Status)">@StatusLabel(visit.Status)</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="d-flex justify-content-center gap-2 flex-wrap">
+                                            <form asp-action="Confirm" asp-route-id="@visit.Id" method="post" class="d-inline" data-confirm-form data-confirm-message="Deseja confirmar este agendamento?">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-sm btn-outline-primary" disabled="@(isPending ? null : "disabled")">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span class="d-none d-xl-inline ms-1">Confirmar</span>
+                                                </button>
+                                            </form>
+                                            <form asp-action="Done" asp-route-id="@visit.Id" method="post" class="d-inline" data-confirm-form data-confirm-message="Marcar visita como concluída?">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-sm btn-outline-success" disabled="@(isDone ? "disabled" : null)">
+                                                    <i class="fas fa-flag-checkered"></i>
+                                                    <span class="d-none d-xl-inline ms-1">Concluir</span>
+                                                </button>
+                                            </form>
+                                            <form asp-action="Cancel" asp-route-id="@visit.Id" method="post" class="d-inline" data-confirm-form data-confirm-message="Cancelar este agendamento e retornar para pendente?">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" disabled="@(isDone ? "disabled" : null)">
+                                                    <i class="fas fa-times"></i>
+                                                    <span class="d-none d-xl-inline ms-1">Cancelar</span>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @if (!Model.Visits.Any())
-                                {
-                                    <tr>
-                                        <td colspan="7" class="text-center py-5 text-muted">
-                                            <i class="fas fa-calendar-times fa-2x mb-3"></i>
-                                            <div>Nenhum agendamento encontrado para os filtros selecionados.</div>
-                                        </td>
-                                    </tr>
-                                }
-                                else
-                                {
-                                    foreach (var visit in Model.Visits)
-                                    {
-                                        <tr>
-                                            <td>@visit.CompanyName</td>
-                                            <td>@visit.ClientName</td>
-                                            <td>@visit.ServiceType</td>
-                                            <td class="text-center">@visit.VisitDate.ToString("dd/MM/yyyy")</td>
-                                            <td class="text-center">@visit.VisitTime.ToString("hh\:mm")</td>
-                                            <td class="text-center">
-                                                <span class="@StatusBadge(visit.Status)">@StatusLabel(visit.Status)</span>
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="d-flex justify-content-center gap-2">
-                                                    <button type="button" class="btn btn-sm btn-outline-primary disabled" title="Em breve">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <button type="button" class="btn btn-sm btn-outline-danger disabled" title="Em breve">
-                                                        <i class="fas fa-times"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    }
-                                }
-                            </tbody>
-                        </table>
-                    </div>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
 
-                    <div class="d-flex justify-content-between align-items-center mt-4">
-                        <div class="text-muted">
-                            Exibindo @Model.Visits.Count() de @Model.TotalItems registros
-                        </div>
-                        <nav>
-                            <ul class="pagination mb-0">
-                                <li class="page-item @(Model.PageNumber == 1 ? "disabled" : string.Empty)">
-                                    <a class="page-link" asp-action="List" asp-route-page="@(Model.PageNumber - 1)"
-                                       asp-route-visitDate="@Model.VisitDate?.ToString("yyyy-MM-dd")"
-                                       asp-route-companyId="@Model.CompanyId"
-                                       asp-route-clientId="@Model.ClientId"
-                                       asp-route-status="@Model.Status?.ToString()">
-                                        <span aria-hidden="true">&laquo;</span>
-                                    </a>
-                                </li>
-                                @for (var page = 1; page <= Model.TotalPages; page++)
-                                {
-                                    <li class="page-item @(page == Model.PageNumber ? "active" : string.Empty)">
-                                        <a class="page-link" asp-action="List" asp-route-page="@page"
-                                           asp-route-visitDate="@Model.VisitDate?.ToString("yyyy-MM-dd")"
-                                           asp-route-companyId="@Model.CompanyId"
-                                           asp-route-clientId="@Model.ClientId"
-                                           asp-route-status="@Model.Status?.ToString()">@page</a>
-                                    </li>
-                                }
-                                <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : string.Empty)">
-                                    <a class="page-link" asp-action="List" asp-route-page="@(Model.PageNumber + 1)"
-                                       asp-route-visitDate="@Model.VisitDate?.ToString("yyyy-MM-dd")"
-                                       asp-route-companyId="@Model.CompanyId"
-                                       asp-route-clientId="@Model.ClientId"
-                                       asp-route-status="@Model.Status?.ToString()">
-                                        <span aria-hidden="true">&raquo;</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mt-4 gap-3">
+                <div class="text-muted small">
+                    Exibindo @exibindo de @Model.TotalItems registros
                 </div>
+                <nav aria-label="Paginação de agendamentos">
+                    <ul class="pagination mb-0">
+                        <li class="page-item @(Model.PageNumber == 1 ? "disabled" : string.Empty)">
+                            <a class="page-link" asp-action="List" asp-route-page="@(Model.PageNumber - 1)"
+                               asp-route-visitDate="@Model.VisitDate?.ToString("yyyy-MM-dd")"
+                               asp-route-companyId="@Model.CompanyId"
+                               asp-route-clientId="@Model.ClientId"
+                               asp-route-status="@Model.Status?.ToString()" aria-label="Página anterior">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        @for (var p = 1; p <= Model.TotalPages; p++)
+                        {
+                            <li class="page-item @(p == Model.PageNumber ? "active" : string.Empty)">
+                                <a class="page-link"
+                                   asp-action="List"
+                                   asp-route-page="@(p)"
+                                   asp-route-visitDate="@(Model.VisitDate?.ToString("yyyy-MM-dd"))"
+                                   asp-route-companyId="@(Model.CompanyId)"
+                                   asp-route-clientId="@(Model.ClientId)"
+                                   asp-route-status="@(Model.Status?.ToString())">@p</a>
+                            </li>
+                        }
+                        <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : string.Empty)">
+                            <a class="page-link" asp-action="List" asp-route-page="@(Model.PageNumber + 1)"
+                               asp-route-visitDate="@Model.VisitDate?.ToString("yyyy-MM-dd")"
+                               asp-route-companyId="@Model.CompanyId"
+                               asp-route-clientId="@Model.ClientId"
+                               asp-route-status="@Model.Status?.ToString()" aria-label="Próxima página">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/scheduling.js" asp-append-version="true"></script>
 }
