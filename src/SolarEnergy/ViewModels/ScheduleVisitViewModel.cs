@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using SolarEnergy.Models;
 
 namespace SolarEnergy.ViewModels
 {
@@ -34,6 +35,8 @@ namespace SolarEnergy.ViewModels
         [Display(Name = "Observações")]
         [DataType(DataType.MultilineText)]
         public string? Notes { get; set; }
+
+        public IDictionary<string, SolarServiceType?> CompanyServiceTypes { get; set; } = new Dictionary<string, SolarServiceType?>();
 
         public IEnumerable<SelectListItem> Companies { get; set; } = Enumerable.Empty<SelectListItem>();
         public IEnumerable<SelectListItem> VisitTimeOptions { get; set; } = Enumerable.Empty<SelectListItem>();

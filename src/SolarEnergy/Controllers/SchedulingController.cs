@@ -28,9 +28,12 @@ namespace SolarEnergy.Controllers
             var currentUser = await _userManager.GetUserAsync(User);
             SetUserContext(currentUser);
 
+            var (companyItems, companyServiceTypes) = await GetCompanyOptionsAsync();
+
             var viewModel = new ScheduleVisitViewModel
             {
-                Companies = await GetCompaniesAsync(),
+                Companies = companyItems,
+                CompanyServiceTypes = companyServiceTypes,
                 VisitDate = DateTime.Today
             };
 
@@ -60,7 +63,9 @@ namespace SolarEnergy.Controllers
 
             if (!ModelState.IsValid)
             {
-                viewModel.Companies = await GetCompaniesAsync();
+                var (companyItems, companyServiceTypes) = await GetCompanyOptionsAsync();
+                viewModel.Companies = companyItems;
+                viewModel.CompanyServiceTypes = companyServiceTypes;
                 viewModel.VisitTimeOptions = ScheduleVisitViewModel.GetVisitTimeOptions(viewModel.VisitTime);
                 return View("Index", viewModel);
             }
@@ -76,7 +81,9 @@ namespace SolarEnergy.Controllers
             if (hasConflict)
             {
                 ModelState.AddModelError(string.Empty, "Já existe um agendamento para esta empresa neste horário.");
-                viewModel.Companies = await GetCompaniesAsync();
+                var (companyItems, companyServiceTypes) = await GetCompanyOptionsAsync();
+                viewModel.Companies = companyItems;
+                viewModel.CompanyServiceTypes = companyServiceTypes;
                 viewModel.VisitTimeOptions = ScheduleVisitViewModel.GetVisitTimeOptions(viewModel.VisitTime);
                 return View("Index", viewModel);
             }
@@ -276,25 +283,44 @@ namespace SolarEnergy.Controllers
             return RedirectToAction(nameof(List));
         }
 
-        private async Task<IEnumerable<SelectListItem>> GetCompaniesAsync(bool includeEmptyOption = false)
+        private async Task<(List<SelectListItem> Items, Dictionary<string, SolarServiceType?> ServiceTypes)> GetCompanyOptionsAsync(bool includeEmptyOption = false, string? emptyOptionText = null)
         {
             var companies = await _userManager.Users
                 .Where(u => u.UserType == UserType.Company && u.IsActive)
                 .OrderBy(u => u.CompanyTradeName ?? u.FullName)
                 .AsNoTracking()
-                .Select(u => new SelectListItem
+                .Select(u => new
                 {
-                    Value = u.Id,
-                    Text = !string.IsNullOrWhiteSpace(u.CompanyTradeName) ? u.CompanyTradeName! : u.FullName
+                    u.Id,
+                    Name = !string.IsNullOrWhiteSpace(u.CompanyTradeName) ? u.CompanyTradeName! : u.FullName,
+                    u.ServiceType
                 })
                 .ToListAsync();
 
+            var items = companies
+                .Select(company => new SelectListItem
+                {
+                    Value = company.Id,
+                    Text = company.Name
+                })
+                .ToList();
+
             if (includeEmptyOption)
             {
-                companies.Insert(0, new SelectListItem { Value = string.Empty, Text = "Todas" });
+                emptyOptionText ??= "Selecione uma empresa";
+                items.Insert(0, new SelectListItem { Value = string.Empty, Text = emptyOptionText });
             }
 
-            return companies;
+            var serviceTypes = companies.ToDictionary(company => company.Id, company => company.ServiceType);
+
+            return (items, serviceTypes);
+        }
+
+        private async Task<IEnumerable<SelectListItem>> GetCompaniesAsync(bool includeEmptyOption = false)
+        {
+            var emptyOptionText = includeEmptyOption ? "Todas" : null;
+            var (items, _) = await GetCompanyOptionsAsync(includeEmptyOption, emptyOptionText);
+            return items;
         }
 
         private async Task<IEnumerable<SelectListItem>> GetClientsAsync(bool includeEmptyOption = false)

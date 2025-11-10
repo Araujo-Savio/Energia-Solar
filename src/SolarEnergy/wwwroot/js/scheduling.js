@@ -66,9 +66,110 @@
         });
     }
 
+    function setupServiceTypeOptions() {
+        const companySelect = document.querySelector('[data-testid="select-company"]');
+        const serviceTypeSelect = document.querySelector('[data-testid="input-servicetype"]');
+        const serviceDataElement = document.querySelector('#companyServiceTypesData');
+
+        if (!companySelect || !serviceTypeSelect || !serviceDataElement) {
+            return;
+        }
+
+        let companyServiceTypes = {};
+        try {
+            const rawData = serviceDataElement.dataset.companyServiceTypes;
+            if (rawData) {
+                companyServiceTypes = JSON.parse(rawData);
+            }
+        } catch (error) {
+            console.error('Não foi possível carregar os tipos de serviço das empresas.', error);
+        }
+
+        const serviceOptionSets = {
+            PanelSales: [
+                { value: 'Venda de Painéis Solares', text: 'Venda de Painéis Solares' }
+            ],
+            EnergyRental: [
+                { value: 'Aluguel de Energia Solar', text: 'Aluguel de Energia Solar' }
+            ],
+            Both: [
+                { value: 'Venda de Painéis Solares', text: 'Venda de Painéis Solares' },
+                { value: 'Aluguel de Energia Solar', text: 'Aluguel de Energia Solar' },
+                { value: 'Consultoria', text: 'Consultoria (Venda ou Aluguel)' }
+            ],
+            Default: [
+                { value: 'Venda de Painéis Solares', text: 'Venda de Painéis Solares' },
+                { value: 'Aluguel de Energia Solar', text: 'Aluguel de Energia Solar' }
+            ]
+        };
+
+        const placeholderText = serviceTypeSelect.dataset.placeholder || 'Selecione o tipo de serviço';
+
+        function getOptions(serviceTypeKey) {
+            if (!serviceTypeKey) {
+                return serviceOptionSets.Default;
+            }
+
+            return serviceOptionSets[serviceTypeKey] ?? serviceOptionSets.Default;
+        }
+
+        function renderOptions(companyId, preserveSelection) {
+            serviceTypeSelect.innerHTML = '';
+            const placeholderOption = document.createElement('option');
+            placeholderOption.value = '';
+            placeholderOption.textContent = placeholderText;
+            serviceTypeSelect.appendChild(placeholderOption);
+
+            if (!companyId) {
+                serviceTypeSelect.value = '';
+                serviceTypeSelect.dataset.selectedValue = '';
+                serviceTypeSelect.disabled = true;
+                return;
+            }
+
+            const serviceTypeKey = companyServiceTypes[companyId] || 'Default';
+            const options = getOptions(serviceTypeKey);
+
+            options.forEach(option => {
+                const optionElement = document.createElement('option');
+                optionElement.value = option.value;
+                optionElement.textContent = option.text;
+                serviceTypeSelect.appendChild(optionElement);
+            });
+
+            const selectedValue = preserveSelection ? (serviceTypeSelect.dataset.selectedValue || '') : '';
+
+            if (selectedValue && options.some(option => option.value === selectedValue)) {
+                serviceTypeSelect.value = selectedValue;
+            } else {
+                serviceTypeSelect.value = '';
+                serviceTypeSelect.dataset.selectedValue = '';
+            }
+
+            serviceTypeSelect.disabled = false;
+            serviceTypeSelect.dataset.selectedValue = serviceTypeSelect.value;
+        }
+
+        if (!serviceTypeSelect.dataset.selectedValue) {
+            serviceTypeSelect.dataset.selectedValue = serviceTypeSelect.value || '';
+        }
+
+        renderOptions(companySelect.value, true);
+
+        companySelect.addEventListener('change', () => {
+            serviceTypeSelect.dataset.selectedValue = '';
+            renderOptions(companySelect.value, false);
+        });
+
+        serviceTypeSelect.addEventListener('change', () => {
+            serviceTypeSelect.dataset.selectedValue = serviceTypeSelect.value;
+        });
+    }
+
     ready(() => {
         setupConfirmationDialogs();
         setupLoadingState();
         setupAutoDismissAlerts();
+        setupServiceTypeOptions();
     });
 })();

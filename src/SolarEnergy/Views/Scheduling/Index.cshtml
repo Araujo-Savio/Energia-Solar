@@ -1,6 +1,58 @@
 @model SolarEnergy.ViewModels.ScheduleVisitViewModel
+@using System.Collections.Generic
+@using SolarEnergy.Models
+@using System.Text.Json
+@using System.Text.Json.Serialization
+
+@functions {
+    private static IEnumerable<(string Value, string Text)> GetServiceOptions(SolarServiceType? serviceType)
+    {
+        return serviceType switch
+        {
+            SolarServiceType.PanelSales => new List<(string Value, string Text)>
+            {
+                ("Venda de Painéis Solares", "Venda de Painéis Solares")
+            },
+            SolarServiceType.EnergyRental => new List<(string Value, string Text)>
+            {
+                ("Aluguel de Energia Solar", "Aluguel de Energia Solar")
+            },
+            SolarServiceType.Both => new List<(string Value, string Text)>
+            {
+                ("Venda de Painéis Solares", "Venda de Painéis Solares"),
+                ("Aluguel de Energia Solar", "Aluguel de Energia Solar"),
+                ("Consultoria", "Consultoria (Venda ou Aluguel)")
+            },
+            _ => new List<(string Value, string Text)>
+            {
+                ("Venda de Painéis Solares", "Venda de Painéis Solares"),
+                ("Aluguel de Energia Solar", "Aluguel de Energia Solar")
+            }
+        };
+    }
+}
+
 @{
     ViewData["Title"] = "Agendar Visita Técnica";
+
+    var companyServiceTypes = Model.CompanyServiceTypes ?? new Dictionary<string, SolarServiceType?>();
+    var selectedCompanyId = Model.CompanyId;
+    SolarServiceType? selectedCompanyServiceType = null;
+
+    if (!string.IsNullOrEmpty(selectedCompanyId) && companyServiceTypes.TryGetValue(selectedCompanyId, out var resolvedServiceType))
+    {
+        selectedCompanyServiceType = resolvedServiceType;
+    }
+
+    var initialServiceOptions = GetServiceOptions(selectedCompanyServiceType);
+
+    var jsonOptions = new JsonSerializerOptions
+    {
+        Converters = { new JsonStringEnumConverter() }
+    };
+
+    var companyServiceTypesJson = JsonSerializer.Serialize(companyServiceTypes, jsonOptions);
+    var isCompanySelected = !string.IsNullOrEmpty(selectedCompanyId);
 }
 
 <div class="container py-5">
@@ -28,6 +80,7 @@
                 <div class="card-body p-4">
                     <form asp-action="Create" method="post" class="row g-4" data-testid="form-agendamento" data-loading-form>
                         @Html.AntiForgeryToken()
+                        <div id="companyServiceTypesData" data-company-service-types='@Html.Raw(companyServiceTypesJson)' class="d-none" aria-hidden="true"></div>
                         <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert" aria-live="polite"></div>
 
                         <div class="col-md-6">
@@ -46,7 +99,19 @@
                                 @Html.DisplayNameFor(m => m.ServiceType)
                                 <span class="text-danger" aria-hidden="true">*</span>
                             </label>
-                            <input asp-for="ServiceType" class="form-control" placeholder="Ex.: Instalação residencial" data-testid="input-servicetype" />
+                            <select asp-for="ServiceType"
+                                    class="form-select"
+                                    data-testid="input-servicetype"
+                                    data-placeholder="Selecione o tipo de serviço"
+                                    data-selected-value="@Model.ServiceType"
+                                    @(isCompanySelected ? string.Empty : "disabled")
+                                    required>
+                                <option value="">Selecione o tipo de serviço</option>
+                                @foreach (var option in initialServiceOptions)
+                                {
+                                    <option value="@option.Value" @(Model.ServiceType == option.Value ? "selected" : string.Empty)>@option.Text</option>
+                                }
+                            </select>
                             <span asp-validation-for="ServiceType" class="text-danger"></span>
                         </div>
 
