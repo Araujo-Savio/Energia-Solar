@@ -14,6 +14,9 @@ namespace SolarEnergy.Data
         public DbSet<CompanyReview> CompanyReviews { get; set; }
         public DbSet<Quote> Quotes { get; set; }
         public DbSet<Proposal> Proposals { get; set; }
+        public DbSet<CompanyCostProfile> CompanyCostProfiles { get; set; }
+        public DbSet<CompanyCostItem> CompanyCostItems { get; set; }
+        public DbSet<CompanySystemSizeCost> CompanySystemSizeCosts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -112,6 +115,102 @@ namespace SolarEnergy.Data
                     .WithMany(q => q.Proposals)
                     .HasForeignKey(e => e.QuoteId)
                     .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            builder.Entity<CompanyCostProfile>(entity =>
+            {
+                entity.ToTable("CompanyCostProfiles");
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.CompanyId)
+                    .IsRequired()
+                    .HasMaxLength(450);
+
+                entity.Property(e => e.ProductionPerKilowattPeak)
+                    .HasDefaultValue(140.0);
+
+                entity.Property(e => e.MaintenanceRate)
+                    .HasColumnType("decimal(18,6)")
+                    .HasDefaultValue(0.015m);
+
+                entity.Property(e => e.RentalRatePerKwh)
+                    .HasColumnType("decimal(18,6)")
+                    .HasDefaultValue(0.65m);
+
+                entity.Property(e => e.RentalAnnualIncrease)
+                    .HasColumnType("decimal(18,6)")
+                    .HasDefaultValue(0.03m);
+
+                entity.Property(e => e.CreatedAt)
+                    .HasDefaultValueSql("GETUTCDATE()");
+
+                entity.Property(e => e.UpdatedAt)
+                    .HasDefaultValueSql("GETUTCDATE()");
+
+                entity.HasOne(e => e.Company)
+                    .WithMany()
+                    .HasForeignKey(e => e.CompanyId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(e => e.CompanyId)
+                    .IsUnique();
+            });
+
+            builder.Entity<CompanyCostItem>(entity =>
+            {
+                entity.ToTable("CompanyCostItems");
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(120);
+
+                entity.Property(e => e.Unit)
+                    .HasMaxLength(60);
+
+                entity.Property(e => e.ItemType)
+                    .HasConversion<int>();
+
+                entity.Property(e => e.Cost)
+                    .HasColumnType("decimal(18,2)");
+
+                entity.Property(e => e.Notes)
+                    .HasMaxLength(300);
+
+                entity.Property(e => e.IsActive)
+                    .HasDefaultValue(true);
+
+                entity.HasOne(e => e.Profile)
+                    .WithMany(p => p.CostItems)
+                    .HasForeignKey(e => e.CompanyCostProfileId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            builder.Entity<CompanySystemSizeCost>(entity =>
+            {
+                entity.ToTable("CompanySystemSizeCosts");
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Label)
+                    .IsRequired()
+                    .HasMaxLength(40);
+
+                entity.Property(e => e.SystemSizeKwp)
+                    .HasColumnType("decimal(9,2)");
+
+                entity.Property(e => e.AverageCost)
+                    .HasColumnType("decimal(18,2)");
+
+                entity.Property(e => e.Notes)
+                    .HasMaxLength(200);
+
+                entity.HasOne(e => e.Profile)
+                    .WithMany(p => p.SystemSizeCosts)
+                    .HasForeignKey(e => e.CompanyCostProfileId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(e => new { e.CompanyCostProfileId, e.SystemSizeKwp })
+                    .IsUnique();
             });
         }
     }
