@@ -163,7 +163,7 @@ namespace SolarEnergy.Controllers
         public async Task<IActionResult> Simulation()
         {
             await SetUserTypeInViewData();
-            return View();
+            return RedirectToAction("Index", "Simulation");
         }
 
         [Authorize]
