@@ -1,0 +1,314 @@
+@using System.Globalization
+@using System.Linq
+@using Microsoft.AspNetCore.Mvc.Rendering
+@model SolarEnergy.ViewModels.CompanySimulationInputViewModel
+
+@{
+    ViewData["Title"] = "Simulador";
+
+    var culture = new CultureInfo("pt-BR");
+    Func<double, string> formatCurrency = value => value.ToString("C2", culture);
+    Func<double, string> formatNumber = value => value.ToString("N0", culture);
+    Func<double, string> formatDecimal = value => value.ToString("N1", culture);
+    Func<double, string> formatPercent = value => value.ToString("P1", culture);
+
+    var installationResult = Model.Simulation.InstallationResult;
+    var rentalResult = Model.Simulation.RentalResult;
+    var comparison = Model.Simulation.Comparison;
+    var projection = Model.Simulation.Projection ?? new List<SolarEnergy.ViewModels.EconomyProjectionPoint>();
+    bool hasResults = Model.Simulation.HasResults;
+}
+
+<div class="solar-page economy-simulator">
+    <div class="container-fluid px-4">
+        <div class="solar-page-header d-flex flex-wrap justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="solar-page-title">Simulador de Economia</h1>
+                <p class="solar-page-subtitle mb-0">Compare cenários de instalação própria e aluguel com base em dados reais da empresa.</p>
+            </div>
+            <div class="text-end">
+                <span class="badge bg-status-online mb-2"><i class="fas fa-bolt me-1"></i>Cálculo em tempo real</span>
+                <p class="text-muted small mb-0">Selecione uma empresa, ajuste os parâmetros e gere a projeção detalhada.</p>
+            </div>
+        </div>
+
+        <div class="row g-4 align-items-start">
+            <div class="col-xxl-4 col-lg-5 d-flex flex-column gap-4">
+                <form asp-action="Calculate" method="post" class="solar-card">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h5 class="solar-card-title mb-0">Configurações do simulador</h5>
+                        <span class="badge bg-status-warning text-uppercase small fw-semibold">Entrada</span>
+                    </div>
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                    <div class="mb-4">
+                        <label asp-for="SelectedCompanyId" class="form-label">Empresa analisada</label>
+                        <select asp-for="SelectedCompanyId"
+                                class="form-select"
+                                asp-items="new SelectList(Model.AvailableCompanies, nameof(SolarEnergy.ViewModels.CompanySimulationOptionViewModel.CompanyId), nameof(SolarEnergy.ViewModels.CompanySimulationOptionViewModel.CompanyName), Model.SelectedCompanyId)">
+                            <option value="">Selecione uma empresa</option>
+                        </select>
+                        <span asp-validation-for="SelectedCompanyId" class="text-danger small"></span>
+                    </div>
+
+                    <div class="alert alert-info small" role="status">
+                        <i class="fas fa-info-circle me-2"></i>As configurações abaixo determinam o consumo a ser coberto e o horizonte de análise para cada cenário.
+                    </div>
+
+                    <div class="simulator-section mt-4">
+                        <h6 class="simulator-section-title"><i class="fas fa-solar-panel me-2 text-solar-orange"></i>Instalação própria</h6>
+                        <div class="metrics-grid">
+                            <div>
+                                <label asp-for="Simulation.InstallationInput.MonthlyConsumption" class="form-label"></label>
+                                <input asp-for="Simulation.InstallationInput.MonthlyConsumption" class="form-control" />
+                                <span asp-validation-for="Simulation.InstallationInput.MonthlyConsumption" class="text-danger small"></span>
+                            </div>
+                            <div>
+                                <label asp-for="Simulation.InstallationInput.Coverage" class="form-label"></label>
+                                <input asp-for="Simulation.InstallationInput.Coverage" class="form-control" />
+                                <span asp-validation-for="Simulation.InstallationInput.Coverage" class="text-danger small"></span>
+                            </div>
+                            <div>
+                                <label asp-for="Simulation.InstallationInput.HorizonYears" class="form-label"></label>
+                                <input asp-for="Simulation.InstallationInput.HorizonYears" class="form-control" />
+                                <span asp-validation-for="Simulation.InstallationInput.HorizonYears" class="text-danger small"></span>
+                            </div>
+                            <div>
+                                <label asp-for="Simulation.InstallationInput.EnergyTariff" class="form-label"></label>
+                                <input asp-for="Simulation.InstallationInput.EnergyTariff" class="form-control" />
+                                <span asp-validation-for="Simulation.InstallationInput.EnergyTariff" class="text-danger small"></span>
+                            </div>
+                            <div>
+                                <label asp-for="Simulation.InstallationInput.AnnualTariffIncrease" class="form-label"></label>
+                                <input asp-for="Simulation.InstallationInput.AnnualTariffIncrease" class="form-control" />
+                                <span asp-validation-for="Simulation.InstallationInput.AnnualTariffIncrease" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="simulator-section mt-4">
+                        <h6 class="simulator-section-title"><i class="fas fa-handshake me-2 text-solar-blue"></i>Aluguel de energia</h6>
+                        <div class="metrics-grid">
+                            <div>
+                                <label asp-for="Simulation.RentalInput.MonthlyConsumption" class="form-label"></label>
+                                <input asp-for="Simulation.RentalInput.MonthlyConsumption" class="form-control" />
+                                <span asp-validation-for="Simulation.RentalInput.MonthlyConsumption" class="text-danger small"></span>
+                            </div>
+                            <div>
+                                <label asp-for="Simulation.RentalInput.Coverage" class="form-label"></label>
+                                <input asp-for="Simulation.RentalInput.Coverage" class="form-control" />
+                                <span asp-validation-for="Simulation.RentalInput.Coverage" class="text-danger small"></span>
+                            </div>
+                            <div>
+                                <label asp-for="Simulation.RentalInput.HorizonYears" class="form-label"></label>
+                                <input asp-for="Simulation.RentalInput.HorizonYears" class="form-control" />
+                                <span asp-validation-for="Simulation.RentalInput.HorizonYears" class="text-danger small"></span>
+                            </div>
+                            <div>
+                                <label asp-for="Simulation.RentalInput.EnergyTariff" class="form-label"></label>
+                                <input asp-for="Simulation.RentalInput.EnergyTariff" class="form-control" />
+                                <span asp-validation-for="Simulation.RentalInput.EnergyTariff" class="text-danger small"></span>
+                            </div>
+                            <div>
+                                <label asp-for="Simulation.RentalInput.AnnualTariffIncrease" class="form-label"></label>
+                                <input asp-for="Simulation.RentalInput.AnnualTariffIncrease" class="form-control" />
+                                <span asp-validation-for="Simulation.RentalInput.AnnualTariffIncrease" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-solar-orange w-100 mt-4">
+                        <i class="fas fa-rotate me-2"></i>Calcular projeção
+                    </button>
+                </form>
+
+                @if (Model.CompanyCosts != null)
+                {
+                    var costSummary = Model.CompanyCosts;
+                    <div class="solar-card">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h5 class="solar-card-title mb-0">Perfil de custos da empresa</h5>
+                            <span class="badge bg-status-alert">Dados de referência</span>
+                        </div>
+                        <p class="text-muted small">Utilizamos as métricas cadastradas pela empresa para refinar os valores do simulador.</p>
+                        <dl class="row small mb-0">
+                            <dt class="col-7">Geração por kWp</dt>
+                            <dd class="col-5 text-end fw-semibold">@formatDecimal(costSummary.ProductionPerKilowattPeak) kWh/mês</dd>
+                            <dt class="col-7">Manutenção anual</dt>
+                            <dd class="col-5 text-end fw-semibold">@formatPercent((double)costSummary.MaintenanceRate)</dd>
+                            <dt class="col-7">Tarifa de aluguel</dt>
+                            <dd class="col-5 text-end fw-semibold">@formatCurrency((double)costSummary.RentalRatePerKwh)</dd>
+                            <dt class="col-7">Reajuste aluguel</dt>
+                            <dd class="col-5 text-end fw-semibold">@formatPercent((double)costSummary.RentalAnnualIncrease)</dd>
+                        </dl>
+
+                        @if (costSummary.SystemSizeCosts.Any())
+                        {
+                            <hr />
+                            <p class="text-muted small mb-2">Faixas cadastradas:</p>
+                            <ul class="list-unstyled small mb-0">
+                                @foreach (var tier in costSummary.SystemSizeCosts.OrderBy(c => c.SystemSizeKwp).Take(4))
+                                {
+                                    <li class="d-flex justify-content-between">
+                                        <span>@tier.Label (@tier.SystemSizeKwp.ToString("N0", culture) kWp)</span>
+                                        <strong>@formatCurrency((double)tier.AverageCost)</strong>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                }
+                else if (Model.AvailableCompanies.Any())
+                {
+                    <div class="solar-card">
+                        <h5 class="solar-card-title">Perfil de custos</h5>
+                        <p class="text-muted small mb-0">Selecione uma empresa com dados cadastrados para visualizar métricas de referência.</p>
+                    </div>
+                }
+            </div>
+
+            <div class="col-xxl-8 col-lg-7">
+                <div class="solar-card h-100 d-flex flex-column">
+                    <div class="d-flex flex-wrap justify-content-between align-items-start mb-3">
+                        <div>
+                            <h5 class="solar-card-title mb-1">Resultado da simulação</h5>
+                            <p class="text-muted small mb-0">Os indicadores são atualizados sempre que um novo cálculo é realizado.</p>
+                        </div>
+                        <span class="badge @(hasResults ? "bg-status-online" : "bg-status-warning")">@(hasResults ? "Resultados disponíveis" : "Aguardando cálculo")</span>
+                    </div>
+
+                    @if (!hasResults)
+                    {
+                        <div class="alert alert-secondary" role="status">
+                            <i class="fas fa-info-circle me-2"></i>Informe os parâmetros e clique em <strong>Calcular projeção</strong> para visualizar o comparativo.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="simulator-summary">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div>
+                                            <h6 class="mb-1">Instalação própria</h6>
+                                            <span class="text-muted small">Sistema @formatDecimal(installationResult.SystemSizeKw) kWp</span>
+                                        </div>
+                                        <span class="badge bg-status-online">Economia projetada</span>
+                                    </div>
+                                    <ul class="simulator-summary-grid mb-3">
+                                        <li>
+                                            <span class="label">Investimento inicial</span>
+                                            <strong class="value">@formatCurrency(installationResult.Investment)</strong>
+                                        </li>
+                                        <li>
+                                            <span class="label">Economia total</span>
+                                            <strong class="value text-success">@formatCurrency(installationResult.TotalNetSavings)</strong>
+                                        </li>
+                                        <li>
+                                            <span class="label">Ganho líquido</span>
+                                            <strong class="value text-solar-blue">@formatCurrency(installationResult.NetGain)</strong>
+                                        </li>
+                                        <li>
+                                            <span class="label">Economia anual</span>
+                                            <strong class="value">@formatCurrency(installationResult.AnnualNetSavings)</strong>
+                                        </li>
+                                        <li>
+                                            <span class="label">Economia mensal (último ano)</span>
+                                            <strong class="value">@formatCurrency(installationResult.LastYearMonthlyNetSavings)</strong>
+                                        </li>
+                                        <li>
+                                            <span class="label">Payback estimado</span>
+                                            <strong class="value">@(double.IsNaN(installationResult.PaybackYears) ? "-" : installationResult.PaybackYears.ToString("N1", culture) + " anos")</strong>
+                                        </li>
+                                    </ul>
+                                    <p class="text-muted small mb-0">Offset de emissões: @formatDecimal(installationResult.EmissionOffsetTons) tCO₂ no período analisado.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="simulator-summary">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div>
+                                            <h6 class="mb-1">Aluguel de energia</h6>
+                                            <span class="text-muted small">Cobertura de @rentalResult.Coverage% da conta</span>
+                                        </div>
+                                        <span class="badge bg-status-warning">Contrato recorrente</span>
+                                    </div>
+                                    <ul class="simulator-summary-grid mb-3">
+                                        <li>
+                                            <span class="label">Custo total do aluguel</span>
+                                            <strong class="value">@formatCurrency(rentalResult.TotalScenarioCosts)</strong>
+                                        </li>
+                                        <li>
+                                            <span class="label">Economia total</span>
+                                            <strong class="value text-success">@formatCurrency(rentalResult.TotalNetSavings)</strong>
+                                        </li>
+                                        <li>
+                                            <span class="label">Economia anual</span>
+                                            <strong class="value">@formatCurrency(rentalResult.AnnualNetSavings)</strong>
+                                        </li>
+                                        <li>
+                                            <span class="label">Economia mensal (último ano)</span>
+                                            <strong class="value">@formatCurrency(rentalResult.LastYearMonthlyNetSavings)</strong>
+                                        </li>
+                                        <li>
+                                            <span class="label">Custo mensal do contrato</span>
+                                            <strong class="value">@formatCurrency(rentalResult.MonthlyCost)</strong>
+                                        </li>
+                                        <li>
+                                            <span class="label">Emissões evitadas</span>
+                                            <strong class="value">@formatDecimal(rentalResult.EmissionOffsetTons) tCO₂</strong>
+                                        </li>
+                                    </ul>
+                                    <p class="text-muted small mb-0">O aluguel mantém investimento inicial zero, mas reduz o ganho líquido acumulado.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if (comparison != null)
+                        {
+                            <hr class="my-4" />
+                            <div class="row g-4 align-items-center">
+                                <div class="col-lg-5">
+                                    <div class="simulator-card-body">
+                                        <h6 class="text-uppercase text-muted small mb-2">Resumo comparativo</h6>
+                                        <p class="mb-2"><strong>Diferença de ganho:</strong> @formatCurrency(comparison.Difference)</p>
+                                        <p class="mb-2"><strong>Sugestão:</strong> @comparison.SuggestedOption</p>
+                                        <p class="mb-0 text-muted small">Investimento instalação: @formatCurrency(comparison.InstallationInvestment) · Custo aluguel: @formatCurrency(comparison.RentalTotalCosts)</p>
+                                    </div>
+                                </div>
+                                <div class="col-lg-7">
+                                    <div class="table-responsive">
+                                        <table class="table table-sm align-middle mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Ano</th>
+                                                    <th class="text-end">Instalação</th>
+                                                    <th class="text-end">Aluguel</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var point in projection)
+                                                {
+                                                    <tr>
+                                                        <td>@point.Year</td>
+                                                        <td class="text-end">@formatCurrency(point.InstallationCumulative)</td>
+                                                        <td class="text-end">@formatCurrency(point.RentalCumulative)</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

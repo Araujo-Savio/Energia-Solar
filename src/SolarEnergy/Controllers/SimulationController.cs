@@ -31,6 +31,8 @@ namespace SolarEnergy.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(string? companyId = null)
         {
+            await SetUserTypeInViewData();
+
             var model = new CompanySimulationInputViewModel
             {
                 AvailableCompanies = await LoadCompanyOptionsAsync()
@@ -50,6 +52,8 @@ namespace SolarEnergy.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Calculate(CompanySimulationInputViewModel model)
         {
+            await SetUserTypeInViewData();
+
             model.AvailableCompanies = await LoadCompanyOptionsAsync();
 
             if (!ModelState.IsValid)
@@ -82,6 +86,18 @@ namespace SolarEnergy.Controllers
                     ServiceType = u.ServiceType?.ToString()
                 })
                 .ToListAsync();
+        }
+
+        private async Task SetUserTypeInViewData()
+        {
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user != null)
+                {
+                    ViewData["UserType"] = user.UserType;
+                }
+            }
         }
     }
 }

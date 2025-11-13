@@ -16,22 +16,23 @@
     var currentController = ViewContext.RouteData.Values["Controller"]?.ToString() ?? string.Empty;
     var isAuthenticated = User.Identity?.IsAuthenticated == true;
     
-    // Verificar tipo de usu·rio pelo ViewData
-    var userTypeEnum = ViewData["UserType"] as SolarEnergy.Models.UserType?;
-    var isCompany = userTypeEnum == SolarEnergy.Models.UserType.Company;
+    var isSimulationActive = (currentController == "Home" && currentAction == "Simulation") || currentController == "Simulation";
+                                    <a class="nav-link nav-link-enhanced @(isSimulationActive ? "active" : string.Empty)" asp-controller="Simulation" asp-action="Index">
+                                    <a class="nav-link nav-link-enhanced @(isSimulationActive ? "active" : string.Empty)" asp-controller="Simulation" asp-action="Index">
+                                    <a class="nav-link nav-link-enhanced @(isSimulationActive ? "active" : string.Empty)" asp-controller="Simulation" asp-action="Index">
     var isAdmin = userTypeEnum == SolarEnergy.Models.UserType.Administrator;
     var isClient = userTypeEnum == SolarEnergy.Models.UserType.Client;
 
-    // Active state para InÌcio - ajustar conforme tipo de usu·rio
+    // Active state para In√≠cio - ajustar conforme tipo de usu√°rio
     var isHomeActive = false;
     if (isCompany)
     {
-        // Para empresas: InÌcio est· ativo quando estiver na tela de Leads
+        // Para empresas: In√≠cio est√° ativo quando estiver na tela de Leads
         isHomeActive = (currentController == "Home" && currentAction == "Leads");
     }
     else if (isAdmin)
     {
-        // Para admin: InÌcio est· ativo quando estiver no Index ou AdminDashboard
+        // Para admin: In√≠cio est√° ativo quando estiver no Index ou AdminDashboard
         isHomeActive = (currentController == "Home" && (currentAction == "Index" || currentAction == "AdminDashboard"));
     }
 }
@@ -51,11 +52,11 @@
                         {
                             @if (isCompany)
                             {
-                                <!-- Menu especÌfico para EMPRESAS - Sem Painel, apenas funcionalidades essenciais -->
+                                <!-- Menu espec√≠fico para EMPRESAS - Sem Painel, apenas funcionalidades essenciais -->
                                 <li class="nav-item">
                                     <a class="nav-link nav-link-enhanced @(isHomeActive ? "active" : string.Empty)" asp-controller="Home" asp-action="Leads">
                                         <i class="fas fa-home me-2"></i>
-                                        <span>InÌcio</span>
+                                        <span>In√≠cio</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
@@ -67,23 +68,23 @@
                                 <li class="nav-item">
                                     <a class="nav-link nav-link-enhanced @(currentController == "Home" && currentAction == "Evaluations" ? "active" : string.Empty)" asp-controller="Home" asp-action="Evaluations">
                                         <i class="fas fa-star me-2"></i>
-                                        <span>AvaliaÁıes</span>
+                                        <span>Avalia√ß√µes</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link nav-link-enhanced @(currentController == "Reports" && currentAction == "MonthlyReport" ? "active" : string.Empty)" asp-controller="Reports" asp-action="MonthlyReport">
                                         <i class="fas fa-chart-bar me-2"></i>
-                                        <span>RelatÛrios</span>
+                                        <span>Relat√≥rios</span>
                                     </a>
                                 </li>
                             }
                             else if (isAdmin)
                             {
-                                <!-- Menu especÌfico para ADMINISTRADORES -->
+                                <!-- Menu espec√≠fico para ADMINISTRADORES -->
                                 <li class="nav-item">
                                     <a class="nav-link nav-link-enhanced @(isHomeActive ? "active" : string.Empty)" asp-controller="Home" asp-action="AdminDashboard">
                                         <i class="fas fa-home me-2"></i>
-                                        <span>InÌcio</span>
+                                        <span>In√≠cio</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
@@ -101,7 +102,7 @@
                                 <li class="nav-item">
                                     <a class="nav-link nav-link-enhanced @(currentController == "Quote" && currentAction == "MyQuotes" ? "active" : string.Empty)" asp-controller="Quote" asp-action="MyQuotes">
                                         <i class="fas fa-list me-2"></i>
-                                        <span>Todos os OrÁamentos</span>
+                                        <span>Todos os Or√ßamentos</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
@@ -113,7 +114,7 @@
                                 <li class="nav-item">
                                     <a class="nav-link nav-link-enhanced @(currentController == "Home" && currentAction == "Evaluations" ? "active" : string.Empty)" asp-controller="Home" asp-action="Evaluations">
                                         <i class="fas fa-star me-2"></i>
-                                        <span>AvaliaÁıes</span>
+                                        <span>Avalia√ß√µes</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
@@ -131,7 +132,7 @@
                             }
                             else if (isClient)
                             {
-                                <!-- Menu especÌfico para CLIENTES -->
+                                <!-- Menu espec√≠fico para CLIENTES -->
                                 <li class="nav-item">
                                     <a class="nav-link nav-link-enhanced @(currentController == "Home" && currentAction == "SearchCompanies" ? "active" : string.Empty)" asp-controller="Home" asp-action="SearchCompanies">
                                         <i class="fas fa-search me-2"></i>
@@ -147,7 +148,7 @@
                                 <li class="nav-item">
                                     <a class="nav-link nav-link-enhanced @(currentController == "Quote" && currentAction == "MyQuotes" ? "active" : string.Empty)" asp-controller="Quote" asp-action="MyQuotes">
                                         <i class="fas fa-file-invoice me-2"></i>
-                                        <span>Meus OrÁamentos</span>
+                                        <span>Meus Or√ßamentos</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
@@ -165,7 +166,7 @@
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle d-flex align-items-center nav-user-dropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fas fa-user-circle me-2 fs-5"></i>
-                                    <span class="d-none d-lg-inline fw-semibold">@(User.Identity?.Name ?? "Usu·rio")</span>
+                                    <span class="d-none d-lg-inline fw-semibold">@(User.Identity?.Name ?? "Usu√°rio")</span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-enhanced">
                                     <li>
@@ -197,7 +198,7 @@
                                     <li>
                                         <a class="dropdown-item d-flex align-items-center" href="#">
                                             <i class="fas fa-cog me-3"></i>
-                                            <span>ConfiguraÁıes</span>
+                                            <span>Configura√ß√µes</span>
                                         </a>
                                     </li>
                                     <li><hr class="dropdown-divider"></li>
@@ -233,7 +234,7 @@
         </nav>
     </header>
     
-    <!-- NotificaÁıes -->
+    <!-- Notifica√ß√µes -->
     @if (TempData["SuccessMessage"] != null)
     {
         <div class="alert alert-success alert-dismissible fade show m-3" role="alert">
@@ -274,7 +275,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <h5><i class="fas fa-solar-panel me-2"></i>Solar Energy</h5>
-                    <p class="mb-1">Energia limpa para um futuro sustent·vel</p>
+                    <p class="mb-1">Energia limpa para um futuro sustent√°vel</p>
                     <p class="text-muted small">&copy; @DateTime.Now.Year - Solar Energy. Todos os direitos reservados.</p>
                 </div>
                 <div class="col-md-6 text-md-end">
