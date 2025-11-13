@@ -3,7 +3,6 @@ namespace SolarEnergy.ViewModels
     public class CompanyLeadsViewModel
     {
         public LeadsStatsViewModel Stats { get; set; } = new();
-        public CompanyLeadBalanceInfo LeadBalance { get; set; } = new();
         public List<QuoteLeadViewModel> Quotes { get; set; } = new();
         public Models.SolarServiceType? CompanyServiceType { get; set; }
     }
@@ -31,14 +30,6 @@ namespace SolarEnergy.ViewModels
         public string Status { get; set; } = string.Empty;
         public bool HasProposal { get; set; }
         public int ProposalCount { get; set; }
-        public int UnreadMessagesCount { get; set; }
-        public DateTime? LastMessageDate { get; set; }
-        public string? LastMessage { get; set; }
-        public bool HasAccess { get; set; } = false;
-        public bool CanPurchaseAccess { get; set; } = true;
-
-        // Campos para o chat
-        public bool HasChat => UnreadMessagesCount > 0 || !string.IsNullOrEmpty(LastMessage);
     }
 
     public class QuoteDetailForCompanyViewModel
@@ -56,12 +47,6 @@ namespace SolarEnergy.ViewModels
         public Models.SolarServiceType? CompanyServiceType { get; set; }
         public bool HasProposal { get; set; }
         public List<ProposalViewModel> Proposals { get; set; } = new();
-
-        // Campos para o chat
-        public int UnreadMessagesCount { get; set; }
-        public bool HasChatMessages { get; set; }
-        public bool HasAccess { get; set; } = false;
-        public bool CanPurchaseAccess { get; set; } = true;
     }
 
     public class CompanyResponseViewModel
@@ -69,7 +54,7 @@ namespace SolarEnergy.ViewModels
         public int QuoteId { get; set; }
         public string ResponseType { get; set; } = string.Empty; // "Message" ou "Proposal"
         public string? Message { get; set; }
-
+        
         // Para propostas (venda de painéis)
         public decimal? Value { get; set; }
         public string? Description { get; set; }
@@ -77,14 +62,5 @@ namespace SolarEnergy.ViewModels
         public int? Warranty { get; set; }
         public decimal? EstimatedMonthlySavings { get; set; }
         public DateTime? ValidUntil { get; set; }
-    }
-
-    public class CompanyLeadBalanceInfo
-    {
-        public int AvailableLeads { get; set; }
-        public int ConsumedLeads { get; set; }
-        public int TotalPurchasedLeads { get; set; }
-        public DateTime? LastPurchaseDate { get; set; }
-        public decimal TotalSpent { get; set; }
     }
 }

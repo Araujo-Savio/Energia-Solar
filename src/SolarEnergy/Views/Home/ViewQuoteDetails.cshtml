@@ -63,95 +63,55 @@
                 <div class="col-lg-8">
                     <div class="card border-0 shadow-sm mb-4">
                         <div class="card-header bg-transparent border-0 py-3">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h6 class="text-solar-blue fw-bold mb-0">
-                                    <i class="fas fa-user me-2 text-solar-orange"></i>
-                                    Informações do Cliente
-                                </h6>
-                                @if (!Model.HasAccess)
-                                {
-                                    <span class="badge bg-warning">
-                                        <i class="fas fa-lock me-1"></i>Bloqueado
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-success">
-                                        <i class="fas fa-unlock me-1"></i>Desbloqueado
-                                    </span>
-                                }
-                            </div>
+                            <h5 class="text-solar-blue fw-bold mb-0">
+                                <i class="fas fa-user-circle me-2 text-solar-orange"></i>
+                                Informações do Cliente
+                            </h5>
                         </div>
                         <div class="card-body">
-                            @if (!Model.HasAccess)
-                            {
-                                <div class="alert alert-warning border-0 mb-3">
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-lock fa-2x text-warning me-3"></i>
-                                        <div>
-                                            <h6 class="alert-heading mb-1">Dados do Cliente Protegidos</h6>
-                                            <p class="mb-0">Para acessar as informações completas deste cliente, você precisa desbloquear este lead consumindo 1 crédito.</p>
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <div class="info-card p-3 rounded bg-light border-start border-solar-orange border-4">
+                                        <h6 class="text-solar-blue fw-bold mb-2">
+                                            <i class="fas fa-user me-2"></i>Nome Completo
+                                        </h6>
+                                        <p class="mb-0">@Model.ClientName</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <div class="info-card p-3 rounded bg-light border-start border-solar-orange border-4">
+                                        <h6 class="text-solar-blue fw-bold mb-2">
+                                            <i class="fas fa-envelope me-2"></i>E-mail
+                                        </h6>
+                                        <p class="mb-0">
+                                            <a href="mailto:@Model.ClientEmail" class="text-decoration-none">
+                                                @Model.ClientEmail
+                                            </a>
+                                        </p>
+                                    </div>
+                                </div>
+                                @if (!string.IsNullOrEmpty(Model.ClientPhone))
+                                {
+                                    <div class="col-md-6 mb-4">
+                                        <div class="info-card p-3 rounded bg-light border-start border-solar-orange border-4">
+                                            <h6 class="text-solar-blue fw-bold mb-2">
+                                                <i class="fas fa-phone me-2"></i>Telefone
+                                            </h6>
+                                            <p class="mb-0">
+                                                <a href="tel:@Model.ClientPhone" class="text-decoration-none">
+                                                    @Model.ClientPhone
+                                                </a>
+                                            </p>
                                         </div>
                                     </div>
-                                    
-                                    <hr class="my-3">
-                                    
-                                    @if (Model.CanPurchaseAccess)
-                                    {
-                                        <div class="d-grid">
-                                            <button type="button" class="btn btn-solar-orange" id="unlockLeadBtn" data-quote-id="@Model.QuoteId">
-                                                <i class="fas fa-unlock me-2"></i>
-                                                Desbloquear Lead (1 crédito)
-                                            </button>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <div class="text-center">
-                                            <p class="mb-2"><strong>Você não possui créditos suficientes.</strong></p>
-                                            <a asp-controller="Leads" asp-action="Purchase" class="btn btn-outline-primary">
-                                                <i class="fas fa-shopping-cart me-2"></i>
-                                                Comprar Leads
-                                            </a>
-                                        </div>
-                                    }
-                                </div>
-                            }
-
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <strong class="text-muted d-block">Nome:</strong>
-                                    <span class="fw-semibold">@Model.ClientName</span>
-                                </div>
-                                <div class="col-md-6">
-                                    <strong class="text-muted d-block">Email:</strong>
-                                    <span class="fw-semibold">
-                                        @if (Model.HasAccess && !string.IsNullOrEmpty(Model.ClientEmail))
-                                        {
-                                            <a href="mailto:@Model.ClientEmail" class="text-decoration-none">@Model.ClientEmail</a>
-                                        }
-                                        else
-                                        {
-                                            @Model.ClientEmail
-                                        }
-                                    </span>
-                                </div>
-                                <div class="col-md-6">
-                                    <strong class="text-muted d-block">Telefone:</strong>
-                                    <span class="fw-semibold">
-                                        @if (Model.HasAccess && !string.IsNullOrEmpty(Model.ClientPhone))
-                                        {
-                                            <a href="tel:@Model.ClientPhone" class="text-decoration-none">@Model.ClientPhone</a>
-                                        }
-                                        else
-                                        {
-                                            @Model.ClientPhone
-                                        }
-                                    </span>
-                                </div>
-                                <div class="col-md-6">
-                                    <strong class="text-muted d-block">Localização:</strong>
-                                    <span class="fw-semibold">@Model.ClientLocation</span>
+                                }
+                                <div class="col-md-6 mb-4">
+                                    <div class="info-card p-3 rounded bg-light border-start border-solar-orange border-4">
+                                        <h6 class="text-solar-blue fw-bold mb-2">
+                                            <i class="fas fa-map-marker-alt me-2"></i>Localização
+                                        </h6>
+                                        <p class="mb-0">@Model.ClientLocation</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -273,32 +233,7 @@
                                 </h6>
                             </div>
                             <div class="card-body">
-                                @if (Model.HasChatMessages || Model.UnreadMessagesCount > 0)
-                                {
-                                    @if (Model.HasAccess)
-                                    {
-                                        <div class="d-grid gap-2 mb-3">
-                                            <a asp-controller="Chat" asp-action="Index" asp-route-quoteId="@Model.QuoteId"
-                                               class="btn btn-primary">
-                                                <i class="fas fa-comments me-2"></i>
-                                                Abrir Chat
-                                                @if (Model.UnreadMessagesCount > 0)
-                                                {
-                                                    <span class="badge bg-danger ms-2">@Model.UnreadMessagesCount</span>
-                                                }
-                                            </a>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <div class="alert alert-info border-0 mb-3">
-                                            <i class="fas fa-comments me-2"></i>
-                                            <strong>Chat disponível</strong><br>
-                                            <small>Desbloqueie este lead para acessar o chat com o cliente.</small>
-                                        </div>
-                                    }
-                                }
-                                @if (!Model.HasProposal && Model.HasAccess)
+                                @if (!Model.HasProposal)
                                 {
                                     <div class="d-grid gap-2">
                                         <button type="button" class="btn btn-solar-orange"
@@ -331,20 +266,6 @@
                                         <strong>Proposta enviada!</strong><br>
                                         Aguarde a resposta do cliente.
                                     </div>
-                                    @if (Model.HasChatMessages && Model.HasAccess)
-                                    {
-                                        <div class="d-grid gap-2">
-                                            <a asp-controller="Chat" asp-action="Index" asp-route-quoteId="@Model.QuoteId"
-                                               class="btn btn-primary">
-                                                <i class="fas fa-comments me-2"></i>
-                                                Continuar Conversa
-                                                @if (Model.UnreadMessagesCount > 0)
-                                                {
-                                                    <span class="badge bg-danger ms-2">@Model.UnreadMessagesCount</span>
-                                                }
-                                            </a>
-                                        </div>
-                                    }
                                 }
                             </div>
                         </div>
@@ -466,74 +387,5 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-});
-
-$(document).ready(function() {
-    // Handle unlock lead button
-    $('#unlockLeadBtn').on('click', function() {
-        const quoteId = $(this).data('quote-id');
-        
-        if (!confirm('Deseja consumir 1 lead para acessar os dados completos deste cliente?\n\nEsta ação não pode ser desfeita.')) {
-            return;
-        }
-        
-        // Show loading state
-        const originalText = $(this).html();
-        $(this).html('<i class="fas fa-spinner fa-spin me-2"></i>Desbloqueando...').prop('disabled', true);
-        
-        // Make AJAX request
-        $.ajax({
-            url: '/Leads/ConsumeLead',
-            type: 'POST',
-            data: {
-                quoteId: quoteId,
-                __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-            },
-            success: function(response) {
-                if (response.success) {
-                    // Show success message
-                    showAlert('success', response.message);
-                    
-                    // Reload page to show unlocked content
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1500);
-                } else {
-                    showAlert('error', response.message);
-                    $('#unlockLeadBtn').html(originalText).prop('disabled', false);
-                }
-            },
-            error: function() {
-                showAlert('error', 'Erro ao processar solicitação. Tente novamente.');
-                $('#unlockLeadBtn').html(originalText).prop('disabled', false);
-            }
-        });
-    });
-    
-    function showAlert(type, message) {
-        // Remove existing alerts
-        $('.dynamic-alert').remove();
-        
-        // Create new alert
-        const alertHtml = `
-            <div class="alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show dynamic-alert">
-                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        `;
-        
-        // Insert at top of content
-        $('.row').first().prepend(`<div class="col-12 mb-3">${alertHtml}</div>`);
-        
-        // Auto-remove success alerts
-        if (type === 'success') {
-            setTimeout(() => {
-                $('.dynamic-alert').fadeOut();
-            }, 4000);
-        }
-    }
-    
-    // ... resto do código JavaScript existente ...
 });
 </script>

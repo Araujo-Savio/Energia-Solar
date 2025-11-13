@@ -57,9 +57,6 @@ namespace SolarEnergy.Models
         // Lista de propostas relacionadas a este orçamento
         public virtual ICollection<Proposal> Proposals { get; set; } = new List<Proposal>();
 
-        // Lista de mensagens do chat
-        public virtual ICollection<QuoteMessage> Messages { get; set; } = new List<QuoteMessage>();
-
         // Métodos
         public void UpdateStatus(string newStatus)
         {

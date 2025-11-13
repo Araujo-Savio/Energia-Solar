@@ -159,56 +159,44 @@ namespace SolarEnergy.Controllers
             if (currentUser.UserType == UserType.Administrator)
             {
                 // Administrador vê todos os orçamentos
-                var quotesQuery = await _context.Quotes
+                quotes = await _context.Quotes
                     .Include(q => q.Client)
                     .Include(q => q.Company)
                     .Include(q => q.Proposals)
-                    .Include(q => q.Messages)
                     .OrderByDescending(q => q.RequestDate)
+                    .Select(q => new QuoteListViewModel
+                    {
+                        QuoteId = q.QuoteId,
+                        CompanyName = $"{q.Client.FullName} ? {(q.Company.CompanyTradeName ?? q.Company.CompanyLegalName ?? q.Company.FullName)}",
+                        MonthlyConsumptionKwh = q.MonthlyConsumptionKwh,
+                        ServiceType = q.ServiceType,
+                        RequestDate = q.RequestDate,
+                        Status = q.Status,
+                        HasProposal = q.Proposals.Any(),
+                        ProposalCount = q.Proposals.Count
+                    })
                     .ToListAsync();
-
-                quotes = quotesQuery.Select(q => new QuoteListViewModel
-                {
-                    QuoteId = q.QuoteId,
-                    CompanyName = $"{q.Client.FullName} ? {(q.Company.CompanyTradeName ?? q.Company.CompanyLegalName ?? q.Company.FullName)}",
-                    MonthlyConsumptionKwh = q.MonthlyConsumptionKwh,
-                    ServiceType = q.ServiceType,
-                    RequestDate = q.RequestDate,
-                    Status = q.Status,
-                    HasProposal = q.Proposals.Any(),
-                    ProposalCount = q.Proposals.Count,
-                    CompanyResponseMessage = q.CompanyResponseMessage,
-                    UnreadMessagesCount = q.Messages.Where(m => m.SenderId != currentUser.Id && !m.ReadDate.HasValue).Count(),
-                    LastMessageDate = q.Messages.Any() ? q.Messages.OrderByDescending(m => m.SentDate).First().SentDate : (DateTime?)null,
-                    LastMessage = q.Messages.Any() ? q.Messages.OrderByDescending(m => m.SentDate).First().Message : null
-                }).ToList();
             }
             else
             {
                 // Cliente vê apenas seus orçamentos solicitados
-                var quotesQuery = await _context.Quotes
+                quotes = await _context.Quotes
                     .Include(q => q.Company)
                     .Include(q => q.Proposals)
-                    .Include(q => q.Messages)
                     .Where(q => q.ClientId == currentUser.Id)
                     .OrderByDescending(q => q.RequestDate)
+                    .Select(q => new QuoteListViewModel
+                    {
+                        QuoteId = q.QuoteId,
+                        CompanyName = q.Company.CompanyTradeName ?? q.Company.CompanyLegalName ?? q.Company.FullName,
+                        MonthlyConsumptionKwh = q.MonthlyConsumptionKwh,
+                        ServiceType = q.ServiceType,
+                        RequestDate = q.RequestDate,
+                        Status = q.Status,
+                        HasProposal = q.Proposals.Any(),
+                        ProposalCount = q.Proposals.Count
+                    })
                     .ToListAsync();
-
-                quotes = quotesQuery.Select(q => new QuoteListViewModel
-                {
-                    QuoteId = q.QuoteId,
-                    CompanyName = q.Company.CompanyTradeName ?? q.Company.CompanyLegalName ?? q.Company.FullName,
-                    MonthlyConsumptionKwh = q.MonthlyConsumptionKwh,
-                    ServiceType = q.ServiceType,
-                    RequestDate = q.RequestDate,
-                    Status = q.Status,
-                    HasProposal = q.Proposals.Any(),
-                    ProposalCount = q.Proposals.Count,
-                    CompanyResponseMessage = q.CompanyResponseMessage,
-                    UnreadMessagesCount = q.Messages.Where(m => m.SenderId != currentUser.Id && !m.ReadDate.HasValue).Count(),
-                    LastMessageDate = q.Messages.Any() ? q.Messages.OrderByDescending(m => m.SentDate).First().SentDate : (DateTime?)null,
-                    LastMessage = q.Messages.Any() ? q.Messages.OrderByDescending(m => m.SentDate).First().Message : null
-                }).ToList();
             }
 
             return View(quotes);
@@ -229,7 +217,6 @@ namespace SolarEnergy.Controllers
                 .Include(q => q.Client)
                 .Include(q => q.Company)
                 .Include(q => q.Proposals)
-                .Include(q => q.Messages)
                 .FirstOrDefaultAsync(q => q.QuoteId == id);
 
             if (quote == null)
@@ -260,8 +247,6 @@ namespace SolarEnergy.Controllers
                 Status = quote.Status,
                 CompanyResponseMessage = quote.CompanyResponseMessage,
                 CompanyResponseDate = quote.CompanyResponseDate,
-                UnreadMessagesCount = quote.Messages.Where(m => m.SenderId != currentUser.Id && !m.ReadDate.HasValue).Count(),
-                HasChatMessages = quote.Messages.Any(),
                 Proposals = quote.Proposals.OrderByDescending(p => p.ProposalDate).Select(p => new ProposalViewModel
                 {
                     ProposalId = p.ProposalId,

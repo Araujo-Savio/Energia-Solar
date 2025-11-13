@@ -568,18 +568,6 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="d-grid gap-2">
-                                        @if (Model.HasChatMessages || !string.IsNullOrEmpty(Model.CompanyResponseMessage))
-                                        {
-                                            <a asp-controller="Chat" asp-action="Index" asp-route-quoteId="@Model.QuoteId" 
-                                               class="btn btn-primary">
-                                                <i class="fas fa-comments me-2"></i>
-                                                Abrir Chat
-                                                @if (Model.UnreadMessagesCount > 0)
-                                                {
-                                                    <span class="badge bg-danger ms-2">@Model.UnreadMessagesCount</span>
-                                                }
-                                            </a>
-                                        }
                                         <a asp-controller="Quote" asp-action="MyQuotes" class="btn btn-outline-solar-orange">
                                             <i class="fas fa-list me-2"></i>Todos os Orçamentos
                                         </a>

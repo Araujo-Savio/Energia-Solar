@@ -39,13 +39,6 @@ namespace SolarEnergy.ViewModels
         public string Status { get; set; } = string.Empty;
         public bool HasProposal { get; set; }
         public int ProposalCount { get; set; }
-        
-        // Campos para o chat
-        public int UnreadMessagesCount { get; set; }
-        public DateTime? LastMessageDate { get; set; }
-        public string? LastMessage { get; set; }
-        public bool HasChat => UnreadMessagesCount > 0 || !string.IsNullOrEmpty(LastMessage) || !string.IsNullOrEmpty(CompanyResponseMessage);
-        public string? CompanyResponseMessage { get; set; }
     }
 
     public class QuoteDetailsViewModel
@@ -64,12 +57,6 @@ namespace SolarEnergy.ViewModels
         // Campos para resposta da empresa
         public string? CompanyResponseMessage { get; set; }
         public DateTime? CompanyResponseDate { get; set; }
-        
-        // Campos para o chat
-        public int UnreadMessagesCount { get; set; }
-        public bool HasChatMessages { get; set; }
-        public bool HasAccess { get; set; } = false;
-        public bool CanPurchaseAccess { get; set; } = true;
     }
 
     public class ProposalViewModel

@@ -1,232 +1,190 @@
-@model SolarEnergy.ViewModels.ClientDashboardViewModel
 @{
-    ViewData["Title"] = "Painel do Cliente";
+    ViewData["Title"] = "Dashboard";
 }
 
-@section Styles {
-    <link rel="stylesheet" href="~/css/client-dashboard.css" asp-append-version="true" />
-}
-
-<div class="client-dashboard">
+<div class="bg-light py-5">
     <div class="container">
-        <!-- Header Section -->
-        <div class="dashboard-header">
-            <div class="header-content">
-                <h1 class="dashboard-title">Bem-vindo, @Model.ClientName!</h1>
-                <p class="dashboard-subtitle">Gerencie seus orçamentos de energia solar</p>
+        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+            <div>
+                <h2 class="text-solar-blue fw-bold mb-1">Bem-vindo, @(User.Identity?.Name ?? "Usuário")!</h2>
+                <p class="text-muted mb-0">Gerencie sua energia solar de forma inteligente</p>
             </div>
-        </div>
-
-        <!-- Statistics Cards -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-file-invoice"></i>
-                </div>
-                <div class="stat-content">
-                    <h3 class="stat-number">@Model.Statistics.TotalQuotes</h3>
-                    <p class="stat-label">Orçamentos Solicitados</p>
-                </div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-icon pending">
-                    <i class="fas fa-clock"></i>
-                </div>
-                <div class="stat-content">
-                    <h3 class="stat-number">@Model.Statistics.PendingQuotes</h3>
-                    <p class="stat-label">Pendentes</p>
-                </div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-icon received">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="stat-content">
-                    <h3 class="stat-number">@Model.Statistics.ReceivedQuotes</h3>
-                    <p class="stat-label">Recebidos</p>
-                </div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-icon accepted">
-                    <i class="fas fa-handshake"></i>
-                </div>
-                <div class="stat-content">
-                    <h3 class="stat-number">@Model.Statistics.AcceptedQuotes</h3>
-                    <p class="stat-label">Aceitos</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Main Content Grid -->
-        <div class="dashboard-grid">
-            <!-- Recent Activities -->
-            <div class="dashboard-card activities-card">
-                <div class="card-header">
-                    <h2 class="card-title">
-                        <i class="fas fa-history"></i>
-                        Atividades Recentes
-                    </h2>
-                </div>
-                <div class="card-content">
-                    @if (Model.RecentActivities.Any())
-                    {
-                        <div class="activities-list">
-                            @foreach (var activity in Model.RecentActivities)
-                            {
-                                <div class="activity-item">
-                                    <div class="activity-icon @activity.IconColor">
-                                        <i class="@activity.IconClass"></i>
-                                    </div>
-                                    <div class="activity-content">
-                                        <h4 class="activity-title">@activity.Title</h4>
-                                        <p class="activity-description">@activity.Description</p>
-                                        <span class="activity-time">@activity.GetTimeAgo()</span>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="empty-state">
-                            <i class="fas fa-inbox"></i>
-                            <p class="empty-title">Nenhuma atividade recente</p>
-                            <p class="empty-description">Suas atividades aparecerão aqui</p>
-                        </div>
-                    }
-                </div>
-            </div>
-
-            <!-- Quick Access -->
-            <div class="dashboard-card quick-access-card">
-                <div class="card-header">
-                    <h2 class="card-title">
-                        <i class="fas fa-rocket"></i>
-                        Acesso Rápido
-                    </h2>
-                </div>
-                <div class="card-content">
-                    <div class="quick-actions">
-                        <a href="@Url.Action("Simulation", "Home")" class="quick-action-btn calculator">
-                            <div class="action-icon">
-                                <i class="fas fa-calculator"></i>
-                            </div>
-                            <div class="action-content">
-                                <h4>Simulador</h4>
-                                <p>Calcule economia</p>
-                            </div>
-                        </a>
-                        
-                        <a href="@Url.Action("SearchCompanies", "Home")" class="quick-action-btn search">
-                            <div class="action-icon">
-                                <i class="fas fa-search"></i>
-                            </div>
-                            <div class="action-content">
-                                <h4>Buscar Empresas</h4>
-                                <p>Encontre fornecedores</p>
-                            </div>
-                        </a>
-                        
-                        <a href="@Url.Action("MyQuotes", "Quote")" class="quick-action-btn quotes">
-                            <div class="action-icon">
-                                <i class="fas fa-list"></i>
-                            </div>
-                            <div class="action-content">
-                                <h4>Meus Orçamentos</h4>
-                                <p>Gerenciar solicitações</p>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Recent Quotes Section -->
-        <div class="dashboard-card quotes-card">
-            <div class="card-header">
-                <h2 class="card-title">
-                    <i class="fas fa-file-invoice-dollar"></i>
-                    Orçamentos Recentes
-                </h2>
-                <a href="@Url.Action("MyQuotes", "Quote")" class="view-all-link">
-                    Ver Todos <i class="fas fa-arrow-right"></i>
+            <div class="d-flex flex-wrap gap-2">
+                <a class="btn btn-outline-solar-orange" asp-controller="Home" asp-action="SearchCompanies">
+                    <i class="fas fa-search me-1"></i>Buscar Empresas
+                </a>
+                <a class="btn btn-solar-orange" asp-controller="Home" asp-action="Quotes">
+                    <i class="fas fa-plus me-1"></i>Novo Orçamento
                 </a>
             </div>
-            <div class="card-content">
-                @if (Model.RecentQuotes.Any())
-                {
-                    <div class="quotes-table">
-                        <div class="table-header">
-                            <div class="header-cell">Empresa</div>
-                            <div class="header-cell">Status</div>
-                            <div class="header-cell">Data</div>
-                            <div class="header-cell">Ação</div>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-12 col-md-6 col-xl-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-file-invoice text-solar-orange fa-2x mb-2"></i>
+                        <h4 class="fw-bold text-solar-blue mb-1">5</h4>
+                        <p class="text-muted mb-0 small">Orçamentos Solicitados</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-xl-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-clock text-warning fa-2x mb-2"></i>
+                        <h4 class="fw-bold text-solar-blue mb-1">3</h4>
+                        <p class="text-muted mb-0 small">Pendentes</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-xl-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-check-circle text-success fa-2x mb-2"></i>
+                        <h4 class="fw-bold text-solar-blue mb-1">2</h4>
+                        <p class="text-muted mb-0 small">Recebidos</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-xl-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-coins text-solar-orange fa-2x mb-2"></i>
+                        <h4 class="fw-bold text-solar-blue mb-1">R$ 2.500</h4>
+                        <p class="text-muted mb-0 small">Economia Estimada/mês</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-12 col-lg-8">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white border-bottom">
+                        <h5 class="mb-0 text-solar-blue fw-bold">
+                            <i class="fas fa-history me-2"></i>Atividades Recentes
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="activity-item d-flex align-items-center mb-3 pb-3 border-bottom">
+                            <div class="activity-icon bg-solar-orange text-white rounded-circle d-flex align-items-center justify-content-center me-3">
+                                <i class="fas fa-file-plus"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1 fw-semibold">Novo orçamento solicitado</h6>
+                                <p class="text-muted mb-0 small">Solicitação enviada para SolarTech Solutions</p>
+                                <small class="text-muted">Há 2 horas</small>
+                            </div>
                         </div>
-                        
-                        @foreach (var quote in Model.RecentQuotes)
-                        {
-                            <div class="table-row">
-                                <div class="table-cell company-cell">
-                                    <div class="company-info">
-                                        <h4 class="company-name">@quote.CompanyName</h4>
-                                        @if (quote.UnreadMessagesCount > 0)
-                                        {
-                                            <span class="message-indicator">
-                                                <i class="fas fa-envelope"></i>
-                                                @quote.UnreadMessagesCount nova(s) mensagem(ns)
-                                            </span>
-                                        }
-                                    </div>
-                                </div>
-                                
-                                <div class="table-cell status-cell">
-                                    @if (quote.Status == "Pendente")
-                                    {
-                                        <span class="status-badge pending">Pendente</span>
-                                    }
-                                    else if (quote.Status == "Respondido")
-                                    {
-                                        <span class="status-badge responded">Respondido</span>
-                                    }
-                                    else if (quote.Status == "Aceito")
-                                    {
-                                        <span class="status-badge accepted">Aceito</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="status-badge default">@quote.Status</span>
-                                    }
-                                </div>
-                                
-                                <div class="table-cell date-cell">
-                                    <span class="date">@quote.RequestDate.ToString("dd/MM/yyyy")</span>
-                                </div>
-                                
-                                <div class="table-cell action-cell">
-                                    <a href="@Url.Action("Details", "Quote", new { id = quote.QuoteId })" class="action-btn">
-                                        <i class="fas fa-eye"></i>
-                                        Ver
-                                    </a>
+                        <div class="activity-item d-flex align-items-center mb-3 pb-3 border-bottom">
+                            <div class="activity-icon bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1 fw-semibold">Orçamento recebido</h6>
+                                <p class="text-muted mb-0 small">Proposta de R$ 25.000 da EcoSolar Energia</p>
+                                <small class="text-muted">Ontem</small>
+                            </div>
+                        </div>
+                        <div class="activity-item d-flex align-items-center mb-3">
+                            <div class="activity-icon bg-info text-white rounded-circle d-flex align-items-center justify-content-center me-3">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1 fw-semibold">Avaliação enviada</h6>
+                                <p class="text-muted mb-0 small">Você avaliou a Energia Limpa SP com 5 estrelas</p>
+                                <small class="text-muted">2 dias atrás</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white border-bottom">
+                        <h5 class="mb-0 text-solar-blue fw-bold">
+                            <i class="fas fa-chart-pie me-2"></i>Simulação de Economia
+                        </h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="economy-chart mb-3">
+                            <div class="circular-progress">
+                                <div class="circle-bg"></div>
+                                <div class="circle-progress" style="--progress: 85;"></div>
+                                <div class="circle-content">
+                                    <h3 class="text-solar-orange fw-bold">85%</h3>
+                                    <small class="text-muted">Economia</small>
                                 </div>
                             </div>
-                        }
+                        </div>
+                        <div class="economy-details">
+                            <div class="row text-center">
+                                <div class="col-6">
+                                    <h6 class="text-solar-blue fw-bold mb-1">R$ 450</h6>
+                                    <small class="text-muted">Conta Atual</small>
+                                </div>
+                                <div class="col-6">
+                                    <h6 class="text-success fw-bold mb-1">R$ 68</h6>
+                                    <small class="text-muted">Com Solar</small>
+                                </div>
+                            </div>
+                            <hr class="my-3">
+                            <p class="mb-2"><strong>Economia mensal:</strong> <span class="text-solar-orange fw-bold">R$ 382</span></p>
+                            <p class="mb-0"><strong>Payback:</strong> <span class="text-solar-blue fw-bold">5.2 anos</span></p>
+                        </div>
                     </div>
-                }
-                else
-                {
-                    <div class="empty-state">
-                        <i class="fas fa-file-invoice"></i>
-                        <h3 class="empty-title">Nenhum orçamento solicitado</h3>
-                        <p class="empty-description">Comece buscando empresas e solicitando orçamentos</p>
-                        <a href="@Url.Action("SearchCompanies", "Home")" class="empty-action-btn">
-                            <i class="fas fa-search"></i>
-                            Buscar Empresas
-                        </a>
-                    </div>
-                }
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-bottom">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+                    <h5 class="mb-0 text-solar-blue fw-bold">
+                        <i class="fas fa-file-invoice-dollar me-2"></i>Orçamentos Recentes
+                    </h5>
+                    <a class="btn btn-sm btn-outline-solar-orange" asp-controller="Home" asp-action="Quotes">Ver Todos</a>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Empresa</th>
+                                <th>Valor</th>
+                                <th>Potência</th>
+                                <th>Status</th>
+                                <th>Data</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>SolarTech Solutions</td>
+                                <td>R$ 22.500</td>
+                                <td>6,5 kWp</td>
+                                <td><span class="badge bg-warning text-dark">Em análise</span></td>
+                                <td>12/03/2024</td>
+                            </tr>
+                            <tr>
+                                <td>EcoSolar Energia</td>
+                                <td>R$ 25.000</td>
+                                <td>7,2 kWp</td>
+                                <td><span class="badge bg-success">Aprovado</span></td>
+                                <td>10/03/2024</td>
+                            </tr>
+                            <tr>
+                                <td>Energia Limpa SP</td>
+                                <td>R$ 21.800</td>
+                                <td>6,0 kWp</td>
+                                <td><span class="badge bg-info text-dark">Recebido</span></td>
+                                <td>08/03/2024</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

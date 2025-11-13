@@ -15,18 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="CHAT_DESIGN.md" />
-    <None Remove="CHAT_FIXES.md" />
-    <None Remove="CHAT_IMPLEMENTATION.md" />
-    <None Remove="clear_data.sql" />
-    <None Remove="RELATORIOS_FIXES.md" />
-    <None Remove="REPORTS_DOCUMENTATION.md" />
-    <None Remove="verify_data.sql" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="itext7" Version="9.3.0" />
-    <PackageReference Include="itext7.bouncy-castle-adapter" Version="9.3.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.10">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

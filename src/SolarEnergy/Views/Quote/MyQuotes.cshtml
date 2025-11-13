@@ -93,24 +93,6 @@
                                     </div>
                                 </div>
 
-                                @if (quote.HasChat)
-                                {
-                                    <div class="alert alert-primary border-0 py-2 px-3 mb-3">
-                                        <i class="fas fa-comments me-2"></i>
-                                        <strong>Chat disponível</strong>
-                                        @if (quote.UnreadMessagesCount > 0)
-                                        {
-                                            <span class="badge bg-danger ms-2">@quote.UnreadMessagesCount nova(s)</span>
-                                        }
-                                        @if (quote.LastMessageDate.HasValue)
-                                        {
-                                            <small class="d-block text-primary">
-                                                <i class="fas fa-clock me-1"></i>Última mensagem: @quote.LastMessageDate.Value.ToString("dd/MM HH:mm")
-                                            </small>
-                                        }
-                                    </div>
-                                }
-
                                 @if (quote.HasProposal)
                                 {
                                     <div class="alert alert-success border-0 py-2 px-3 mb-3">
@@ -122,16 +104,6 @@
                                                 <i class="fas fa-star me-1"></i>A empresa respondeu!
                                             </small>
                                         }
-                                    </div>
-                                }
-                                else if (!string.IsNullOrEmpty(quote.CompanyResponseMessage))
-                                {
-                                    <div class="alert alert-info border-0 py-2 px-3 mb-3">
-                                        <i class="fas fa-reply me-2"></i>
-                                        <strong>Empresa respondeu</strong>
-                                        <small class="d-block text-info">
-                                            <i class="fas fa-comment me-1"></i>Mensagem recebida
-                                        </small>
                                     </div>
                                 }
                                 else if (quote.Status == "Pendente")
@@ -170,39 +142,18 @@
                                 }
                             </div>
                             <div class="card-footer bg-transparent border-0 pt-0">
-                                @if (quote.HasChat)
-                                {
-                                    <div class="d-grid gap-2">
-                                        <a asp-controller="Chat" asp-action="Index" asp-route-quoteId="@quote.QuoteId" 
-                                           class="btn btn-primary">
-                                            <i class="fas fa-comments me-2"></i>
-                                            Abrir Chat
-                                            @if (quote.UnreadMessagesCount > 0)
-                                            {
-                                                <span class="badge bg-danger ms-2">@quote.UnreadMessagesCount</span>
-                                            }
-                                        </a>
-                                        <a asp-action="Details" asp-route-id="@quote.QuoteId" 
-                                           class="btn btn-outline-solar-orange">
-                                            <i class="fas fa-eye me-2"></i>Ver Detalhes
-                                        </a>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <a asp-action="Details" asp-route-id="@quote.QuoteId" 
-                                       class="btn btn-solar-orange w-100">
-                                        <i class="fas fa-eye me-2"></i>
-                                        @if (isAdmin)
-                                        {
-                                            <text>Ver Detalhes Administrativos</text>
-                                        }
-                                        else
-                                        {
-                                            <text>Ver Detalhes e Propostas</text>
-                                        }
-                                    </a>
-                                }
+                                <a asp-action="Details" asp-route-id="@quote.QuoteId" 
+                                   class="btn btn-solar-orange w-100">
+                                    <i class="fas fa-eye me-2"></i>
+                                    @if (isAdmin)
+                                    {
+                                        <text>Ver Detalhes Administrativos</text>
+                                    }
+                                    else
+                                    {
+                                        <text>Ver Detalhes e Propostas</text>
+                                    }
+                                </a>
                             </div>
                         </div>
                     </div>
