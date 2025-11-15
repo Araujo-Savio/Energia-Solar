@@ -85,6 +85,10 @@
                         <canvas id="costComparisonChart" aria-label="Comparativo de custos dos cenários" role="img"></canvas>
                     </div>
 
+                    <div class="chart-wrapper mt-4">
+                        <canvas id="savingsComparisonChart" aria-label="Economia comparativa entre instalação e aluguel" role="img"></canvas>
+                    </div>
+
                     <div class="simulator-summary mt-4">
                         <div class="simulator-summary-grid">
                             <div>
@@ -312,7 +316,8 @@
                 }
             });
 
-            let chartInstance;
+            let costChartInstance;
+            let savingsChartInstance;
 
             function parseInput(inputName) {
                 const element = document.querySelector(`[data-sim-input="${inputName}"]`);
@@ -375,21 +380,89 @@
                 const dataValues = [totals.base, totals.installation, totals.rental];
                 const backgroundColors = ['#1a2b3d', '#ff6b35', '#2563eb'];
 
-                if (chartInstance) {
-                    chartInstance.data.labels = labels;
-                    chartInstance.data.datasets[0].data = dataValues;
-                    chartInstance.data.datasets[0].backgroundColor = backgroundColors;
-                    chartInstance.update();
+                if (costChartInstance) {
+                    costChartInstance.data.labels = labels;
+                    costChartInstance.data.datasets[0].data = dataValues;
+                    costChartInstance.data.datasets[0].backgroundColor = backgroundColors;
+                    costChartInstance.update();
                     return;
                 }
 
-                chartInstance = new Chart(context, {
+                costChartInstance = new Chart(context, {
                     type: 'bar',
                     data: {
                         labels,
                         datasets: [
                             {
                                 label: 'Custo total projetado',
+                                data: dataValues,
+                                backgroundColor: backgroundColors,
+                                borderRadius: 12,
+                                maxBarThickness: 64
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const value = typeof context.parsed.x === 'number' ? context.parsed.x : context.parsed.y;
+                                        return `${context.label}: ${formatCurrency(value)}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                ticks: {
+                                    callback: (value) => formatCurrency(value)
+                                },
+                                grid: {
+                                    color: 'rgba(26, 43, 61, 0.05)'
+                                }
+                            },
+                            y: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        },
+                        indexAxis: 'y'
+                    }
+                });
+            }
+
+            function buildSavingsChart(savings) {
+                const canvas = document.getElementById('savingsComparisonChart');
+                if (!canvas) return;
+                const context = canvas.getContext('2d');
+                if (!context) return;
+
+                const labels = ['Economia com instalação', 'Economia com aluguel'];
+                const dataValues = [savings.installation, savings.rental];
+                const backgroundColors = ['#16a34a', '#0ea5e9'];
+
+                if (savingsChartInstance) {
+                    savingsChartInstance.data.labels = labels;
+                    savingsChartInstance.data.datasets[0].data = dataValues;
+                    savingsChartInstance.data.datasets[0].backgroundColor = backgroundColors;
+                    savingsChartInstance.update();
+                    return;
+                }
+
+                savingsChartInstance = new Chart(context, {
+                    type: 'bar',
+                    data: {
+                        labels,
+                        datasets: [
+                            {
+                                label: 'Economia projetada',
                                 data: dataValues,
                                 backgroundColor: backgroundColors,
                                 borderRadius: 12,
@@ -591,6 +664,11 @@
                     base: totalBaseCost,
                     installation: totalInstallCost,
                     rental: totalRentalCost
+                });
+
+                buildSavingsChart({
+                    installation: totalInstallSavings,
+                    rental: totalRentalSavings
                 });
             }
 
