@@ -6,25 +6,43 @@
     <div class="container-fluid px-4">
         <div class="solar-page-header d-flex flex-wrap justify-content-between align-items-center mb-4">
             <div>
-                <h1 class="solar-page-title">Simulador de Economia</h1>
-                <p class="solar-page-subtitle mb-0">Combine dados reais de consumo para comparar instalação própria e aluguel de energia.</p>
+                <div class="d-flex align-items-center gap-2">
+                    <h1 class="solar-page-title mb-0">Simulador de Economia</h1>
+                    <button type="button"
+                            class="summary-info"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="right"
+                            title="Combine dados reais de consumo para comparar instalação própria e aluguel de energia.">
+                        <i class="fas fa-info"></i>
+                    </button>
+                </div>
             </div>
             <div class="text-end">
-                <span class="badge bg-status-online mb-2"><i class="fas fa-bolt me-1"></i>Cálculo sob demanda</span>
+                <span class="badge bg-status-online mb-2">
+                    <i class="fas fa-bolt me-1"></i>Cálculo sob demanda
+                </span>
                 <p class="text-muted small mb-0">Informe os parâmetros básicos, depois utilize o botão de cálculo para atualizar a simulação.</p>
             </div>
         </div>
 
         <div class="row g-4 align-items-start">
+            <!-- COLUNA ESQUERDA: PARÂMETROS -->
             <div class="col-xxl-4 col-lg-5">
                 <div class="solar-card">
                     <div class="d-flex align-items-center justify-content-between mb-3">
-                        <h5 class="solar-card-title mb-0">Métricas de Economia</h5>
+                        <div class="d-flex align-items-center gap-2">
+                            <h5 class="solar-card-title mb-0">Métricas de Economia</h5>
+                            <button type="button"
+                                    class="summary-info"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="right"
+                                    title="Nesse campo, insira as métricas básicas para alimentar o simulador: consumo médio da rede, índice de cobertura desejado, horizonte de tempo e inflação anual da tarifa. Você também pode informar o desconto aplicado em contratos de aluguel para refletir o benefício na conta.">
+                                <i class="fas fa-info"></i>
+                            </button>
+                        </div>
                         <span class="badge bg-status-warning text-uppercase small fw-semibold">Base do cálculo</span>
                     </div>
-                    <p class="text-muted small mb-4">
-                        Nesse campo, insira as métricas básicas para alimentar o simulador: consumo médio da rede, índice de cobertura desejado, horizonte de tempo e inflação anual da tarifa. Você também pode informar o desconto aplicado em contratos de aluguel para refletir o benefício na conta.
-                    </p>
+
                     <div class="simulator-section">
                         <h6 class="simulator-section-title">
                             <i class="fas fa-chart-line me-2 text-solar-orange"></i>Parâmetros básicos
@@ -70,23 +88,27 @@
                 </div>
             </div>
 
+            <!-- COLUNA CENTRAL: GRÁFICO + RESUMO -->
             <div class="col-xxl-5 col-lg-7">
                 <div class="solar-card h-100 d-flex flex-column">
                     <div class="d-flex flex-wrap justify-content-between align-items-start mb-3">
-                        <div>
-                            <h5 class="solar-card-title mb-1">Projeção comparativa</h5>
-                            <p class="text-muted small mb-0">
-                                Compare o custo total projetado de cada cenário considerando inflação, degradação do sistema e despesas adicionais.
-                            </p>
+                        <div class="d-flex align-items-center gap-2">
+                            <h5 class="solar-card-title mb-1 mb-lg-0">Comparativo de economia</h5>
+                            <button type="button"
+                                    class="summary-info"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="right"
+                                    title="Compare a economia total estimada entre instalação própria e aluguel de energia.">
+                                <i class="fas fa-info"></i>
+                            </button>
                         </div>
                         <span class="badge bg-status-alert">Resultados dinâmicos</span>
                     </div>
-                    <div class="chart-wrapper">
-                        <canvas id="costComparisonChart" aria-label="Comparativo de custos dos cenários" role="img"></canvas>
-                    </div>
 
-                    <div class="chart-wrapper mt-4">
-                        <canvas id="savingsComparisonChart" aria-label="Economia comparativa entre instalação e aluguel" role="img"></canvas>
+                    <div class="chart-wrapper" style="min-height:260px;">
+                        <canvas id="economyComparisonChart"
+                                aria-label="Economia total entre instalação e aluguel"
+                                role="img"></canvas>
                     </div>
 
                     <div class="simulator-summary mt-4">
@@ -175,6 +197,7 @@
                 </div>
             </div>
 
+            <!-- COLUNA DIREITA: RESUMOS -->
             <div class="col-xxl-3">
                 <div class="d-flex flex-column gap-3">
                     <div class="solar-card insight-card">
@@ -182,9 +205,15 @@
                             <div class="insight-icon bg-solar-blue text-white">
                                 <i class="fas fa-solar-panel"></i>
                             </div>
-                            <div>
+                            <div class="d-flex align-items-center gap-2">
                                 <h6 class="mb-1">Instalação própria</h6>
-                                <p class="text-muted small mb-0">Resumo do cenário baseado nos dados informados.</p>
+                                <button type="button"
+                                        class="summary-info"
+                                        data-bs-toggle="tooltip"
+                                        data-bs-placement="top"
+                                        title="Resumo do cenário baseado nos dados informados.">
+                                    <i class="fas fa-info"></i>
+                                </button>
                             </div>
                             <span class="badge bg-status-online" data-sim-output="install-badge">-</span>
                         </div>
@@ -213,9 +242,15 @@
                             <div class="insight-icon bg-solar-orange text-white">
                                 <i class="fas fa-handshake"></i>
                             </div>
-                            <div>
+                            <div class="d-flex align-items-center gap-2">
                                 <h6 class="mb-1">Aluguel de energia</h6>
-                                <p class="text-muted small mb-0">Mensalidade fixa e descontos aplicados na conta.</p>
+                                <button type="button"
+                                        class="summary-info"
+                                        data-bs-toggle="tooltip"
+                                        data-bs-placement="top"
+                                        title="Mensalidade fixa e descontos aplicados na conta.">
+                                    <i class="fas fa-info"></i>
+                                </button>
                             </div>
                             <span class="badge bg-status-warning" data-sim-output="rental-badge">-</span>
                         </div>
@@ -244,9 +279,15 @@
                             <div class="insight-icon bg-solar-blue text-white">
                                 <i class="fas fa-clipboard-check"></i>
                             </div>
-                            <div>
+                            <div class="d-flex align-items-center gap-2">
                                 <h6 class="mb-1">Próximos passos</h6>
-                                <p class="text-muted small mb-0">Utilize estes indicadores para direcionar a proposta ao cliente.</p>
+                                <button type="button"
+                                        class="summary-info"
+                                        data-bs-toggle="tooltip"
+                                        data-bs-placement="top"
+                                        title="Utilize estes indicadores para direcionar a proposta ao cliente.">
+                                    <i class="fas fa-info"></i>
+                                </button>
                             </div>
                         </div>
                         <ul class="insight-list">
@@ -275,7 +316,8 @@
 </div>
 
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" integrity="sha384-MV6cFQhfZc6AtZ1I928PDScdJtba8pI99O2mHaFxN4iAdCKfFsRJg7xvHRvgqBBz" crossorigin="anonymous"></script>
+    <!-- Chart.js SEM integrity/crossorigin para evitar bloqueio -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
     <script>
         (function () {
             const currencyFormatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -306,6 +348,7 @@
                 fiveYearSavings: document.querySelector('[data-sim-output="five-year-savings"]'),
                 horizonLabel: document.querySelector('[data-sim-output="horizon-label"]')
             };
+
             const coverageProgress = document.querySelector('[data-sim-progress="coverage"]');
             const actionButtons = document.querySelectorAll('[data-sim-action="recalculate"]');
 
@@ -316,43 +359,7 @@
                 }
             });
 
-        let costChartInstance;
-        let savingsChartInstance;
-        let savingsTimelineChartInstance;
-
-
-            const placeholderPlugin = {
-                id: 'simulatorPlaceholder',
-                afterDraw(chart, args, options) {
-                    if (!options || !options.enabled) {
-                        return;
-                    }
-
-                    const { ctx, chartArea } = chart;
-                    if (!chartArea) {
-                        return;
-                    }
-
-                    const { left, top, width, height } = chartArea;
-
-                    ctx.save();
-                    ctx.fillStyle = 'rgba(26, 43, 61, 0.04)';
-                    ctx.fillRect(left, top, width, height);
-                    ctx.restore();
-
-                    ctx.save();
-                    ctx.font = '600 16px "Inter", "Segoe UI", sans-serif';
-                    ctx.fillStyle = 'rgba(26, 43, 61, 0.6)';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillText(options.message || 'Aguardando cálculo', left + width / 2, top + height / 2);
-                    ctx.restore();
-                }
-            };
-
-            if (window.Chart && typeof Chart.register === 'function') {
-                Chart.register(placeholderPlugin);
-            }
+            let economyChartInstance;
 
             function parseInput(inputName) {
                 const element = document.querySelector(`[data-sim-input="${inputName}"]`);
@@ -405,61 +412,40 @@
                 }
             }
 
-            function buildChart(totals, options = {}) {
-                const canvas = document.getElementById('costComparisonChart');
+            // Gráfico instantâneo: economia total instalação x aluguel
+            function buildEconomyChart(installSavingsTotal, rentalSavingsTotal) {
+                const canvas = document.getElementById('economyComparisonChart');
                 if (!canvas) return;
-                const context = canvas.getContext('2d');
-                if (!context) return;
+                const ctx = canvas.getContext('2d');
+                if (!ctx) return;
 
-                const placeholder = options.placeholder === true;
-                const labels = ['Sem energia solar', 'Instalação própria', 'Aluguel de energia'];
-                const dataValues = placeholder ? [0, 0, 0] : [totals.base, totals.installation, totals.rental];
-                const backgroundColors = placeholder
-                    ? ['rgba(26, 43, 61, 0.15)', 'rgba(255, 107, 53, 0.18)', 'rgba(37, 99, 235, 0.18)']
-                    : ['#1a2b3d', '#ff6b35', '#2563eb'];
+                const labels = ['Instalação própria', 'Aluguel de energia'];
+                const dataValues = [
+                    Number.isFinite(installSavingsTotal) ? installSavingsTotal : 0,
+                    Number.isFinite(rentalSavingsTotal) ? rentalSavingsTotal : 0
+                ];
 
                 const tooltipLabel = function (context) {
-                    const value = typeof context.parsed.x === 'number' ? context.parsed.x : context.parsed.y;
+                    const value = context.parsed.y;
                     return `${context.label}: ${formatCurrency(value)}`;
                 };
 
-                if (costChartInstance) {
-                    costChartInstance.data.labels = labels;
-                    costChartInstance.data.datasets[0].data = dataValues;
-                    costChartInstance.data.datasets[0].backgroundColor = backgroundColors;
-
-                    const tooltipOptions = costChartInstance.options?.plugins?.tooltip;
-                    if (tooltipOptions) {
-                        tooltipOptions.enabled = !placeholder;
-                        tooltipOptions.callbacks = placeholder ? {} : { label: tooltipLabel };
-                    }
-
-                    const xScale = costChartInstance.options?.scales?.x;
-                    if (xScale && xScale.ticks) {
-                        xScale.ticks.callback = placeholder ? () => '' : (value) => formatCurrency(value);
-                    }
-
-                    if (!costChartInstance.options.plugins) {
-                        costChartInstance.options.plugins = {};
-                    }
-                    costChartInstance.options.plugins.simulatorPlaceholder = {
-                        enabled: placeholder,
-                        message: 'Aguardando cálculo para exibir o comparativo'
-                    };
-
-                    costChartInstance.update();
+                if (economyChartInstance) {
+                    economyChartInstance.data.labels = labels;
+                    economyChartInstance.data.datasets[0].data = dataValues;
+                    economyChartInstance.update();
                     return;
                 }
 
-                costChartInstance = new Chart(context, {
+                economyChartInstance = new Chart(ctx, {
                     type: 'bar',
                     data: {
                         labels,
                         datasets: [
                             {
-                                label: 'Custo total projetado',
+                                label: 'Economia total no horizonte',
                                 data: dataValues,
-                                backgroundColor: backgroundColors,
+                                backgroundColor: ['#16a34a', '#0ea5e9'],
                                 borderRadius: 12,
                                 maxBarThickness: 64
                             }
@@ -473,221 +459,30 @@
                                 display: false
                             },
                             tooltip: {
-                                enabled: !placeholder,
-                                callbacks: placeholder ? {} : { label: tooltipLabel }
-                            },
-                            simulatorPlaceholder: {
-                                enabled: placeholder,
-                                message: 'Aguardando cálculo para exibir o comparativo'
+                                enabled: true,
+                                callbacks: {
+                                    label: tooltipLabel
+                                }
                             }
                         },
                         scales: {
-                            x: {
+                            y: {
                                 ticks: {
-                                    callback: placeholder ? () => '' : (value) => formatCurrency(value)
+                                    callback: (value) => formatCurrency(value)
                                 },
                                 grid: {
-                                    color: 'rgba(26, 43, 61, 0.05)'
+                                    color: 'rgba(26, 43, 61, 0.06)'
                                 }
                             },
-                            y: {
+                            x: {
                                 grid: {
                                     display: false
                                 }
                             }
-                        },
-                        indexAxis: 'y'
+                        }
                     }
                 });
             }
-
-            function buildSavingsChart(savings, options = {}) {
-                const canvas = document.getElementById('savingsComparisonChart');
-                if (!canvas) return;
-                const context = canvas.getContext('2d');
-                if (!context) return;
-
-                        <div class="chart-wrapper mt-4">
-            <canvas id="savingsTimelineChart"
-                    aria-label="Economia anual comparativa entre instalação e aluguel"
-                    role="img"></canvas>
-        </div>
-
-
-                const placeholder = options.placeholder === true;
-                const labels = ['Economia com instalação', 'Economia com aluguel'];
-                const dataValues = placeholder ? [0, 0] : [savings.installation, savings.rental];
-                const backgroundColors = placeholder
-                    ? ['rgba(22, 163, 74, 0.18)', 'rgba(14, 165, 233, 0.18)']
-                    : ['#16a34a', '#0ea5e9'];
-
-                const tooltipLabel = function (context) {
-                    const value = typeof context.parsed.x === 'number' ? context.parsed.x : context.parsed.y;
-                    return `${context.label}: ${formatCurrency(value)}`;
-                };
-
-                if (savingsChartInstance) {
-                    savingsChartInstance.data.labels = labels;
-                    savingsChartInstance.data.datasets[0].data = dataValues;
-                    savingsChartInstance.data.datasets[0].backgroundColor = backgroundColors;
-
-                    const tooltipOptions = savingsChartInstance.options?.plugins?.tooltip;
-                    if (tooltipOptions) {
-                        tooltipOptions.enabled = !placeholder;
-                        tooltipOptions.callbacks = placeholder ? {} : { label: tooltipLabel };
-                    }
-
-                    const xScale = savingsChartInstance.options?.scales?.x;
-                    if (xScale && xScale.ticks) {
-                        xScale.ticks.callback = placeholder ? () => '' : (value) => formatCurrency(value);
-                    }
-
-                    if (!savingsChartInstance.options.plugins) {
-                        savingsChartInstance.options.plugins = {};
-                    }
-                    savingsChartInstance.options.plugins.simulatorPlaceholder = {
-                        enabled: placeholder,
-                        message: 'Execute o cálculo para visualizar a economia projetada'
-                    };
-
-                    savingsChartInstance.update();
-                    return;
-                }
-
-                savingsChartInstance = new Chart(context, {
-                    type: 'bar',
-                    data: {
-                        labels,
-                        datasets: [
-                            {
-                                label: 'Economia projetada',
-                                data: dataValues,
-                                backgroundColor: backgroundColors,
-                                borderRadius: 12,
-                                maxBarThickness: 64
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            },
-                            tooltip: {
-                                enabled: !placeholder,
-                                callbacks: placeholder ? {} : { label: tooltipLabel }
-                            },
-                            simulatorPlaceholder: {
-                                enabled: placeholder,
-                                message: 'Execute o cálculo para visualizar a economia projetada'
-                            }
-                        },
-                        scales: {
-                            x: {
-                                ticks: {
-                                    callback: placeholder ? () => '' : (value) => formatCurrency(value)
-                                },
-                                grid: {
-                                    color: 'rgba(26, 43, 61, 0.05)'
-                                }
-                            },
-                            y: {
-                                grid: {
-                                    display: false
-                                }
-                            }
-                        },
-                        indexAxis: 'y'
-                    }
-                });
-            }
-
-                    function buildSavingsTimelineChart(data, options = {}) {
-            const canvas = document.getElementById('savingsTimelineChart');
-            if (!canvas) return;
-
-            const context = canvas.getContext('2d');
-            if (!context) return;
-
-            const labels = data.labels || [];
-            const installationAnnual = data.installationAnnual || [];
-            const rentalAnnual = data.rentalAnnual || [];
-
-            const tooltipLabel = function (context) {
-                const value = typeof context.parsed.y === 'number' ? context.parsed.y : 0;
-                return `${context.dataset.label}: ${formatCurrency(value)}`;
-            };
-
-            if (savingsTimelineChartInstance) {
-                savingsTimelineChartInstance.data.labels = labels;
-                savingsTimelineChartInstance.data.datasets[0].data = installationAnnual;
-                savingsTimelineChartInstance.data.datasets[1].data = rentalAnnual;
-                savingsTimelineChartInstance.update();
-                return;
-            }
-
-            savingsTimelineChartInstance = new Chart(context, {
-                type: 'line',
-                data: {
-                    labels,
-                    datasets: [
-                        {
-                            label: 'Economia anual com instalação',
-                            data: installationAnnual,
-                            tension: 0.3,
-                            pointRadius: 3,
-                            borderWidth: 2,
-                            borderColor: '#16a34a',
-                            backgroundColor: 'rgba(22, 163, 74, 0.15)',
-                            fill: true
-                        },
-                        {
-                            label: 'Economia anual com aluguel',
-                            data: rentalAnnual,
-                            tension: 0.3,
-                            pointRadius: 3,
-                            borderWidth: 2,
-                            borderColor: '#0ea5e9',
-                            backgroundColor: 'rgba(14, 165, 233, 0.15)',
-                            fill: true
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true
-                        },
-                        tooltip: {
-                            enabled: true,
-                            callbacks: {
-                                label: tooltipLabel
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            ticks: {
-                                callback: (value) => formatCurrency(value)
-                            },
-                            grid: {
-                                color: 'rgba(26, 43, 61, 0.06)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
 
             function deriveScenarioDefaults(monthlyConsumption, energyTariff) {
                 const safeConsumption = Math.max(monthlyConsumption, 0);
@@ -745,11 +540,6 @@
                 const monthlyTariffWithoutInflation = energyTariff > 0 ? energyTariff : 0;
                 const annualConsumption = monthlyConsumption * 12;
 
-                const yearLabels = [];
-                const annualInstallSavingsByYear = [];
-                const annualRentalSavingsByYear = [];
-
-
                 let cumulativeBase = 0;
                 let cumulativeInstall = installationCost - installationIncentive;
                 let cumulativeRental = rentalSetup;
@@ -761,11 +551,6 @@
                 let cumulativeInstallSavings = -cumulativeInstall;
                 let firstYearInstallSavings = 0;
                 let firstYearRentalSavings = 0;
-
-                const yearLabels = [];
-                const annualInstallSavingsByYear = [];
-                const annualRentalSavingsByYear = [];
-
 
                 for (let year = 1; year <= horizonYears; year++) {
                     const tariffWithInflation = monthlyTariffWithoutInflation * Math.pow(1 + inflation, year - 1);
@@ -790,11 +575,6 @@
                     const annualSavingsInstall = baseCostYear - installCostYear;
                     const annualSavingsRental = baseCostYear - rentalCostYear;
 
-                    yearLabels.push(`Ano ${year}`);
-                    annualInstallSavingsByYear.push(annualSavingsInstall);
-                    annualRentalSavingsByYear.push(annualSavingsRental);
-
-
                     if (year === 1) {
                         firstYearInstallSavings = annualSavingsInstall;
                         firstYearRentalSavings = annualSavingsRental;
@@ -813,10 +593,6 @@
                         const fractionOfYear = annualSavingsInstall > 0 ? (installationCost - installationIncentive - previousSavings) / annualSavingsInstall : 0;
                         paybackYears = year - 1 + Math.max(0, Math.min(1, fractionOfYear));
                     }
-                            yearLabels.push(`Ano ${year}`);
-                            annualInstallSavingsByYear.push(annualSavingsInstall);
-                            annualRentalSavingsByYear.push(annualSavingsRental);
-
                 }
 
                 const totalBaseCost = cumulativeBase;
@@ -862,29 +638,16 @@
                     coverageProgress.setAttribute('aria-valuenow', progressValue.toFixed(0));
                 }
 
-                buildChart({
-                    base: totalBaseCost,
-                    installation: totalInstallCost,
-                    rental: totalRentalCost
-                });
-
-                buildSavingsChart({
-                    installation: totalInstallSavings,
-                    rental: totalRentalSavings
-                });
-                buildSavingsTimelineChart({
-                    labels: yearLabels,
-                    installationAnnual: annualInstallSavingsByYear,
-                    rentalAnnual: annualRentalSavingsByYear
-        });
+                // Atualiza o gráfico de economia total
+                buildEconomyChart(totalInstallSavings, totalRentalSavings);
             }
 
             actionButtons.forEach((button) => {
                 button.addEventListener('click', recalculate);
             });
 
-            buildChart({ base: 0, installation: 0, rental: 0 }, { placeholder: true });
-            buildSavingsChart({ installation: 0, rental: 0 }, { placeholder: true });
+            // Gráfico só aparece após o primeiro cálculo
+
         })();
     </script>
 }
