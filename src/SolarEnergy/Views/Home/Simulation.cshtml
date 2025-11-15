@@ -316,8 +316,10 @@
                 }
             });
 
-            let costChartInstance;
-            let savingsChartInstance;
+        let costChartInstance;
+        let savingsChartInstance;
+        let savingsTimelineChartInstance;
+
 
             const placeholderPlugin = {
                 id: 'simulatorPlaceholder',
@@ -505,6 +507,13 @@
                 const context = canvas.getContext('2d');
                 if (!context) return;
 
+                        <div class="chart-wrapper mt-4">
+            <canvas id="savingsTimelineChart"
+                    aria-label="Economia anual comparativa entre instalação e aluguel"
+                    role="img"></canvas>
+        </div>
+
+
                 const placeholder = options.placeholder === true;
                 const labels = ['Economia com instalação', 'Economia com aluguel'];
                 const dataValues = placeholder ? [0, 0] : [savings.installation, savings.rental];
@@ -595,6 +604,91 @@
                 });
             }
 
+                    function buildSavingsTimelineChart(data, options = {}) {
+            const canvas = document.getElementById('savingsTimelineChart');
+            if (!canvas) return;
+
+            const context = canvas.getContext('2d');
+            if (!context) return;
+
+            const labels = data.labels || [];
+            const installationAnnual = data.installationAnnual || [];
+            const rentalAnnual = data.rentalAnnual || [];
+
+            const tooltipLabel = function (context) {
+                const value = typeof context.parsed.y === 'number' ? context.parsed.y : 0;
+                return `${context.dataset.label}: ${formatCurrency(value)}`;
+            };
+
+            if (savingsTimelineChartInstance) {
+                savingsTimelineChartInstance.data.labels = labels;
+                savingsTimelineChartInstance.data.datasets[0].data = installationAnnual;
+                savingsTimelineChartInstance.data.datasets[1].data = rentalAnnual;
+                savingsTimelineChartInstance.update();
+                return;
+            }
+
+            savingsTimelineChartInstance = new Chart(context, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            label: 'Economia anual com instalação',
+                            data: installationAnnual,
+                            tension: 0.3,
+                            pointRadius: 3,
+                            borderWidth: 2,
+                            borderColor: '#16a34a',
+                            backgroundColor: 'rgba(22, 163, 74, 0.15)',
+                            fill: true
+                        },
+                        {
+                            label: 'Economia anual com aluguel',
+                            data: rentalAnnual,
+                            tension: 0.3,
+                            pointRadius: 3,
+                            borderWidth: 2,
+                            borderColor: '#0ea5e9',
+                            backgroundColor: 'rgba(14, 165, 233, 0.15)',
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true
+                        },
+                        tooltip: {
+                            enabled: true,
+                            callbacks: {
+                                label: tooltipLabel
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: {
+                                callback: (value) => formatCurrency(value)
+                            },
+                            grid: {
+                                color: 'rgba(26, 43, 61, 0.06)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+
             function deriveScenarioDefaults(monthlyConsumption, energyTariff) {
                 const safeConsumption = Math.max(monthlyConsumption, 0);
                 const safeTariff = Math.max(energyTariff, 0);
@@ -651,6 +745,11 @@
                 const monthlyTariffWithoutInflation = energyTariff > 0 ? energyTariff : 0;
                 const annualConsumption = monthlyConsumption * 12;
 
+                const yearLabels = [];
+                const annualInstallSavingsByYear = [];
+                const annualRentalSavingsByYear = [];
+
+
                 let cumulativeBase = 0;
                 let cumulativeInstall = installationCost - installationIncentive;
                 let cumulativeRental = rentalSetup;
@@ -662,6 +761,11 @@
                 let cumulativeInstallSavings = -cumulativeInstall;
                 let firstYearInstallSavings = 0;
                 let firstYearRentalSavings = 0;
+
+                const yearLabels = [];
+                const annualInstallSavingsByYear = [];
+                const annualRentalSavingsByYear = [];
+
 
                 for (let year = 1; year <= horizonYears; year++) {
                     const tariffWithInflation = monthlyTariffWithoutInflation * Math.pow(1 + inflation, year - 1);
@@ -686,6 +790,11 @@
                     const annualSavingsInstall = baseCostYear - installCostYear;
                     const annualSavingsRental = baseCostYear - rentalCostYear;
 
+                    yearLabels.push(`Ano ${year}`);
+                    annualInstallSavingsByYear.push(annualSavingsInstall);
+                    annualRentalSavingsByYear.push(annualSavingsRental);
+
+
                     if (year === 1) {
                         firstYearInstallSavings = annualSavingsInstall;
                         firstYearRentalSavings = annualSavingsRental;
@@ -704,6 +813,10 @@
                         const fractionOfYear = annualSavingsInstall > 0 ? (installationCost - installationIncentive - previousSavings) / annualSavingsInstall : 0;
                         paybackYears = year - 1 + Math.max(0, Math.min(1, fractionOfYear));
                     }
+                            yearLabels.push(`Ano ${year}`);
+                            annualInstallSavingsByYear.push(annualSavingsInstall);
+                            annualRentalSavingsByYear.push(annualSavingsRental);
+
                 }
 
                 const totalBaseCost = cumulativeBase;
@@ -759,6 +872,11 @@
                     installation: totalInstallSavings,
                     rental: totalRentalSavings
                 });
+                buildSavingsTimelineChart({
+                    labels: yearLabels,
+                    installationAnnual: annualInstallSavingsByYear,
+                    rentalAnnual: annualRentalSavingsByYear
+        });
             }
 
             actionButtons.forEach((button) => {
