@@ -1,0 +1,34 @@
+* [33m9688d89[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m RESET
+* [33mb363d89[m reset
+*   [33m1251db0[m Merge pull request #8 from Araujo-Savio/develop1
+[32m|[m[33m\[m  
+[32m|[m *   [33m38f935e[m Merge pull request #7 from Araujo-Savio/codex/update-empresa-design-and-scheduling-link
+[32m|[m [34m|[m[35m\[m  
+[32m|[m [34m|[m * [33me3724a4[m Ajusta menu de leads da empresa e integra agendamentos
+[32m|[m [34m|[m[34m/[m  
+[32m|[m * [33mcaae710[m Merge pull request #6 from Araujo-Savio/codex/keep-only-business-hours
+[32m|[m[32m/[m[1;31m|[m 
+[32m|[m * [33md438d3d[m Restrict scheduling form to business hours
+[32m|[m[32m/[m  
+*   [33m74ceb0f[m Merge pull request #5 from Araujo-Savio/codex/fix-menu-disappearing-on-appointments
+[1;32m|[m[1;33m\[m  
+[1;32m|[m * [33m448e4d6[m Ensure scheduling uses logged in client
+[1;32m|[m[1;32m/[m  
+* [33m0934247[m .
+*   [33m31720c5[m Merge pull request #4 from Araujo-Savio/develop
+[1;34m|[m[1;35m\[m  
+[1;34m|[m * [33m2f74c13[m agendamento
+[1;34m|[m * [33m7dabafa[m Merge pull request #3 from Araujo-Savio/codex/implementar-tela-de-agendamentos
+[1;34m|[m[1;34m/[m[31m|[m 
+[1;34m|[m * [33mcd801e2[m feat: implement technical visit scheduling flow
+[1;34m|[m[1;34m/[m  
+* [33m606f701[m feat: suas mudanças aqui
+*   [33m2b42240[m Merge pull request #2 from Araujo-Savio/codex/fix
+[32m|[m[33m\[m  
+[32m|[m * [33m4313676[m Fix technical visit list date formatting
+[32m|[m[32m/[m  
+*   [33ma4f20cf[m Merge pull request #1 from Araujo-Savio/codex/add-scheduling-visit-screen-and-navigation-link
+[34m|[m[35m\[m  
+[34m|[m * [33mb7ce5c8[m Add technical visit scheduling module
+[34m|[m[34m/[m  
+* [33m8097dd9[m chore: commit inicial
