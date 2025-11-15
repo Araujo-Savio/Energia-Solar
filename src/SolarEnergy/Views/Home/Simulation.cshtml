@@ -75,6 +75,54 @@
                         </div>
                     </div>
 
+                    <div class="simulator-section mt-4">
+                        <h6 class="simulator-section-title">
+                            <i class="fas fa-building me-2 text-solar-orange"></i>Parâmetros da empresa
+                        </h6>
+                        <div class="metrics-grid">
+                            <div>
+                                <label class="form-label" for="companySystemPriceKwp">Preço do sistema por kWp (R$/kWp)</label>
+                                <input id="companySystemPriceKwp" type="number" min="0" step="0.01" class="form-control" placeholder="ex.: 4.200" data-company-input="system-price-kwp" />
+                            </div>
+                            <div>
+                                <label class="form-label" for="companyMaintenancePercent">% Manutenção anual sobre o investimento</label>
+                                <input id="companyMaintenancePercent" type="number" min="0" step="0.1" class="form-control" placeholder="ex.: 1,2" data-company-input="maintenance-percent" />
+                            </div>
+                            <div>
+                                <label class="form-label" for="companyIncentivePercent">% Incentivo/desconto na instalação</label>
+                                <input id="companyIncentivePercent" type="number" min="0" step="0.1" class="form-control" placeholder="ex.: 4" data-company-input="incentive-percent" />
+                            </div>
+                            <div>
+                                <label class="form-label" for="companyRentalFactorPercent">% da conta usado como mensalidade de aluguel</label>
+                                <input id="companyRentalFactorPercent" type="number" min="0" step="1" class="form-control" placeholder="ex.: 68" data-company-input="rental-factor-percent" />
+                            </div>
+                            <div>
+                                <label class="form-label" for="companyRentalMinimum">Mensalidade mínima de aluguel (R$)</label>
+                                <input id="companyRentalMinimum" type="number" min="0" step="1" class="form-control" placeholder="ex.: 250" data-company-input="rental-minimum" />
+                            </div>
+                            <div>
+                                <label class="form-label" for="companyRentalSetupKwp">Taxa de instalação/configuração do aluguel (R$/kWp)</label>
+                                <input id="companyRentalSetupKwp" type="number" min="0" step="1" class="form-control" placeholder="ex.: 150" data-company-input="rental-setup-kwp" />
+                            </div>
+                            <div>
+                                <label class="form-label" for="companyRentalIncreasePercent">% de reajuste anual do aluguel</label>
+                                <input id="companyRentalIncreasePercent" type="number" min="0" step="0.1" class="form-control" placeholder="ex.: 4,5" data-company-input="rental-increase-percent" />
+                            </div>
+                            <div>
+                                <label class="form-label" for="companyRentalDiscountPercent">% de desconto na conta (modelo aluguel)</label>
+                                <input id="companyRentalDiscountPercent" type="number" min="0" step="0.1" class="form-control" placeholder="ex.: 14" data-company-input="rental-discount-percent" />
+                            </div>
+                            <div>
+                                <label class="form-label" for="companyKwhPerKwp">kWh/mês por kWp do sistema</label>
+                                <input id="companyKwhPerKwp" type="number" min="0" step="1" class="form-control" placeholder="ex.: 120" data-company-input="kwh-per-kwp" />
+                            </div>
+                            <div>
+                                <label class="form-label" for="companyMinSystemKw">Potência mínima do sistema (kWp)</label>
+                                <input id="companyMinSystemKw" type="number" min="0" step="0.1" class="form-control" placeholder="ex.: 2,5" data-company-input="min-system-kw" />
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="alert alert-info mt-4 mb-0 small" role="status">
                         <i class="fas fa-robot me-2 text-solar-blue"></i>Os custos de instalação e aluguel são estimados automaticamente a partir do consumo informado, considerando padrões médios de mercado.
                     </div>
@@ -368,6 +416,16 @@
                 return Number.isFinite(value) ? value : 0;
             }
 
+            function parseCompanyInput(inputName, defaultValue) {
+                const element = document.querySelector(`[data-company-input="${inputName}"]`);
+                if (!element) return defaultValue;
+                const rawValue = (element.value || '').toString().trim();
+                if (!rawValue) return defaultValue;
+                const normalized = rawValue.replace(',', '.');
+                const value = Number.parseFloat(normalized);
+                return Number.isFinite(value) ? value : defaultValue;
+            }
+
             function formatCurrency(value) {
                 return Number.isFinite(value) ? currencyFormatter.format(value) : '-';
             }
@@ -488,16 +546,29 @@
                 const safeConsumption = Math.max(monthlyConsumption, 0);
                 const safeTariff = Math.max(energyTariff, 0);
                 const monthlyBill = safeConsumption * safeTariff;
-                const systemSizeKw = Math.max(safeConsumption / 120, 2.5);
-                const installationCost = systemSizeKw * 4200;
-                const maintenanceAnnual = installationCost * 0.012;
-                const installationIncentive = installationCost * 0.04;
+                const kwhPerKwpInput = parseCompanyInput('kwh-per-kwp', 120);
+                const kwhPerKwp = kwhPerKwpInput > 0 ? kwhPerKwpInput : 120;
+                const minSystemKwInput = parseCompanyInput('min-system-kw', 2.5);
+                const minSystemKw = minSystemKwInput > 0 ? minSystemKwInput : 2.5;
+                const systemSizeKw = Math.max(kwhPerKwp > 0 ? safeConsumption / kwhPerKwp : safeConsumption / 120, minSystemKw);
+                const systemPriceKwp = Math.max(parseCompanyInput('system-price-kwp', 4200), 0);
+                const installationCost = systemSizeKw * systemPriceKwp;
+                const maintenancePercent = Math.max(parseCompanyInput('maintenance-percent', 1.2), 0) / 100;
+                const maintenanceAnnual = installationCost * maintenancePercent;
+                const incentivePercent = Math.max(parseCompanyInput('incentive-percent', 4), 0) / 100;
+                const installationIncentive = installationCost * incentivePercent;
                 const installationTimeMonths = Math.min(Math.max(systemSizeKw * 0.8, 2), 8);
 
-                const rentalMonthly = Math.max(monthlyBill * 0.68, 250);
-                const rentalSetup = Math.max(systemSizeKw * 150, 0);
-                const rentalIncreaseRate = 0.045;
-                const rentalDiscountRate = Math.min(0.18, 0.1 + (systemSizeKw / 100));
+                const rentalFactor = Math.max(parseCompanyInput('rental-factor-percent', 68), 0) / 100;
+                const rentalMinimum = Math.max(parseCompanyInput('rental-minimum', 250), 0);
+                const rentalMonthly = Math.max(monthlyBill * rentalFactor, rentalMinimum);
+                const rentalSetupRate = Math.max(parseCompanyInput('rental-setup-kwp', 150), 0);
+                const rentalSetup = Math.max(systemSizeKw * rentalSetupRate, 0);
+                const rentalIncreaseRate = Math.max(parseCompanyInput('rental-increase-percent', 4.5), 0) / 100;
+                const rentalDiscountPercentValue = parseCompanyInput('rental-discount-percent', null);
+                const rentalDiscountRate = rentalDiscountPercentValue === null
+                    ? Math.min(0.18, 0.1 + (systemSizeKw / 100))
+                    : Math.min(Math.max(rentalDiscountPercentValue / 100, 0), 1);
 
                 return {
                     installationCost,
