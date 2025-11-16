@@ -655,14 +655,62 @@
                 }
             }
 
+            function resetSimulatorOutputs() {
+                if (outputs.baseTotal) outputs.baseTotal.textContent = formatCurrency(0);
+                if (outputs.installTotal) outputs.installTotal.textContent = formatCurrency(0);
+                if (outputs.rentalTotal) outputs.rentalTotal.textContent = formatCurrency(0);
+
+                if (outputs.installSavings) outputs.installSavings.textContent = formatCurrency(0);
+                if (outputs.rentalSavings) outputs.rentalSavings.textContent = formatCurrency(0);
+                if (outputs.installMonthlySavings) outputs.installMonthlySavings.textContent = formatCurrency(0);
+                if (outputs.rentalMonthlySavings) outputs.rentalMonthlySavings.textContent = formatCurrency(0);
+                if (outputs.installSavingsTotal) outputs.installSavingsTotal.textContent = formatCurrency(0);
+                if (outputs.rentalSavingsTotal) outputs.rentalSavingsTotal.textContent = formatCurrency(0);
+
+                if (outputs.installInvestment) outputs.installInvestment.textContent = formatCurrency(0);
+                if (outputs.annualGeneration) outputs.annualGeneration.textContent = '0 kWh';
+                if (outputs.annualSavingsAverage) outputs.annualSavingsAverage.textContent = formatCurrency(0);
+                if (outputs.fiveYearSavings) outputs.fiveYearSavings.textContent = formatCurrency(0);
+                if (outputs.horizonLabel) outputs.horizonLabel.textContent = '-';
+
+                if (outputs.coverageLabel) outputs.coverageLabel.textContent = '0%';
+                if (outputs.installTime) outputs.installTime.textContent = '-';
+                if (outputs.installPayback) outputs.installPayback.textContent = 'Não calculado';
+                if (outputs.paybackResume) outputs.paybackResume.textContent = 'Não calculado';
+
+                if (outputs.rentalMonthly) outputs.rentalMonthly.textContent = formatCurrency(0);
+                if (outputs.rentalDiscountLabel) outputs.rentalDiscountLabel.textContent = '0%';
+
+                if (outputs.installBadge) {
+                    outputs.installBadge.classList.remove('badge-positive', 'badge-negative');
+                    outputs.installBadge.textContent = 'Aguardando cálculo';
+                }
+                if (outputs.rentalBadge) {
+                    outputs.rentalBadge.classList.remove('badge-positive', 'badge-negative');
+                    outputs.rentalBadge.textContent = 'Aguardando cálculo';
+                }
+
+                if (coverageProgress) {
+                    coverageProgress.style.width = '0%';
+                    coverageProgress.setAttribute('aria-valuenow', '0');
+                }
+
+                if (projectionChart) {
+                    const labels = generateTimelineLabels(defaultTimelineLength);
+                    const zeroData = new Array(labels.length).fill(0);
+                    projectionChart.data.labels = labels;
+                    projectionChart.data.datasets[0].data = zeroData.slice();
+                    projectionChart.data.datasets[1].data = zeroData.slice();
+                    projectionChart.update();
+                }
+            }
+
             initializeProjectionChart();
+            resetSimulatorOutputs();
 
             actionButtons.forEach((button) => {
                 button.addEventListener('click', recalculate);
             });
-
-            // Estado inicial: gráfico e cards com projeção baseada nos valores default (ou zerados)
-            recalculate();
         })();
     </script>
 }
