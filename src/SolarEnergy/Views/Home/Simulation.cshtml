@@ -45,7 +45,7 @@
                                 <option value="">Selecione...</option>
                                 @foreach (var company in Model.Companies)
                                 {
-                                    <option value="@company.Id" @(company.Id == Model.SelectedCompanyId ? "selected" : string.Empty)>@company.Name</option>
+                                    <option value="@company.Id" selected="@(company.Id == Model.SelectedCompanyId)">@company.Name</option>
                                 }
                             </select>
                         </div>
