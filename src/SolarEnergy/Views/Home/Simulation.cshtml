@@ -30,15 +30,15 @@
             animation: scaleUp 0.3s ease;
         }
 
-        .custom-modal h2 {
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
+            .custom-modal h2 {
+                font-weight: 700;
+                margin-bottom: 10px;
+            }
 
-        .custom-modal p {
-            color: #6c757d;
-            margin-bottom: 0;
-        }
+            .custom-modal p {
+                color: #6c757d;
+                margin-bottom: 0;
+            }
 
         .modal-icon {
             font-size: 48px;
@@ -58,21 +58,46 @@
             transition: background-color 0.2s ease;
         }
 
-        .btn-orange:hover {
-            background-color: #e56d00;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
+            .btn-orange:hover {
+                background-color: #e56d00;
             }
 
-            to {
-                opacity: 1;
-            }
+        /* Campos de parâmetros da empresa */
+        .company-param.param-preset {
+            background-color: #f3f4f6; /* cinza claro, indicando valor padrão/carregado */
         }
 
-        @keyframes scaleUp {
+        .company-param.param-custom {
+            background-color: #fff7e6; /* leve amarelo para destacar alteração manual */
+            border-left: 4px solid #ff9800; /* barra lateral laranja */
+        }
+
+        /* Badges usadas na comparação de economia */
+        .badge-positive {
+            background-color: #16a34a;
+            color: #fff;
+        }
+
+        .badge-negative {
+            background-color: #dc2626;
+            color: #fff;
+        }
+
+        
+        @@keyframes fadeIn {
+            from
+
+        {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+
+        }
+
+        @@keyframes scaleUp {
             from {
                 transform: scale(0.85);
                 opacity: 0;
@@ -542,8 +567,8 @@
                 });
             }
 
-            const isCompanyRole = @(isCompanyUser.ToString().ToLowerInvariant());
-            const initialCompanyParameters = @Html.Raw(companyParametersJson);
+            const isCompanyRole = '@(isCompanyUser.ToString().ToLowerInvariant())' === 'true';
+            const initialCompanyParameters = JSON.parse('@Html.Raw(companyParametersJson ?? "null")');
             let companyParametersData = initialCompanyParameters ? { ...initialCompanyParameters } : null;
 
             const companyParameterSelectors = {
