@@ -199,6 +199,15 @@ input[type="search"].form-control:focus {
   left: 100%;
 }
 
+.param-preset {
+  background-color: #eef2f5 !important;
+}
+
+.param-custom {
+  background-color: #fff7e6 !important;
+  border-left: 4px solid #ff9800;
+}
+
 .btn-solar-orange:hover {
   background: linear-gradient(135deg, var(--solar-orange-dark) 0%, var(--solar-orange) 100%);
   color: var(--solar-white);

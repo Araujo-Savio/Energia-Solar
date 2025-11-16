@@ -14,6 +14,7 @@ namespace SolarEnergy.Data
         public DbSet<CompanyReview> CompanyReviews { get; set; }
         public DbSet<Quote> Quotes { get; set; }
         public DbSet<Proposal> Proposals { get; set; }
+        public DbSet<CompanyParameters> CompanyParameters { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -45,6 +46,26 @@ namespace SolarEnergy.Data
                 // Índices únicos
                 entity.HasIndex(e => e.CPF).IsUnique().HasFilter("[CPF] IS NOT NULL");
                 entity.HasIndex(e => e.CNPJ).IsUnique().HasFilter("[CNPJ] IS NOT NULL");
+            });
+
+            // Configuração da entidade CompanyParameters
+            builder.Entity<CompanyParameters>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.CompanyId).IsRequired().HasMaxLength(450);
+                entity.Property(e => e.PricePerKwP).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.AnnualMaintenance).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.InstallationDiscount).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.RentalPercent).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.MinRentalValue).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.RentalSetupFee).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.AnnualRentIncrease).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.RentDiscount).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.KwhPerKwp).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.MinSystemPower).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.UpdatedAt).IsRequired();
+
+                entity.HasIndex(e => e.CompanyId).IsUnique();
             });
 
             // Configuração da entidade CompanyReview

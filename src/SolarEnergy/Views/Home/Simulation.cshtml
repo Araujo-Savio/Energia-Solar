@@ -1,6 +1,7 @@
 @{
     ViewData["Title"] = "Simulador";
     var isCompanyUser = User.IsInRole("Company");
+    var companyParametersJson = ViewBag.CompanyParametersJson as string ?? "null";
 }
 
 <div class="solar-page economy-simulator">
@@ -340,54 +341,55 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form id="companyParametersForm">
+                        @Html.AntiForgeryToken()
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label" for="companySystemPriceKwp">Preço do sistema por kWp (R$/kWp)</label>
-                                <input id="companySystemPriceKwp" type="number" min="0" step="0.01" class="form-control" placeholder="4200" data-company-input="system-price-kwp" />
+                                <label class="form-label" for="pricePerKwP">Preço do sistema por kWp (R$/kWp)</label>
+                                <input id="pricePerKwP" type="number" min="0" step="0.01" class="form-control company-param" placeholder="4200" data-company-input="system-price-kwp" />
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label" for="companyMaintenancePercent">% Manutenção anual sobre o investimento</label>
-                                <input id="companyMaintenancePercent" type="number" min="0" step="0.1" class="form-control" placeholder="1,2" data-company-input="maintenance-percent" />
+                                <label class="form-label" for="annualMaintenance">% Manutenção anual sobre o investimento</label>
+                                <input id="annualMaintenance" type="number" min="0" step="0.1" class="form-control company-param" placeholder="1,2" data-company-input="maintenance-percent" />
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label" for="companyIncentivePercent">% Incentivo/desconto na instalação</label>
-                                <input id="companyIncentivePercent" type="number" min="0" step="0.1" class="form-control" placeholder="4" data-company-input="incentive-percent" />
+                                <label class="form-label" for="installationDiscount">% Incentivo/desconto na instalação</label>
+                                <input id="installationDiscount" type="number" min="0" step="0.1" class="form-control company-param" placeholder="4" data-company-input="incentive-percent" />
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label" for="companyRentalFactorPercent">% da conta usado como mensalidade de aluguel</label>
-                                <input id="companyRentalFactorPercent" type="number" min="0" step="1" class="form-control" placeholder="68" data-company-input="rental-factor-percent" />
+                                <label class="form-label" for="rentalPercent">% da conta usado como mensalidade de aluguel</label>
+                                <input id="rentalPercent" type="number" min="0" step="1" class="form-control company-param" placeholder="68" data-company-input="rental-factor-percent" />
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label" for="companyRentalMinimum">Mensalidade mínima de aluguel (R$)</label>
-                                <input id="companyRentalMinimum" type="number" min="0" step="1" class="form-control" placeholder="250" data-company-input="rental-minimum" />
+                                <label class="form-label" for="minRentalValue">Mensalidade mínima de aluguel (R$)</label>
+                                <input id="minRentalValue" type="number" min="0" step="1" class="form-control company-param" placeholder="250" data-company-input="rental-minimum" />
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label" for="companyRentalSetupKwp">Taxa de instalação/configuração do aluguel (R$/kWp)</label>
-                                <input id="companyRentalSetupKwp" type="number" min="0" step="1" class="form-control" placeholder="150" data-company-input="rental-setup-kwp" />
+                                <label class="form-label" for="rentalSetupFee">Taxa de instalação/configuração do aluguel (R$/kWp)</label>
+                                <input id="rentalSetupFee" type="number" min="0" step="1" class="form-control company-param" placeholder="150" data-company-input="rental-setup-kwp" />
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label" for="companyRentalIncreasePercent">% de reajuste anual do aluguel</label>
-                                <input id="companyRentalIncreasePercent" type="number" min="0" step="0.1" class="form-control" placeholder="4,5" data-company-input="rental-increase-percent" />
+                                <label class="form-label" for="annualRentIncrease">% de reajuste anual do aluguel</label>
+                                <input id="annualRentIncrease" type="number" min="0" step="0.1" class="form-control company-param" placeholder="4,5" data-company-input="rental-increase-percent" />
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label" for="companyRentalDiscountPercent">% de desconto na conta (modelo aluguel)</label>
-                                <input id="companyRentalDiscountPercent" type="number" min="0" step="0.1" class="form-control" placeholder="14" data-company-input="rental-discount-percent" />
+                                <label class="form-label" for="rentDiscount">% de desconto na conta (modelo aluguel)</label>
+                                <input id="rentDiscount" type="number" min="0" step="0.1" class="form-control company-param" placeholder="14" data-company-input="rental-discount-percent" />
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label" for="companyKwhPerKwp">kWh/mês por kWp do sistema</label>
-                                <input id="companyKwhPerKwp" type="number" min="0" step="1" class="form-control" placeholder="120" data-company-input="kwh-per-kwp" />
+                                <label class="form-label" for="kwhPerKwp">kWh/mês por kWp do sistema</label>
+                                <input id="kwhPerKwp" type="number" min="0" step="1" class="form-control company-param" placeholder="120" data-company-input="kwh-per-kwp" />
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label" for="companyMinSystemKw">Potência mínima do sistema (kWp)</label>
-                                <input id="companyMinSystemKw" type="number" min="0" step="0.1" class="form-control" placeholder="2,5" data-company-input="min-system-kw" />
+                                <label class="form-label" for="minSystemPower">Potência mínima do sistema (kWp)</label>
+                                <input id="minSystemPower" type="number" min="0" step="0.1" class="form-control company-param" placeholder="2,5" data-company-input="min-system-kw" />
                             </div>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-solar-orange" data-bs-dismiss="modal">
+                    <button type="button" class="btn btn-solar-orange" id="saveCompanyParameters">
                         <i class="fas fa-save me-1"></i>Salvar parâmetros
                     </button>
                 </div>
@@ -432,6 +434,136 @@
 
             const coverageProgress = document.querySelector('[data-sim-progress="coverage"]');
             const actionButtons = document.querySelectorAll('[data-sim-action="recalculate"]');
+
+            const isCompanyRole = @(isCompanyUser.ToString().ToLowerInvariant());
+            const initialCompanyParameters = @Html.Raw(companyParametersJson);
+            let companyParametersData = initialCompanyParameters ? { ...initialCompanyParameters } : null;
+
+            const companyParameterSelectors = {
+                pricePerKwP: 'pricePerKwP',
+                annualMaintenance: 'annualMaintenance',
+                installationDiscount: 'installationDiscount',
+                rentalPercent: 'rentalPercent',
+                minRentalValue: 'minRentalValue',
+                rentalSetupFee: 'rentalSetupFee',
+                annualRentIncrease: 'annualRentIncrease',
+                rentDiscount: 'rentDiscount',
+                kwhPerKwp: 'kwhPerKwp',
+                minSystemPower: 'minSystemPower'
+            };
+
+            const companyParameterInputs = document.querySelectorAll('.company-param');
+
+            function applyPresetStyles() {
+                companyParameterInputs.forEach((input) => {
+                    input.classList.add('param-preset');
+                    input.classList.remove('param-custom');
+                });
+            }
+
+            applyPresetStyles();
+
+            document.querySelectorAll(".company-param").forEach(input => {
+                input.addEventListener("input", () => {
+                    input.classList.remove("param-preset");
+                    input.classList.add("param-custom");
+                });
+            });
+
+            function populateCompanyParameters() {
+                if (!companyParametersData) {
+                    return;
+                }
+
+                Object.entries(companyParameterSelectors).forEach(([prop, inputId]) => {
+                    const input = document.getElementById(inputId);
+                    if (!input) {
+                        return;
+                    }
+
+                    const value = companyParametersData[prop];
+                    if (value === undefined || value === null) {
+                        return;
+                    }
+
+                    input.value = value;
+                });
+
+                applyPresetStyles();
+            }
+
+            function normalizeDecimal(value) {
+                if (typeof value !== 'string') {
+                    value = value?.toString() ?? '';
+                }
+
+                const normalized = value.replace(',', '.');
+                const parsed = parseFloat(normalized);
+                return Number.isFinite(parsed) ? parsed : 0;
+            }
+
+            function collectCompanyParametersPayload() {
+                const payload = {};
+                Object.entries(companyParameterSelectors).forEach(([prop, inputId]) => {
+                    const input = document.getElementById(inputId);
+                    payload[prop] = normalizeDecimal(input?.value ?? '0');
+                });
+                return payload;
+            }
+
+            function bindSaveParameters() {
+                if (!isCompanyRole) {
+                    return;
+                }
+
+                populateCompanyParameters();
+
+                const saveButton = document.getElementById('saveCompanyParameters');
+                if (!saveButton) {
+                    return;
+                }
+
+                const form = document.getElementById('companyParametersForm');
+                const tokenInput = form ? form.querySelector('input[name="__RequestVerificationToken"]') : null;
+                const antiForgeryToken = tokenInput ? tokenInput.value : '';
+
+                saveButton.addEventListener('click', async () => {
+                    const payload = collectCompanyParametersPayload();
+                    try {
+                        const response = await fetch('/CompanyParameters/Save', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'RequestVerificationToken': antiForgeryToken
+                            },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Falha ao salvar parâmetros');
+                        }
+
+                        const result = await response.json();
+                        if (result?.success) {
+                            companyParametersData = { ...payload };
+                            applyPresetStyles();
+                            const modalElement = document.getElementById('companyParametersModal');
+                            if (modalElement && window.bootstrap) {
+                                const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+                                modalInstance.hide();
+                            }
+                            alert('Parâmetros salvos com sucesso!');
+                        } else {
+                            alert('Não foi possível salvar os parâmetros. Tente novamente.');
+                        }
+                    } catch (error) {
+                        console.error(error);
+                        alert('Ocorreu um erro ao salvar os parâmetros.');
+                    }
+                });
+            }
+
+            bindSaveParameters();
 
             const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             tooltipTriggerList.forEach((tooltipTriggerEl) => {
