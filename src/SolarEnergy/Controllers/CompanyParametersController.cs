@@ -68,10 +68,18 @@ namespace SolarEnergy.Controllers
             parameters.MinSystemSizeKwp = ClampNonNegative(input.MinSystemSizeKwp);
             parameters.UpdatedAt = DateTime.UtcNow;
 
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao salvar parâmetros da empresa {CompanyId}", companyUser.Id);
+                return StatusCode(500, "Erro ao salvar parâmetros da empresa.");
+            }
 
             var response = MapToDto(parameters);
-            return Json(response);
+            return Ok(response);
         }
 
         private static CompanyParametersInputModel MapToDto(CompanyParameters parameters)
