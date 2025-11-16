@@ -44,7 +44,7 @@ namespace SolarEnergy.Controllers
             }
 
             var parameters = await _context.CompanyParameters
-                .FirstOrDefaultAsync(p => p.CompanyId == companyUser.Id);
+                .SingleOrDefaultAsync(p => p.CompanyId == companyUser.Id);
 
             if (parameters is null)
             {

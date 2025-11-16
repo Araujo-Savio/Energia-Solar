@@ -233,7 +233,7 @@ namespace SolarEnergy.Data
                 entity.Property(e => e.UpdatedAt).HasColumnType("datetime2");
 
                 entity.HasOne(e => e.Company)
-                    .WithOne()
+                    .WithOne(c => c.Parameters)
                     .HasForeignKey<CompanyParameters>(e => e.CompanyId)
                     .OnDelete(DeleteBehavior.Cascade);
 
