@@ -13,8 +13,10 @@ namespace SolarEnergy.Models
         [StringLength(450)]
         public string CompanyId { get; set; } = string.Empty;
 
+        // ===== CAMPOS ATUAIS (existem no banco) =====
+
         [Column(TypeName = "decimal(18,2)")]
-        public decimal PricePerKwp { get; set; }
+        public decimal SystemPricePerKwp { get; set; }
 
         [Column(TypeName = "decimal(5,2)")]
         public decimal MaintenancePercent { get; set; }
@@ -45,6 +47,7 @@ namespace SolarEnergy.Models
 
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
+        // ===== Relação com ApplicationUser =====
         [ForeignKey(nameof(CompanyId))]
         public ApplicationUser Company { get; set; } = null!;
     }

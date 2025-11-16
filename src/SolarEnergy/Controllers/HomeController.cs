@@ -466,7 +466,7 @@ namespace SolarEnergy.Controllers
         {
             return new CompanyParametersInputModel
             {
-                SystemPricePerKwp = parameters.PricePerKwp,
+                SystemPricePerKwp = parameters.SystemPricePerKwp,
                 MaintenancePercent = parameters.MaintenancePercent,
                 InstallDiscountPercent = parameters.InstallDiscountPercent,
                 RentalFactorPercent = parameters.RentalFactorPercent,

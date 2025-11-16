@@ -1,125 +1,99 @@
-using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SolarEnergy.Data;
 using SolarEnergy.Models;
-using SolarEnergy.ViewModels;
+using System;
+using System.Threading.Tasks;
 
 namespace SolarEnergy.Controllers
 {
     [Authorize(Roles = "Company")]
-    [AutoValidateAntiforgeryToken]
     public class CompanyParametersController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ILogger<CompanyParametersController> _logger;
 
-        public CompanyParametersController(
-            ApplicationDbContext context,
-            UserManager<ApplicationUser> userManager,
-            ILogger<CompanyParametersController> logger)
+        public CompanyParametersController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _userManager = userManager;
-            _logger = logger;
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SaveForCurrentCompany([FromBody] CompanyParametersInputModel? input)
+        // ===============================
+        // GET: /CompanyParameters
+        // ===============================
+        public async Task<IActionResult> Index()
         {
-            if (input is null)
-            {
-                return BadRequest("Parâmetros inválidos.");
-            }
-
             var user = await _userManager.GetUserAsync(User);
-            if (user is null)
-            {
-                return Unauthorized("Usuário não autenticado.");
-            }
 
-            var company = await _context.Users
-                .SingleOrDefaultAsync(u => u.Id == user.Id && u.UserType == UserType.Company);
-
-            if (company is null)
-            {
-                _logger.LogWarning("Nenhuma empresa encontrada para o usuário {UserId}.", user.Id);
-                return BadRequest("Empresa não encontrada para o usuário atual.");
-            }
-
-            var companyId = company.Id;
+            if (user == null)
+                return Unauthorized();
 
             var parameters = await _context.CompanyParameters
-                .SingleOrDefaultAsync(p => p.CompanyId == companyId);
+                .FirstOrDefaultAsync(x => x.CompanyId == user.Id);
 
-            if (parameters is null)
+            if (parameters == null)
             {
                 parameters = new CompanyParameters
                 {
-                    CompanyId = companyId
+                    CompanyId = user.Id,
+                    SystemPricePerKwp = 0,
+                    MaintenancePercent = 0,
+                    InstallDiscountPercent = 0,
+                    RentalFactorPercent = 0,
+                    RentalMinMonthly = 0,
+                    RentalSetupPerKwp = 0,
+                    RentalAnnualIncreasePercent = 0,
+                    RentalDiscountPercent = 0,
+                    ConsumptionPerKwp = 0,
+                    MinSystemSizeKwp = 0
                 };
 
                 _context.CompanyParameters.Add(parameters);
-            }
-
-            parameters.PricePerKwp = ClampNonNegative(input.SystemPricePerKwp);
-            parameters.MaintenancePercent = ClampNonNegative(input.MaintenancePercent);
-            parameters.InstallDiscountPercent = ClampNonNegative(input.InstallDiscountPercent);
-            parameters.RentalFactorPercent = ClampNonNegative(input.RentalFactorPercent);
-            parameters.RentalMinMonthly = ClampNonNegative(input.RentalMinMonthly);
-            parameters.RentalSetupPerKwp = ClampNonNegative(input.RentalSetupPerKwp);
-            parameters.RentalAnnualIncreasePercent = ClampNonNegative(input.RentalAnnualIncreasePercent);
-            parameters.RentalDiscountPercent = ClampNonNegative(input.RentalDiscountPercent);
-            parameters.ConsumptionPerKwp = ClampNonNegative(input.ConsumptionPerKwp);
-            parameters.MinSystemSizeKwp = ClampNonNegative(input.MinSystemSizeKwp);
-            parameters.UpdatedAt = DateTime.UtcNow;
-
-            try
-            {
                 await _context.SaveChangesAsync();
-                var response = MapToDto(parameters);
-                return Ok(response);
-            }
-            catch (DbUpdateException dbEx)
-            {
-                var detailedMessage = dbEx.InnerException?.Message ?? dbEx.Message;
-
-                _logger.LogError(dbEx,
-                    "Erro de banco ao salvar parâmetros da empresa {CompanyId}. Detalhe: {Message}",
-                    companyId, detailedMessage);
-
-                // TEMPORÁRIO: só pra debug, pra gente ver a mensagem real do SQL
-                return StatusCode(500, detailedMessage);
             }
 
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro inesperado ao salvar parâmetros da empresa {CompanyId}.", companyId);
-                return StatusCode(500, "Erro inesperado ao salvar parâmetros da empresa.");
-            }
+            return View(parameters);
         }
 
-        private static CompanyParametersInputModel MapToDto(CompanyParameters parameters)
+
+        // ===============================
+        // POST: /CompanyParameters/Save
+        // ===============================
+        [HttpPost]
+        public async Task<IActionResult> Save(CompanyParameters updated)
         {
-            return new CompanyParametersInputModel
-            {
-                SystemPricePerKwp = parameters.PricePerKwp,
-                MaintenancePercent = parameters.MaintenancePercent,
-                InstallDiscountPercent = parameters.InstallDiscountPercent,
-                RentalFactorPercent = parameters.RentalFactorPercent,
-                RentalMinMonthly = parameters.RentalMinMonthly,
-                RentalSetupPerKwp = parameters.RentalSetupPerKwp,
-                RentalAnnualIncreasePercent = parameters.RentalAnnualIncreasePercent,
-                RentalDiscountPercent = parameters.RentalDiscountPercent,
-                ConsumptionPerKwp = parameters.ConsumptionPerKwp,
-                MinSystemSizeKwp = parameters.MinSystemSizeKwp
-            };
-        }
+            var user = await _userManager.GetUserAsync(User);
 
-        private static decimal ClampNonNegative(decimal value) => value < 0 ? 0 : value;
+            if (user == null)
+                return Unauthorized();
+
+            var existing = await _context.CompanyParameters
+                .FirstOrDefaultAsync(x => x.CompanyId == user.Id);
+
+            if (existing == null)
+                return NotFound();
+
+            // Atualização dos campos
+            existing.SystemPricePerKwp = updated.SystemPricePerKwp;
+            existing.MaintenancePercent = updated.MaintenancePercent;
+            existing.InstallDiscountPercent = updated.InstallDiscountPercent;
+            existing.RentalFactorPercent = updated.RentalFactorPercent;
+            existing.RentalMinMonthly = updated.RentalMinMonthly;
+            existing.RentalSetupPerKwp = updated.RentalSetupPerKwp;
+            existing.RentalAnnualIncreasePercent = updated.RentalAnnualIncreasePercent;
+            existing.RentalDiscountPercent = updated.RentalDiscountPercent;
+            existing.ConsumptionPerKwp = updated.ConsumptionPerKwp;
+            existing.MinSystemSizeKwp = updated.MinSystemSizeKwp;
+
+            existing.UpdatedAt = DateTime.UtcNow;
+
+            _context.CompanyParameters.Update(existing);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
     }
 }

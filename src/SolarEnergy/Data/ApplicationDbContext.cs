@@ -26,7 +26,7 @@ namespace SolarEnergy.Data
         {
             base.OnModelCreating(builder);
 
-            // Configurações adicionais do modelo podem ser adicionadas aqui
+            // ---- CONFIGURAÇÃO DE USUÁRIO (ApplicationUser) ----
             builder.Entity<ApplicationUser>(entity =>
             {
                 entity.Property(e => e.FullName).IsRequired().HasMaxLength(100);
@@ -44,52 +44,47 @@ namespace SolarEnergy.Data
                 entity.Property(e => e.Location).HasMaxLength(120);
                 entity.Property(e => e.ProfileImagePath).HasMaxLength(260);
 
-                // Configuração do enum ServiceType
                 entity.Property(e => e.ServiceType)
                     .HasConversion<int>()
                     .IsRequired(false);
 
-                // Índices únicos
                 entity.HasIndex(e => e.CPF).IsUnique().HasFilter("[CPF] IS NOT NULL");
                 entity.HasIndex(e => e.CNPJ).IsUnique().HasFilter("[CNPJ] IS NOT NULL");
             });
 
-            // Configuração da entidade CompanyReview
+            // ---- COMPANY REVIEW ----
             builder.Entity<CompanyReview>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Comment).IsRequired().HasMaxLength(1000);
                 entity.Property(e => e.CompanyId).IsRequired().HasMaxLength(450);
                 entity.Property(e => e.ReviewerId).IsRequired().HasMaxLength(450);
-                
-                // Relacionamentos
+
                 entity.HasOne(e => e.Company)
                     .WithMany()
                     .HasForeignKey(e => e.CompanyId)
                     .OnDelete(DeleteBehavior.Cascade);
-                    
+
                 entity.HasOne(e => e.Reviewer)
                     .WithMany()
                     .HasForeignKey(e => e.ReviewerId)
                     .OnDelete(DeleteBehavior.Restrict);
 
-                // Índice único para garantir que um usuário só pode avaliar uma empresa uma vez
                 entity.HasIndex(e => new { e.CompanyId, e.ReviewerId }).IsUnique();
             });
 
-            // Configuração da entidade Quote
+            // ---- QUOTE ----
             builder.Entity<Quote>(entity =>
             {
                 entity.ToTable("Quotes");
                 entity.HasKey(e => e.QuoteId);
                 entity.Property(e => e.ClientId).IsRequired().HasMaxLength(450);
                 entity.Property(e => e.CompanyId).IsRequired().HasMaxLength(450);
-                entity.Property(e => e.MonthlyConsumptionKwh).IsRequired(); // Agora é int, não precisa de HasColumnType
+                entity.Property(e => e.MonthlyConsumptionKwh).IsRequired();
                 entity.Property(e => e.ServiceType).IsRequired().HasMaxLength(50);
                 entity.Property(e => e.Message).HasMaxLength(1000);
                 entity.Property(e => e.Status).IsRequired().HasMaxLength(50);
 
-                // Relacionamentos
                 entity.HasOne(e => e.Client)
                     .WithMany()
                     .HasForeignKey(e => e.ClientId)
@@ -100,11 +95,10 @@ namespace SolarEnergy.Data
                     .HasForeignKey(e => e.CompanyId)
                     .OnDelete(DeleteBehavior.Restrict);
 
-                // Índice único para garantir que um cliente só pode solicitar um orçamento por empresa
                 entity.HasIndex(e => new { e.ClientId, e.CompanyId }).IsUnique();
             });
 
-            // Configuração da entidade Proposal
+            // ---- PROPOSAL ----
             builder.Entity<Proposal>(entity =>
             {
                 entity.ToTable("Proposals");
@@ -114,14 +108,13 @@ namespace SolarEnergy.Data
                 entity.Property(e => e.EstimatedMonthlySavings).HasColumnType("decimal(18,2)");
                 entity.Property(e => e.Status).IsRequired().HasMaxLength(50);
 
-                // Relacionamento
                 entity.HasOne(e => e.Quote)
                     .WithMany(q => q.Proposals)
                     .HasForeignKey(e => e.QuoteId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
-            // Configuração da entidade QuoteMessage
+            // ---- QUOTE MESSAGE ----
             builder.Entity<QuoteMessage>(entity =>
             {
                 entity.ToTable("QuoteMessages");
@@ -129,10 +122,7 @@ namespace SolarEnergy.Data
                 entity.Property(e => e.SenderId).IsRequired().HasMaxLength(450);
                 entity.Property(e => e.Message).IsRequired().HasMaxLength(2000);
                 entity.Property(e => e.SenderType).HasConversion<int>().IsRequired();
-                
-                // A propriedade IsRead é [NotMapped], então não configuramos aqui
 
-                // Relacionamentos
                 entity.HasOne(e => e.Quote)
                     .WithMany(q => q.Messages)
                     .HasForeignKey(e => e.QuoteId)
@@ -143,14 +133,13 @@ namespace SolarEnergy.Data
                     .HasForeignKey(e => e.SenderId)
                     .OnDelete(DeleteBehavior.Restrict);
 
-                // Índices
                 entity.HasIndex(e => e.QuoteId);
                 entity.HasIndex(e => e.SenderId);
                 entity.HasIndex(e => e.SentDate);
                 entity.HasIndex(e => e.ReadDate);
             });
 
-            // Configuração das entidades do sistema de leads
+            // ---- LEAD SYSTEM ----
             builder.Entity<CompanyLeadBalance>(entity =>
             {
                 entity.ToTable("CompanyLeadBalances");
@@ -215,22 +204,48 @@ namespace SolarEnergy.Data
                 entity.HasIndex(e => e.ConsumedAt);
             });
 
+            // ---- COMPANY PARAMETERS (FINAL, CORRIGIDO) ----
             builder.Entity<CompanyParameters>(entity =>
             {
                 entity.ToTable("CompanyParameters");
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.CompanyId).IsRequired().HasMaxLength(450);
-                entity.Property(e => e.PricePerKwp).HasColumnType("decimal(18,2)");
-                entity.Property(e => e.MaintenancePercent).HasColumnType("decimal(5,2)");
-                entity.Property(e => e.InstallDiscountPercent).HasColumnType("decimal(5,2)");
-                entity.Property(e => e.RentalFactorPercent).HasColumnType("decimal(5,2)");
-                entity.Property(e => e.RentalMinMonthly).HasColumnType("decimal(18,2)");
-                entity.Property(e => e.RentalSetupPerKwp).HasColumnType("decimal(18,2)");
-                entity.Property(e => e.RentalAnnualIncreasePercent).HasColumnType("decimal(5,2)");
-                entity.Property(e => e.RentalDiscountPercent).HasColumnType("decimal(5,2)");
-                entity.Property(e => e.ConsumptionPerKwp).HasColumnType("decimal(18,2)");
-                entity.Property(e => e.MinSystemSizeKwp).HasColumnType("decimal(18,2)");
-                entity.Property(e => e.UpdatedAt).HasColumnType("datetime2");
+
+                entity.Property(e => e.CompanyId)
+                    .IsRequired()
+                    .HasMaxLength(450);
+
+                entity.Property(e => e.SystemPricePerKwp)
+                    .HasColumnType("decimal(18,2)");
+
+                entity.Property(e => e.MaintenancePercent)
+                    .HasColumnType("decimal(5,2)");
+
+                entity.Property(e => e.InstallDiscountPercent)
+                    .HasColumnType("decimal(5,2)");
+
+                entity.Property(e => e.RentalFactorPercent)
+                    .HasColumnType("decimal(5,2)");
+
+                entity.Property(e => e.RentalMinMonthly)
+                    .HasColumnType("decimal(18,2)");
+
+                entity.Property(e => e.RentalSetupPerKwp)
+                    .HasColumnType("decimal(18,2)");
+
+                entity.Property(e => e.RentalAnnualIncreasePercent)
+                    .HasColumnType("decimal(5,2)");
+
+                entity.Property(e => e.RentalDiscountPercent)
+                    .HasColumnType("decimal(5,2)");
+
+                entity.Property(e => e.ConsumptionPerKwp)
+                    .HasColumnType("decimal(18,2)");
+
+                entity.Property(e => e.MinSystemSizeKwp)
+                    .HasColumnType("decimal(18,2)");
+
+                entity.Property(e => e.UpdatedAt)
+                    .HasColumnType("datetime2");
 
                 entity.HasOne(e => e.Company)
                     .WithOne(c => c.Parameters)

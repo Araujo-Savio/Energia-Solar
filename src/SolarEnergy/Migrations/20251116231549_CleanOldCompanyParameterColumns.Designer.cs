@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SolarEnergy.Data;
 
@@ -11,9 +12,11 @@ using SolarEnergy.Data;
 namespace SolarEnergy.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251116231549_CleanOldCompanyParameterColumns")]
+    partial class CleanOldCompanyParameterColumns
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -361,6 +364,9 @@ namespace SolarEnergy.Migrations
                     b.Property<decimal>("MinSystemSizeKwp")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<decimal>("PricePerKwp")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("RentalAnnualIncreasePercent")
                         .HasColumnType("decimal(5,2)");
 
@@ -374,9 +380,6 @@ namespace SolarEnergy.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("RentalSetupPerKwp")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("SystemPricePerKwp")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("UpdatedAt")
