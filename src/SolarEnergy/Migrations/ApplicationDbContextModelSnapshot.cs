@@ -300,7 +300,7 @@ namespace SolarEnergy.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("SolarEnergy.Models.CompanyParameters", b =>
+            modelBuilder.Entity("SolarEnergy.Models.CompanyLeadBalance", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -308,42 +308,24 @@ namespace SolarEnergy.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("AnnualMaintenance")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("AnnualRentIncrease")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("AvailableLeads")
+                        .HasColumnType("int");
 
                     b.Property<string>("CompanyId")
                         .IsRequired()
                         .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<decimal>("InstallationDiscount")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("ConsumedLeads")
+                        .HasColumnType("int");
 
-                    b.Property<decimal>("KwhPerKwp")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
-                    b.Property<decimal>("MinRentalValue")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("TotalPurchasedLeads")
+                        .HasColumnType("int");
 
-                    b.Property<decimal>("MinSystemPower")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("PricePerKwP")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("RentalPercent")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("RentalSetupFee")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("RentDiscount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -351,7 +333,7 @@ namespace SolarEnergy.Migrations
                     b.HasIndex("CompanyId")
                         .IsUnique();
 
-                    b.ToTable("CompanyParameters");
+                    b.ToTable("CompanyLeadBalances", (string)null);
                 });
 
             modelBuilder.Entity("SolarEnergy.Models.CompanyReview", b =>
@@ -394,6 +376,108 @@ namespace SolarEnergy.Migrations
                         .IsUnique();
 
                     b.ToTable("CompanyReviews");
+                });
+
+            modelBuilder.Entity("SolarEnergy.Models.LeadConsumption", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CompanyId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("CompanyLeadBalanceId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ConsumedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("QuoteId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CompanyLeadBalanceId");
+
+                    b.HasIndex("ConsumedAt");
+
+                    b.HasIndex("QuoteId");
+
+                    b.HasIndex("CompanyId", "QuoteId")
+                        .IsUnique();
+
+                    b.ToTable("LeadConsumptions", (string)null);
+                });
+
+            modelBuilder.Entity("SolarEnergy.Models.LeadPurchase", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CompanyId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("CompanyLeadBalanceId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("DiscountPercentage")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("LeadQuantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("PaymentStatus")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("PurchaseDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("TransactionId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CompanyLeadBalanceId");
+
+                    b.HasIndex("PurchaseDate");
+
+                    b.HasIndex("TransactionId");
+
+                    b.ToTable("LeadPurchases", (string)null);
                 });
 
             modelBuilder.Entity("SolarEnergy.Models.Proposal", b =>
@@ -496,6 +580,49 @@ namespace SolarEnergy.Migrations
                     b.ToTable("Quotes", (string)null);
                 });
 
+            modelBuilder.Entity("SolarEnergy.Models.QuoteMessage", b =>
+                {
+                    b.Property<int>("MessageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MessageId"));
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<int>("QuoteId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ReadDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SenderId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("SenderType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("SentDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("MessageId");
+
+                    b.HasIndex("QuoteId");
+
+                    b.HasIndex("ReadDate");
+
+                    b.HasIndex("SenderId");
+
+                    b.HasIndex("SentDate");
+
+                    b.ToTable("QuoteMessages", (string)null);
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -547,6 +674,17 @@ namespace SolarEnergy.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("SolarEnergy.Models.CompanyLeadBalance", b =>
+                {
+                    b.HasOne("SolarEnergy.Models.ApplicationUser", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+                });
+
             modelBuilder.Entity("SolarEnergy.Models.CompanyReview", b =>
                 {
                     b.HasOne("SolarEnergy.Models.ApplicationUser", "Company")
@@ -564,6 +702,44 @@ namespace SolarEnergy.Migrations
                     b.Navigation("Company");
 
                     b.Navigation("Reviewer");
+                });
+
+            modelBuilder.Entity("SolarEnergy.Models.LeadConsumption", b =>
+                {
+                    b.HasOne("SolarEnergy.Models.ApplicationUser", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SolarEnergy.Models.CompanyLeadBalance", null)
+                        .WithMany("LeadConsumptions")
+                        .HasForeignKey("CompanyLeadBalanceId");
+
+                    b.HasOne("SolarEnergy.Models.Quote", "Quote")
+                        .WithMany()
+                        .HasForeignKey("QuoteId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Quote");
+                });
+
+            modelBuilder.Entity("SolarEnergy.Models.LeadPurchase", b =>
+                {
+                    b.HasOne("SolarEnergy.Models.ApplicationUser", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SolarEnergy.Models.CompanyLeadBalance", null)
+                        .WithMany("LeadPurchases")
+                        .HasForeignKey("CompanyLeadBalanceId");
+
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("SolarEnergy.Models.Proposal", b =>
@@ -596,8 +772,36 @@ namespace SolarEnergy.Migrations
                     b.Navigation("Company");
                 });
 
+            modelBuilder.Entity("SolarEnergy.Models.QuoteMessage", b =>
+                {
+                    b.HasOne("SolarEnergy.Models.Quote", "Quote")
+                        .WithMany("Messages")
+                        .HasForeignKey("QuoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SolarEnergy.Models.ApplicationUser", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Quote");
+
+                    b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("SolarEnergy.Models.CompanyLeadBalance", b =>
+                {
+                    b.Navigation("LeadConsumptions");
+
+                    b.Navigation("LeadPurchases");
+                });
+
             modelBuilder.Entity("SolarEnergy.Models.Quote", b =>
                 {
+                    b.Navigation("Messages");
+
                     b.Navigation("Proposals");
                 });
 #pragma warning restore 612, 618

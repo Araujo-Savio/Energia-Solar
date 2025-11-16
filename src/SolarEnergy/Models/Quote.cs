@@ -22,16 +22,16 @@ namespace SolarEnergy.Models
         public int MonthlyConsumptionKwh { get; set; }
 
         [Required]
-        [Display(Name = "Tipo de ServiÁo")]
+        [Display(Name = "Tipo de Servi√ßo")]
         [StringLength(50)]
         public string ServiceType { get; set; } = string.Empty;
 
         [Display(Name = "Mensagem")]
-        [StringLength(1000, ErrorMessage = "A mensagem deve ter no m·ximo 1000 caracteres")]
+        [StringLength(1000, ErrorMessage = "A mensagem deve ter no m√°ximo 1000 caracteres")]
         public string? Message { get; set; }
 
         [Required]
-        [Display(Name = "Data da SolicitaÁ„o")]
+        [Display(Name = "Data da Solicita√ß√£o")]
         public DateTime RequestDate { get; set; } = DateTime.Now;
 
         [Required]
@@ -41,7 +41,7 @@ namespace SolarEnergy.Models
 
         // Campos para resposta da empresa
         [Display(Name = "Mensagem de Resposta da Empresa")]
-        [StringLength(2000, ErrorMessage = "A mensagem de resposta deve ter no m·ximo 2000 caracteres")]
+        [StringLength(2000, ErrorMessage = "A mensagem de resposta deve ter no m√°ximo 2000 caracteres")]
         public string? CompanyResponseMessage { get; set; }
 
         [Display(Name = "Data da Resposta da Empresa")]
@@ -54,10 +54,13 @@ namespace SolarEnergy.Models
         [ForeignKey("CompanyId")]
         public virtual ApplicationUser Company { get; set; } = null!;
 
-        // Lista de propostas relacionadas a este orÁamento
+        // Lista de propostas relacionadas a este or√ßamento
         public virtual ICollection<Proposal> Proposals { get; set; } = new List<Proposal>();
 
-        // MÈtodos
+        // Lista de mensagens do chat
+        public virtual ICollection<QuoteMessage> Messages { get; set; } = new List<QuoteMessage>();
+
+        // M√©todos
         public void UpdateStatus(string newStatus)
         {
             Status = newStatus;
@@ -76,7 +79,7 @@ namespace SolarEnergy.Models
         [Display(Name = "Pendente")]
         Pending,
 
-        [Display(Name = "Em An·lise")]
+        [Display(Name = "Em An√°lise")]
         InAnalysis,
 
         [Display(Name = "Proposta Enviada")]

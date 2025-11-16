@@ -4,25 +4,25 @@ namespace SolarEnergy.ViewModels
 {
     public class RequestQuoteViewModel
     {
-        [Required(ErrorMessage = "O ID da empresa é obrigatório")]
+        [Required(ErrorMessage = "O ID da empresa Ã© obrigatÃ³rio")]
         public string CompanyId { get; set; } = string.Empty;
 
         public string CompanyName { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "O consumo mensal é obrigatório")]
-        [Display(Name = "Consumo Médio Mensal (kWh)")]
+        [Required(ErrorMessage = "O consumo mensal Ã© obrigatÃ³rio")]
+        [Display(Name = "Consumo MÃ©dio Mensal (kWh)")]
         [Range(1, 99999, ErrorMessage = "O consumo deve ser entre 1 e 99.999 kWh")]
         public int MonthlyConsumptionKwh { get; set; }
 
-        [Required(ErrorMessage = "O tipo de serviço é obrigatório")]
-        [Display(Name = "Tipo de Serviço")]
+        [Required(ErrorMessage = "O tipo de serviÃ§o Ã© obrigatÃ³rio")]
+        [Display(Name = "Tipo de ServiÃ§o")]
         public string ServiceType { get; set; } = string.Empty;
 
         [Display(Name = "Mensagem Adicional")]
-        [StringLength(1000, ErrorMessage = "A mensagem deve ter no máximo 1000 caracteres")]
+        [StringLength(1000, ErrorMessage = "A mensagem deve ter no mÃ¡ximo 1000 caracteres")]
         public string? Message { get; set; }
 
-        // Informações adicionais da empresa para exibição
+        // InformaÃ§Ãµes adicionais da empresa para exibiÃ§Ã£o
         public string? CompanyDescription { get; set; }
         public string? CompanyLocation { get; set; }
         public string? CompanyWebsite { get; set; }
@@ -39,6 +39,13 @@ namespace SolarEnergy.ViewModels
         public string Status { get; set; } = string.Empty;
         public bool HasProposal { get; set; }
         public int ProposalCount { get; set; }
+        
+        // Campos para o chat
+        public int UnreadMessagesCount { get; set; }
+        public DateTime? LastMessageDate { get; set; }
+        public string? LastMessage { get; set; }
+        public bool HasChat => UnreadMessagesCount > 0 || !string.IsNullOrEmpty(LastMessage) || !string.IsNullOrEmpty(CompanyResponseMessage);
+        public string? CompanyResponseMessage { get; set; }
     }
 
     public class QuoteDetailsViewModel
@@ -57,6 +64,12 @@ namespace SolarEnergy.ViewModels
         // Campos para resposta da empresa
         public string? CompanyResponseMessage { get; set; }
         public DateTime? CompanyResponseDate { get; set; }
+        
+        // Campos para o chat
+        public int UnreadMessagesCount { get; set; }
+        public bool HasChatMessages { get; set; }
+        public bool HasAccess { get; set; } = false;
+        public bool CanPurchaseAccess { get; set; } = true;
     }
 
     public class ProposalViewModel

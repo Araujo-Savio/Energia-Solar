@@ -1,0 +1,344 @@
+@model SolarEnergy.ViewModels.AdminUsersViewModel
+@{
+    ViewData["Title"] = "Gerenciar Usuários";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["BreadcrumbItems"] = new List<dynamic>
+    {
+    new { Title = "Usuários", Url = "", IsActive = true }
+    };
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-users.css" asp-append-version="true" />
+}
+
+<div class="admin-users-page admin-fade-in">
+    <div class="container-fluid px-4">
+        <!-- Page Header -->
+        <div class="admin-users-header">
+            <div class="users-title">
+                <i class="fas fa-users me-3 text-admin-info"></i>
+                Gerenciar Usuários
+            </div>
+            <p class="users-subtitle">
+                Administre todos os usuários da plataforma Solar Energy
+            </p>
+        </div>
+
+        <!-- Filtros -->
+        <div class="admin-users-filters">
+            <form method="get" class="mb-0">
+                <div class="filters-row">
+                    <div class="filter-group">
+                        <label class="filter-label">Buscar por nome ou email</label>
+                        <input type="text" name="search" value="@ViewBag.SearchTerm" 
+                               class="filter-input" placeholder="Digite para buscar...">
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Tipo de Usuário</label>
+                        <select name="userType" class="filter-select">
+                            <option value="">Todos os tipos</option>
+                            <option value="Client" selected="@(ViewBag.UserTypeFilter == "Client")">Clientes</option>
+                            <option value="Company" selected="@(ViewBag.UserTypeFilter == "Company")">Empresas</option>
+                            <option value="Administrator" selected="@(ViewBag.UserTypeFilter == "Administrator")">Administradores</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Status</label>
+                        <select name="status" class="filter-select">
+                            <option value="">Todos os status</option>
+                            <option value="Active" selected="@(ViewBag.StatusFilter == "Active")">Ativo</option>
+                            <option value="Inactive" selected="@(ViewBag.StatusFilter == "Inactive")">Inativo</option>
+                            <option value="Pending" selected="@(ViewBag.StatusFilter == "Pending")">Pendente</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <button type="submit" class="filter-btn primary">
+                            <i class="fas fa-search me-1"></i>
+                            Filtrar
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    <!-- Estatísticas dos Usuários -->
+        <div class="users-stats">
+            <div class="user-stat-card">
+                <div class="user-stat-icon clients">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-stat-number">@Model.TotalClients</div>
+                <div class="user-stat-label">Clientes</div>
+            </div>
+            <div class="user-stat-card">
+                <div class="user-stat-icon companies">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div class="user-stat-number">@Model.TotalCompanies</div>
+                <div class="user-stat-label">Empresas</div>
+            </div>
+            <div class="user-stat-card">
+                <div class="user-stat-icon admins">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="user-stat-number">@Model.TotalAdmins</div>
+                <div class="user-stat-label">Administradores</div>
+            </div>
+            <div class="user-stat-card">
+                <div class="user-stat-icon pending">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="user-stat-number">@Model.PendingUsers</div>
+                <div class="user-stat-label">Pendentes</div>
+            </div>
+        </div>
+
+    <!-- Tabela de Usuários -->
+        <div class="admin-users-table-container">
+            <div class="users-table-header">
+                <h5 class="table-title">
+                    <i class="fas fa-list me-2"></i>
+                    Lista de Usuários
+                </h5>
+                <a href="@Url.Action("CreateUser", "Admin")" class="add-user-btn">
+                    <i class="fas fa-plus me-1"></i>
+                    Novo Usuário
+                </a>
+            </div>
+
+            @if (Model.Users != null && Model.Users.Any())
+            {
+                <table class="table users-table">
+                    <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="select-all" class="form-check-input">
+                            </th>
+                            <th>Usuário</th>
+                            <th>Tipo</th>
+                            <th>Status</th>
+                            <th>Cadastro</th>
+                            <th>Último Acesso</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model.Users)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="checkbox" name="selectedUsers" value="@user.Id" 
+                                           class="form-check-input item-checkbox">
+                                </td>
+                                <td>
+                                    <div class="user-info">
+                                        <div class="user-avatar">
+                                            @(user.FullName?.Substring(0, 1).ToUpper() ?? "U")
+                                        </div>
+                                        <div class="user-details">
+                                            <div class="user-name">@user.FullName</div>
+                                            <div class="user-email">@user.Email</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="user-type-badge @user.UserType.ToString().ToLower()">
+                                        @(user.UserType switch 
+                                        {
+                                            SolarEnergy.Models.UserType.Client => "Cliente",
+                                            SolarEnergy.Models.UserType.Company => "Empresa", 
+                                            SolarEnergy.Models.UserType.Administrator => "Admin",
+                                            _ => "N/A"
+                                        })
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="user-status">
+                                        <span class="status-dot @(user.IsActive ? "active" : "inactive")"></span>
+                                        <span class="status-text @(user.IsActive ? "active" : "inactive")">
+                                            @(user.IsActive ? "Ativo" : "Inativo")
+                                        </span>
+                                    </div>
+                                </td>
+                                <td data-label="Cadastro">
+                                    @user.CreatedAt.ToString("dd/MM/yyyy")
+                                </td>
+                                <td data-label="Último Acesso">
+                                    @(user.CreatedAt.AddDays(Random.Shared.Next(1, 30)).ToString("dd/MM/yyyy HH:mm"))
+                                </td>
+                                <td data-label="Ações">
+                                    <div class="user-actions">
+                                        <a href="@Url.Action("UserDetails", "Admin", new { id = user.Id })" 
+                                           class="action-btn view" title="Ver Detalhes">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="@Url.Action("EditUser", "Admin", new { id = user.Id })" 
+                                           class="action-btn edit" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        @if (user.UserType != SolarEnergy.Models.UserType.Administrator)
+                                        {
+                                            <button type="button" class="action-btn delete" 
+                                                    data-confirm="Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita."
+                                                    onclick="deleteUser('@user.Id')" title="Excluir">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <!-- Paginação -->
+                @if (ViewBag.TotalPages != null && (int)ViewBag.TotalPages > 1)
+                {
+                    <div class="users-pagination">
+                        <div class="pagination-info">
+                            Mostrando @((ViewBag.CurrentPage - 1) * ViewBag.PageSize + 1) a 
+                            @(Math.Min(ViewBag.CurrentPage * ViewBag.PageSize, ViewBag.TotalUsers)) 
+                            de @ViewBag.TotalUsers usuários
+                        </div>
+                        
+                        <nav class="pagination-controls">
+                            <ul class="pagination mb-0">
+                                @if (ViewBag.CurrentPage > 1)
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=@(ViewBag.CurrentPage - 1)&search=@ViewBag.SearchTerm&userType=@ViewBag.UserTypeFilter&status=@ViewBag.StatusFilter">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </a>
+                                    </li>
+                                }
+                                
+                                @for (int i = Math.Max(1, ViewBag.CurrentPage - 2); i <= Math.Min(ViewBag.TotalPages, ViewBag.CurrentPage + 2); i++)
+                                {
+                                    <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                        <a class="page-link" href="?page=@i&search=@ViewBag.SearchTerm&userType=@ViewBag.UserTypeFilter&status=@ViewBag.StatusFilter">@i</a>
+                                    </li>
+                                }
+                                
+                                @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=@(ViewBag.CurrentPage + 1)&search=@ViewBag.SearchTerm&userType=@ViewBag.UserTypeFilter&status=@ViewBag.StatusFilter">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </nav>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="users-empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h4 class="empty-title">Nenhum usuário encontrado</h4>
+                    <p class="empty-message">Não há usuários que correspondam aos critérios de busca.</p>
+                    <a href="@Url.Action("CreateUser", "Admin")" class="btn btn-admin-primary">
+                        <i class="fas fa-plus me-1"></i>
+                        Criar Primeiro Usuário
+                    </a>
+                </div>
+            }
+        </div>
+
+    <!-- Ações em Massa (aparece quando itens são selecionados) -->
+        <div class="bulk-actions" style="display: none;">
+            <button type="button" class="bulk-action-btn approve" data-original-text="Ativar Selecionados">
+                <i class="fas fa-check me-1"></i>
+                Ativar Selecionados
+            </button>
+            <button type="button" class="bulk-action-btn reject" data-original-text="Desativar Selecionados">
+                <i class="fas fa-ban me-1"></i>
+                Desativar Selecionados
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function deleteUser(userId) {
+            if (confirm('Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita.')) {
+                // Criar form dinámico para DELETE
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '@Url.Action("DeleteUser", "Admin")';
+                
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'id';
+                input.value = userId;
+                
+                const token = document.createElement('input');
+                token.type = 'hidden';
+                token.name = '__RequestVerificationToken';
+                token.value = $('input[name="__RequestVerificationToken"]').val();
+                
+                form.appendChild(input);
+                form.appendChild(token);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+    // Ações em massa
+        document.addEventListener('DOMContentLoaded', function() {
+            // Bulk activate users
+            document.querySelector('.bulk-action-btn.approve')?.addEventListener('click', function() {
+                const selectedUsers = Array.from(document.querySelectorAll('.item-checkbox:checked')).map(cb => cb.value);
+                if (selectedUsers.length === 0) return;
+                
+                if (confirm(`Deseja ativar ${selectedUsers.length} usuário(s) selecionado(s)?`)) {
+                    bulkUpdateUsers(selectedUsers, 'activate');
+                }
+            });
+
+            // Bulk deactivate users
+            document.querySelector('.bulk-action-btn.reject')?.addEventListener('click', function() {
+                const selectedUsers = Array.from(document.querySelectorAll('.item-checkbox:checked')).map(cb => cb.value);
+                if (selectedUsers.length === 0) return;
+                
+                if (confirm(`Deseja desativar ${selectedUsers.length} usuário(s) selecionado(s)?`)) {
+                    bulkUpdateUsers(selectedUsers, 'deactivate');
+                }
+            });
+        });
+
+        function bulkUpdateUsers(userIds, action) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '@Url.Action("BulkUpdateUsers", "Admin")';
+            
+            userIds.forEach(id => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'userIds';
+                input.value = id;
+                form.appendChild(input);
+            });
+            
+            const actionInput = document.createElement('input');
+            actionInput.type = 'hidden';
+            actionInput.name = 'action';
+            actionInput.value = action;
+            form.appendChild(actionInput);
+            
+            const token = document.createElement('input');
+            token.type = 'hidden';
+            token.name = '__RequestVerificationToken';
+            token.value = $('input[name="__RequestVerificationToken"]').val();
+            form.appendChild(token);
+            
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+}

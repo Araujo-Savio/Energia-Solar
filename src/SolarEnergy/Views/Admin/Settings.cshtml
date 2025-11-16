@@ -1,0 +1,383 @@
+@model SolarEnergy.ViewModels.AdminSettingsViewModel
+@{
+    ViewData["Title"] = "Configurações do Sistema";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["BreadcrumbItems"] = new List<dynamic>
+    {
+    new { Title = "Configurações", Url = "", IsActive = true }
+    };
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-settings.css" asp-append-version="true" />
+}
+
+<div class="admin-settings-page admin-fade-in">
+    <div class="container-fluid px-4">
+        <!-- Page Header -->
+        <div class="admin-settings-header">
+            <div class="settings-title">
+                <i class="fas fa-cog me-3 text-admin-secondary"></i>
+                Configurações do Sistema
+            </div>
+            <p class="settings-subtitle">
+                Configure parâmetros gerais da plataforma Solar Energy
+            </p>
+        </div>
+
+        <form asp-action="UpdateSettings" method="post" class="admin-form">
+            <div class="row">
+                <!-- Configurações Gerais -->
+                <div class="col-lg-6">
+                    <div class="settings-section">
+                        <div class="section-header">
+                            <h5><i class="fas fa-sliders-h me-2"></i>Configurações Gerais</h5>
+                        </div>
+                        
+                        <div class="admin-form-group">
+                            <label class="admin-form-label">Nome da Plataforma</label>
+                            <input type="text" asp-for="PlatformName" class="admin-form-control" 
+                                   placeholder="Nome da plataforma">
+                        </div>
+
+                        <div class="admin-form-group">
+                            <label class="admin-form-label">Email de Contato</label>
+                            <input type="email" asp-for="ContactEmail" class="admin-form-control" 
+                                   placeholder="email@exemplo.com">
+                        </div>
+
+                        <div class="admin-form-group">
+                            <label class="admin-form-label">Telefone de Suporte</label>
+                            <input type="tel" asp-for="SupportPhone" class="admin-form-control" 
+                                   placeholder="(11) 99999-9999">
+                        </div>
+
+                        <div class="admin-form-group">
+                            <label class="admin-form-label">Comissão da Plataforma (%)</label>
+                            <input type="number" asp-for="PlatformCommission" class="admin-form-control" 
+                                   min="0" max="100" step="0.1" placeholder="0.0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configurações de Email -->
+                <div class="col-lg-6">
+                    <div class="settings-section">
+                        <div class="section-header">
+                            <h5><i class="fas fa-envelope me-2"></i>Configurações de Email</h5>
+                        </div>
+                        
+                        <div class="admin-form-group">
+                            <label class="admin-form-label">Servidor SMTP</label>
+                            <input type="text" asp-for="SmtpServer" class="admin-form-control" 
+                                   placeholder="smtp.gmail.com">
+                        </div>
+
+                        <div class="admin-form-group">
+                            <label class="admin-form-label">Porta SMTP</label>
+                            <input type="number" asp-for="SmtpPort" class="admin-form-control" 
+                                   placeholder="587">
+                        </div>
+
+                        <div class="admin-form-group">
+                            <label class="admin-form-label">Email Remetente</label>
+                            <input type="email" asp-for="SenderEmail" class="admin-form-control" 
+                                   placeholder="noreply@solarenergy.com">
+                        </div>
+
+                        <div class="admin-form-group">
+                            <div class="form-check">
+                                <input type="checkbox" asp-for="EnableSsl" class="form-check-input" id="enableSsl">
+                                <label class="form-check-label" for="enableSsl">
+                                    Habilitar SSL/TLS
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configurações de Segurança -->
+                <div class="col-lg-6">
+                    <div class="settings-section">
+                        <div class="section-header">
+                            <h5><i class="fas fa-shield-alt me-2"></i>Configurações de Segurança</h5>
+                        </div>
+                        
+                        <div class="admin-form-group">
+                            <label class="admin-form-label">Tempo de Sessão (minutos)</label>
+                            <input type="number" asp-for="SessionTimeout" class="admin-form-control" 
+                                   min="15" max="480" placeholder="60">
+                        </div>
+
+                        <div class="admin-form-group">
+                            <label class="admin-form-label">Máx. Tentativas de Login</label>
+                            <input type="number" asp-for="MaxLoginAttempts" class="admin-form-control" 
+                                   min="3" max="10" placeholder="5">
+                        </div>
+
+                        <div class="admin-form-group">
+                            <div class="form-check">
+                                <input type="checkbox" asp-for="RequireTwoFactor" class="form-check-input" id="require2FA">
+                                <label class="form-check-label" for="require2FA">
+                                    Exigir Autenticação de Dois Fatores
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="admin-form-group">
+                            <div class="form-check">
+                                <input type="checkbox" asp-for="EnableAuditLog" class="form-check-input" id="enableAudit">
+                                <label class="form-check-label" for="enableAudit">
+                                    Habilitar Log de Auditoria
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configurações de Leads -->
+                <div class="col-lg-6">
+                    <div class="settings-section">
+                        <div class="section-header">
+                            <h5><i class="fas fa-coins me-2"></i>Configurações de Leads</h5>
+                        </div>
+                        
+                        <div class="admin-form-group">
+                            <label class="admin-form-label">Preço por Lead (R$)</label>
+                            <input type="number" asp-for="LeadPrice" class="admin-form-control" 
+                                   min="1" step="0.01" placeholder="50.00">
+                        </div>
+
+                        <div class="admin-form-group">
+                            <label class="admin-form-label">Leads Gratuitos por Empresa</label>
+                            <input type="number" asp-for="FreeLeadsPerCompany" class="admin-form-control" 
+                                   min="0" placeholder="3">
+                        </div>
+
+                        <div class="admin-form-group">
+                            <label class="admin-form-label">Validade do Lead (dias)</label>
+                            <input type="number" asp-for="LeadValidityDays" class="admin-form-control" 
+                                   min="1" max="90" placeholder="30">
+                        </div>
+
+                        <div class="admin-form-group">
+                            <div class="form-check">
+                                <input type="checkbox" asp-for="AutoAssignLeads" class="form-check-input" id="autoAssign">
+                                <label class="form-check-label" for="autoAssign">
+                                    Atribuição Automática de Leads
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configurações de Notificações -->
+                <div class="col-lg-12">
+                    <div class="settings-section">
+                        <div class="section-header">
+                            <h5><i class="fas fa-bell me-2"></i>Configurações de Notificações</h5>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="admin-form-group">
+                                    <div class="form-check">
+                                        <input type="checkbox" asp-for="NotifyNewUser" class="form-check-input" id="notifyNewUser">
+                                        <label class="form-check-label" for="notifyNewUser">
+                                            Notificar Novo Usuário
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="admin-form-group">
+                                    <div class="form-check">
+                                        <input type="checkbox" asp-for="NotifyNewCompany" class="form-check-input" id="notifyNewCompany">
+                                        <label class="form-check-label" for="notifyNewCompany">
+                                            Notificar Nova Empresa
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="admin-form-group">
+                                    <div class="form-check">
+                                        <input type="checkbox" asp-for="NotifyNewQuote" class="form-check-input" id="notifyNewQuote">
+                                        <label class="form-check-label" for="notifyNewQuote">
+                                            Notificar Novo Orçamento
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Status -->
+                <div class="col-lg-12">
+                    <div class="settings-section">
+                        <div class="section-header">
+                            <h5><i class="fas fa-heartbeat me-2"></i>Status do Sistema</h5>
+                        </div>
+                        
+                        <div class="system-status-grid">
+                            <div class="status-item">
+                                <div class="status-info">
+                                    <i class="fas fa-database text-admin-success me-2"></i>
+                                    <span>Banco de Dados</span>
+                                </div>
+                                <span class="status-badge online">Online</span>
+                            </div>
+                            
+                            <div class="status-item">
+                                <div class="status-info">
+                                    <i class="fas fa-envelope text-admin-success me-2"></i>
+                                    <span>Servidor de Email</span>
+                                </div>
+                                <span class="status-badge online">Operacional</span>
+                            </div>
+                            
+                            <div class="status-item">
+                                <div class="status-info">
+                                    <i class="fas fa-cloud text-admin-success me-2"></i>
+                                    <span>Armazenamento</span>
+                                </div>
+                                <span class="status-badge online">OK</span>
+                            </div>
+                            
+                            <div class="status-item">
+                                <div class="status-info">
+                                    <i class="fas fa-shield-alt text-admin-warning me-2"></i>
+                                    <span>Sistema de Backup</span>
+                                </div>
+                                <span class="status-badge warning">Aguardando</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="settings-actions">
+                <button type="submit" class="btn btn-admin-primary">
+                    <i class="fas fa-save me-1"></i>
+                    Salvar Configurações
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="resetToDefaults()">
+                    <i class="fas fa-undo me-1"></i>
+                    Restaurar Padrões
+                </button>
+                <a href="@Url.Action("Dashboard", "Admin")" class="btn btn-outline-secondary">
+                    <i class="fas fa-times me-1"></i>
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function resetToDefaults() {
+            if (confirm('Tem certeza que deseja restaurar todas as configurações para os valores padrão?')) {
+                // Reset form to default values
+                document.querySelector('input[name="PlatformName"]').value = 'Solar Energy';
+                document.querySelector('input[name="ContactEmail"]').value = 'contato@solarenergy.com';
+                document.querySelector('input[name="SupportPhone"]').value = '(11) 99999-9999';
+                document.querySelector('input[name="PlatformCommission"]').value = '5.0';
+                document.querySelector('input[name="SmtpServer"]').value = 'smtp.gmail.com';
+                document.querySelector('input[name="SmtpPort"]').value = '587';
+                document.querySelector('input[name="SenderEmail"]').value = 'noreply@solarenergy.com';
+                document.querySelector('input[name="EnableSsl"]').checked = true;
+                document.querySelector('input[name="SessionTimeout"]').value = '60';
+                document.querySelector('input[name="MaxLoginAttempts"]').value = '5';
+                document.querySelector('input[name="RequireTwoFactor"]').checked = false;
+                document.querySelector('input[name="EnableAuditLog"]').checked = true;
+                document.querySelector('input[name="LeadPrice"]').value = '50.00';
+                document.querySelector('input[name="FreeLeadsPerCompany"]').value = '3';
+                document.querySelector('input[name="LeadValidityDays"]').value = '30';
+                document.querySelector('input[name="AutoAssignLeads"]').checked = true;
+                document.querySelector('input[name="NotifyNewUser"]').checked = true;
+                document.querySelector('input[name="NotifyNewCompany"]').checked = true;
+                document.querySelector('input[name="NotifyNewQuote"]').checked = true;
+            }
+        }
+
+        // Form validation
+        document.querySelector('.admin-form').addEventListener('submit', function(e) {
+            const requiredFields = this.querySelectorAll('input[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+            
+            if (!isValid) {
+                e.preventDefault();
+                AdminJS.showNotification('error', 'Por favor, preencha todos os campos obrigatórios');
+            }
+        });
+
+        // Auto-save draft
+        let saveTimer;
+        document.querySelectorAll('.admin-form-control').forEach(input => {
+            input.addEventListener('input', function() {
+                clearTimeout(saveTimer);
+                saveTimer = setTimeout(saveDraft, 2000);
+            });
+        });
+
+        function saveDraft() {
+            const formData = new FormData(document.querySelector('.admin-form'));
+            const data = Object.fromEntries(formData.entries());
+            localStorage.setItem('adminSettingsDraft', JSON.stringify(data));
+            
+            // Show save indicator
+            const saveIndicator = document.createElement('div');
+            saveIndicator.className = 'alert alert-info alert-dismissible fade show position-fixed';
+            saveIndicator.style.top = '20px';
+            saveIndicator.style.right = '20px';
+            saveIndicator.style.zIndex = '9999';
+            saveIndicator.innerHTML = `
+                <i class="fas fa-cloud me-1"></i>
+                Rascunho salvo automaticamente
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(saveIndicator);
+            
+            setTimeout(() => {
+                if (saveIndicator.parentNode) {
+                    saveIndicator.remove();
+                }
+            }, 3000);
+        }
+
+        // Load draft on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const draft = localStorage.getItem('adminSettingsDraft');
+            if (draft) {
+                const data = JSON.parse(draft);
+                Object.keys(data).forEach(key => {
+                    const input = document.querySelector(`[name="${key}"]`);
+                    if (input) {
+                        if (input.type === 'checkbox') {
+                            input.checked = data[key] === 'true' || data[key] === 'on';
+                        } else {
+                            input.value = data[key];
+                        }
+                    }
+                });
+            }
+        });
+
+        // Clear draft after successful save
+        document.querySelector('.admin-form').addEventListener('submit', function() {
+            localStorage.removeItem('adminSettingsDraft');
+        });
+    </script>
+}

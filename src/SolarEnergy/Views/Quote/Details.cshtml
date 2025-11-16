@@ -1,9 +1,9 @@
 @model SolarEnergy.ViewModels.QuoteDetailsViewModel
 @{
-    ViewData["Title"] = $"Detalhes do OrÁamento - {Model.CompanyName}";
+    ViewData["Title"] = $"Detalhes do Or√ßamento - {Model.CompanyName}";
     var userType = ViewData["UserType"] as SolarEnergy.Models.UserType?;
     var isClient = userType == SolarEnergy.Models.UserType.Client;
-    var canEdit = isClient && (Model.Status == "Pendente" || Model.Status == "Em An·lise");
+    var canEdit = isClient && (Model.Status == "Pendente" || Model.Status == "Em An√°lise");
     var hasResponse = Model.Proposals.Any() || Model.Status == "Respondido";
 }
 
@@ -16,7 +16,7 @@
                     <ol class="breadcrumb bg-transparent p-0 mb-3">
                         <li class="breadcrumb-item">
                             <a asp-controller="Quote" asp-action="MyQuotes" class="text-solar-orange text-decoration-none">
-                                <i class="fas fa-arrow-left me-1"></i>Voltar aos OrÁamentos
+                                <i class="fas fa-arrow-left me-1"></i>Voltar aos Or√ßamentos
                             </a>
                         </li>
                         <li class="breadcrumb-item active text-muted" aria-current="page">Detalhes</li>
@@ -30,7 +30,7 @@
                             <div class="col-md-8">
                                 <h4 class="mb-1">
                                     <i class="fas fa-file-invoice me-2"></i>
-                                    OrÁamento #@Model.QuoteId.ToString("D6")
+                                    Or√ßamento #@Model.QuoteId.ToString("D6")
                                 </h4>
                                 <p class="mb-0 opacity-75">
                                     <i class="fas fa-building me-1"></i>
@@ -53,13 +53,13 @@
                 <div class="row">
                     <!-- Coluna Principal -->
                     <div class="col-lg-8">
-                        <!-- Dados da SolicitaÁ„o -->
+                        <!-- Dados da Solicita√ß√£o -->
                         <div class="card border-0 shadow-sm mb-4">
                             <div class="card-header bg-transparent border-0 py-3">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h5 class="text-solar-blue fw-bold mb-0">
                                         <i class="fas fa-info-circle me-2 text-solar-orange"></i>
-                                        Dados da SolicitaÁ„o
+                                        Dados da Solicita√ß√£o
                                     </h5>
                                     @if (canEdit && !hasResponse)
                                     {
@@ -78,7 +78,7 @@
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label fw-semibold text-solar-blue">
                                                 <i class="fas fa-bolt me-1 text-solar-orange"></i>
-                                                Consumo MÈdio Mensal
+                                                Consumo M√©dio Mensal
                                             </label>
                                             <div class="input-group">
                                                 <input type="number" class="form-control" name="MonthlyConsumptionKwh" 
@@ -90,15 +90,15 @@
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label fw-semibold text-solar-blue">
                                                 <i class="fas fa-cogs me-1 text-solar-orange"></i>
-                                                Tipo de ServiÁo
+                                                Tipo de Servi√ßo
                                             </label>
                                             <select class="form-select" name="ServiceType" required>
                                                 @{
-                                                    var isVendaPaineis = Model.ServiceType == "Venda de PainÈis";
+                                                    var isVendaPaineis = Model.ServiceType == "Venda de Pain√©is";
                                                     var isAluguelEnergia = Model.ServiceType == "Aluguel de Energia";
                                                     var isConsultoria = Model.ServiceType == "Consultoria";
                                                 }
-                                                <option value="Venda de PainÈis" selected="@isVendaPaineis">Venda de PainÈis Solares</option>
+                                                <option value="Venda de Pain√©is" selected="@isVendaPaineis">Venda de Pain√©is Solares</option>
                                                 <option value="Aluguel de Energia" selected="@isAluguelEnergia">Aluguel de Energia Solar</option>
                                                 <option value="Consultoria" selected="@isConsultoria">Consultoria</option>
                                             </select>
@@ -110,13 +110,13 @@
                                                 Mensagem Adicional
                                             </label>
                                             <textarea class="form-control" name="Message" rows="4" 
-                                                      placeholder="Descreva detalhes especÌficos sobre seu projeto...">@Model.Message</textarea>
+                                                      placeholder="Descreva detalhes espec√≠ficos sobre seu projeto...">@Model.Message</textarea>
                                         </div>
                                     </div>
 
                                     <div class="d-flex gap-2">
                                         <button type="submit" class="btn btn-solar-orange">
-                                            <i class="fas fa-save me-1"></i>Salvar AlteraÁıes
+                                            <i class="fas fa-save me-1"></i>Salvar Altera√ß√µes
                                         </button>
                                         <button type="button" class="btn btn-outline-secondary" onclick="cancelEdit()">
                                             <i class="fas fa-times me-1"></i>Cancelar
@@ -124,7 +124,7 @@
                                     </div>
                                 </form>
 
-                                <!-- VisualizaÁ„o dos dados -->
+                                <!-- Visualiza√ß√£o dos dados -->
                                 <div id="quote-display">
                                     <div class="row">
                                         <div class="col-md-6 mb-4">
@@ -134,7 +134,7 @@
                                                         <i class="fas fa-bolt text-solar-orange fs-5"></i>
                                                     </div>
                                                     <div>
-                                                        <h6 class="text-solar-blue fw-bold mb-0">Consumo MÈdio Mensal</h6>
+                                                        <h6 class="text-solar-blue fw-bold mb-0">Consumo M√©dio Mensal</h6>
                                                         <small class="text-muted">Baseado na sua conta de energia</small>
                                                     </div>
                                                 </div>
@@ -151,7 +151,7 @@
                                                         <i class="fas fa-cogs text-solar-orange fs-5"></i>
                                                     </div>
                                                     <div>
-                                                        <h6 class="text-solar-blue fw-bold mb-0">Tipo de ServiÁo</h6>
+                                                        <h6 class="text-solar-blue fw-bold mb-0">Tipo de Servi√ßo</h6>
                                                         <small class="text-muted">Modalidade solicitada</small>
                                                     </div>
                                                 </div>
@@ -169,7 +169,7 @@
                                                         </div>
                                                         <div>
                                                             <h6 class="text-solar-blue fw-bold mb-0">Mensagem Adicional</h6>
-                                                            <small class="text-muted">InformaÁıes fornecidas</small>
+                                                            <small class="text-muted">Informa√ß√µes fornecidas</small>
                                                         </div>
                                                     </div>
                                                     <p class="text-secondary mb-0 lh-base">@Model.Message</p>
@@ -184,10 +184,10 @@
                                             <div class="d-flex">
                                                 <i class="fas fa-info-circle text-info me-3 mt-1"></i>
                                                 <div>
-                                                    <h6 class="text-info fw-bold mb-1">VocÍ pode editar</h6>
+                                                    <h6 class="text-info fw-bold mb-1">Voc√™ pode editar</h6>
                                                     <p class="mb-0 small">
-                                                        Enquanto sua solicitaÁ„o n„o receber uma resposta, vocÍ pode alterar o consumo mÈdio, 
-                                                        tipo de serviÁo ou adicionar informaÁıes adicionais.
+                                                        Enquanto sua solicita√ß√£o n√£o receber uma resposta, voc√™ pode alterar o consumo m√©dio, 
+                                                        tipo de servi√ßo ou adicionar informa√ß√µes adicionais.
                                                     </p>
                                                 </div>
                                             </div>
@@ -214,7 +214,7 @@
                             <div class="card-body">
                                 @if (Model.Proposals.Any())
                                 {
-                                    <!-- Propostas Formais (Venda de PainÈis) -->
+                                    <!-- Propostas Formais (Venda de Pain√©is) -->
                                     <div class="response-header mb-4">
                                         <div class="alert alert-success border-0 bg-success bg-opacity-10">
                                             <div class="d-flex align-items-center">
@@ -260,7 +260,7 @@
                                                                     <div class="d-flex align-items-center">
                                                                         <i class="fas fa-calendar-check text-success me-2"></i>
                                                                         <div>
-                                                                            <small class="text-muted d-block">Prazo de InstalaÁ„o</small>
+                                                                            <small class="text-muted d-block">Prazo de Instala√ß√£o</small>
                                                                             <strong>@proposal.InstallationTimeframe dias</strong>
                                                                         </div>
                                                                     </div>
@@ -320,7 +320,7 @@
                                                         <div class="d-flex flex-wrap gap-3">
                                                             <span>
                                                                 <i class="fas fa-clock me-1"></i>
-                                                                Enviado em @proposal.ProposalDate.ToString("dd/MM/yyyy '‡s' HH:mm")
+                                                                Enviado em @proposal.ProposalDate.ToString("dd/MM/yyyy '√†s' HH:mm")
                                                             </span>
                                                             @if (proposal.ValidUntil.HasValue)
                                                             {
@@ -332,7 +332,7 @@
                                                                     }
                                                                     else
                                                                     {
-                                                                        <span>V·lida atÈ @proposal.ValidUntil.Value.ToString("dd/MM/yyyy")</span>
+                                                                        <span>V√°lida at√© @proposal.ValidUntil.Value.ToString("dd/MM/yyyy")</span>
                                                                     }
                                                                 </span>
                                                             }
@@ -371,7 +371,7 @@
                                                 <div>
                                                     <h6 class="text-info fw-bold mb-1">Mensagem Recebida da Empresa</h6>
                                                     <p class="mb-0 small">
-                                                        A empresa <strong>@Model.CompanyName</strong> respondeu sua solicitaÁ„o com informaÁıes personalizadas.
+                                                        A empresa <strong>@Model.CompanyName</strong> respondeu sua solicita√ß√£o com informa√ß√µes personalizadas.
                                                     </p>
                                                 </div>
                                             </div>
@@ -402,7 +402,7 @@
                                                         <i class="fas fa-clock me-1"></i>
                                                         @if (Model.CompanyResponseDate.HasValue)
                                                         {
-                                                            <span>Respondido em @Model.CompanyResponseDate.Value.ToString("dd/MM/yyyy '‡s' HH:mm")</span>
+                                                            <span>Respondido em @Model.CompanyResponseDate.Value.ToString("dd/MM/yyyy '√†s' HH:mm")</span>
                                                         }
                                                         else
                                                         {
@@ -418,14 +418,14 @@
                                                         }
                                                         else
                                                         {
-                                                            @: Obrigado pelo seu interesse em nossos serviÁos de energia solar por aluguel! 
-                                                            @: Analisamos seu consumo de <strong>@Model.MonthlyConsumptionKwh kWh/mÍs</strong> e preparamos uma soluÁ„o personalizada.
+                                                            @: Obrigado pelo seu interesse em nossos servi√ßos de energia solar por aluguel! 
+                                                            @: Analisamos seu consumo de <strong>@Model.MonthlyConsumptionKwh kWh/m√™s</strong> e preparamos uma solu√ß√£o personalizada.
                                                             <br><br>
-                                                            @: Nossa equipe entrar· em contato em breve para agendar uma visita tÈcnica gratuita e apresentar 
-                                                            @: as opÁıes de aluguel mais adequadas para seu perfil. VocÍ poder· economizar atÈ 95% 
+                                                            @: Nossa equipe entrar√° em contato em breve para agendar uma visita t√©cnica gratuita e apresentar 
+                                                            @: as op√ß√µes de aluguel mais adequadas para seu perfil. Voc√™ poder√° economizar at√© 95% 
                                                             @: na sua conta de energia sem nenhum investimento inicial!
                                                             <br><br>
-                                                            @: Aguardamos seu contato pelos telefones ou emails disponÌveis em nosso perfil.
+                                                            @: Aguardamos seu contato pelos telefones ou emails dispon√≠veis em nosso perfil.
                                                         }
                                                     </p>
                                                 </div>
@@ -444,18 +444,18 @@
                                         </div>
                                     </div>
 
-                                    <!-- PrÛximos Passos -->
+                                    <!-- Pr√≥ximos Passos -->
                                     <div class="mt-4">
                                         <div class="alert alert-warning border-0 bg-warning bg-opacity-10">
                                             <div class="d-flex">
                                                 <i class="fas fa-lightbulb text-warning me-3 mt-1"></i>
                                                 <div>
-                                                    <h6 class="text-warning fw-bold mb-2">PrÛximos Passos</h6>
+                                                    <h6 class="text-warning fw-bold mb-2">Pr√≥ximos Passos</h6>
                                                     <ul class="mb-0 small text-dark">
-                                                        <li>A empresa entrar· em contato para agendar uma visita tÈcnica</li>
-                                                        <li>Ser· feita uma an·lise detalhada do seu consumo e local</li>
-                                                        <li>VocÍ receber· uma proposta personalizada de aluguel</li>
-                                                        <li>ApÛs aprovaÁ„o, a instalaÁ„o ser· agendada sem custo</li>
+                                                        <li>A empresa entrar√° em contato para agendar uma visita t√©cnica</li>
+                                                        <li>Ser√° feita uma an√°lise detalhada do seu consumo e local</li>
+                                                        <li>Voc√™ receber√° uma proposta personalizada de aluguel</li>
+                                                        <li>Ap√≥s aprova√ß√£o, a instala√ß√£o ser√° agendada sem custo</li>
                                                     </ul>
                                                 </div>
                                             </div>
@@ -471,8 +471,8 @@
                                         </div>
                                         <h5 class="text-muted mb-3">Aguardando Resposta</h5>
                                         <p class="text-muted mb-4">
-                                            Sua solicitaÁ„o foi enviada para <strong>@Model.CompanyName</strong>.
-                                            <br>A empresa analisar· seus dados e enviar· uma resposta personalizada em breve.
+                                            Sua solicita√ß√£o foi enviada para <strong>@Model.CompanyName</strong>.
+                                            <br>A empresa analisar√° seus dados e enviar√° uma resposta personalizada em breve.
                                         </p>
 
                                         <!-- Status Timeline -->
@@ -484,12 +484,12 @@
                                                     </div>
                                                     <small>Enviado</small>
                                                 </div>
-                                                <div class="status-line @(Model.Status == "Em An·lise" || hasResponse ? "active" : "")"></div>
-                                                <div class="status-step @(Model.Status == "Em An·lise" ? "active" : hasResponse ? "completed" : "")">
+                                                <div class="status-line @(Model.Status == "Em An√°lise" || hasResponse ? "active" : "")"></div>
+                                                <div class="status-step @(Model.Status == "Em An√°lise" ? "active" : hasResponse ? "completed" : "")">
                                                     <div class="status-circle">
                                                         <i class="fas fa-search"></i>
                                                     </div>
-                                                    <small>Em An·lise</small>
+                                                    <small>Em An√°lise</small>
                                                 </div>
                                                 <div class="status-line @(hasResponse ? "active" : "")"></div>
                                                 <div class="status-step @(hasResponse ? "completed" : "")">
@@ -507,10 +507,10 @@
                                                 <div class="text-start">
                                                     <strong>O que acontece agora?</strong>
                                                     <ul class="mb-0 mt-2 small">
-                                                        <li>A empresa receber· seus dados e analisar· suas necessidades</li>
-                                                        <li>Ser· elaborada uma proposta ou resposta personalizada</li>
-                                                        <li>VocÍ receber· a resposta aqui mesmo nesta tela</li>
-                                                        <li>Poder· aceitar, recusar ou entrar em contato para mais detalhes</li>
+                                                        <li>A empresa receber√° seus dados e analisar√° suas necessidades</li>
+                                                        <li>Ser√° elaborada uma proposta ou resposta personalizada</li>
+                                                        <li>Voc√™ receber√° a resposta aqui mesmo nesta tela</li>
+                                                        <li>Poder√° aceitar, recusar ou entrar em contato para mais detalhes</li>
                                                     </ul>
                                                 </div>
                                             </div>
@@ -524,7 +524,7 @@
                     <!-- Sidebar -->
                     <div class="col-lg-4">
                         <div class="sticky-top" style="top: 20px;">
-                            <!-- InformaÁıes da Empresa -->
+                            <!-- Informa√ß√µes da Empresa -->
                             <div class="card border-0 shadow-sm mb-4">
                                 <div class="card-header bg-transparent border-0 py-3">
                                     <h6 class="text-solar-blue fw-bold mb-0">
@@ -558,18 +558,30 @@
                                 </div>
                             </div>
 
-                            <!-- AÁıes R·pidas -->
+                            <!-- A√ß√µes R√°pidas -->
                             <div class="card border-0 shadow-sm">
                                 <div class="card-header bg-transparent border-0 py-3">
                                     <h6 class="text-solar-blue fw-bold mb-0">
                                         <i class="fas fa-bolt me-2 text-solar-orange"></i>
-                                        AÁıes R·pidas
+                                        A√ß√µes R√°pidas
                                     </h6>
                                 </div>
                                 <div class="card-body">
                                     <div class="d-grid gap-2">
+                                        @if (Model.HasChatMessages || !string.IsNullOrEmpty(Model.CompanyResponseMessage))
+                                        {
+                                            <a asp-controller="Chat" asp-action="Index" asp-route-quoteId="@Model.QuoteId" 
+                                               class="btn btn-primary">
+                                                <i class="fas fa-comments me-2"></i>
+                                                Abrir Chat
+                                                @if (Model.UnreadMessagesCount > 0)
+                                                {
+                                                    <span class="badge bg-danger ms-2">@Model.UnreadMessagesCount</span>
+                                                }
+                                            </a>
+                                        }
                                         <a asp-controller="Quote" asp-action="MyQuotes" class="btn btn-outline-solar-orange">
-                                            <i class="fas fa-list me-2"></i>Todos os OrÁamentos
+                                            <i class="fas fa-list me-2"></i>Todos os Or√ßamentos
                                         </a>
                                         <a asp-controller="Home" asp-action="SearchCompanies" class="btn btn-outline-secondary">
                                             <i class="fas fa-search me-2"></i>Buscar Outras Empresas
@@ -620,21 +632,21 @@
     }
 
     function acceptProposal(proposalId) {
-        if (confirm('Tem certeza que deseja aceitar esta proposta? Esta aÁ„o n„o pode ser desfeita.')) {
-            // Implementar aÁ„o de aceitar proposta
-            alert('Funcionalidade de aceitar proposta ser· implementada em breve.');
+        if (confirm('Tem certeza que deseja aceitar esta proposta? Esta a√ß√£o n√£o pode ser desfeita.')) {
+            // Implementar a√ß√£o de aceitar proposta
+            alert('Funcionalidade de aceitar proposta ser√° implementada em breve.');
         }
     }
 
     function rejectProposal(proposalId) {
         if (confirm('Tem certeza que deseja recusar esta proposta?')) {
-            // Implementar aÁ„o de recusar proposta
-            alert('Funcionalidade de recusar proposta ser· implementada em breve.');
+            // Implementar a√ß√£o de recusar proposta
+            alert('Funcionalidade de recusar proposta ser√° implementada em breve.');
         }
     }
 
     function showContactInfo() {
-        alert('Redirecionando para o perfil da empresa com informaÁıes de contato...');
+        alert('Redirecionando para o perfil da empresa com informa√ß√µes de contato...');
         window.location.href = '@Url.Action("CompanyDetails", "Home", new { id = Model.CompanyId })';
     }
 </script>
@@ -722,7 +734,7 @@
         return status switch
         {
             "Pendente" => "bg-warning text-dark",
-            "Em An·lise" => "bg-info text-white",
+            "Em An√°lise" => "bg-info text-white",
             "Proposta Enviada" => "bg-success text-white",
             "Respondido" => "bg-success text-white",
             "Aceito" => "bg-primary text-white",

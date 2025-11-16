@@ -1,75 +1,289 @@
-﻿@{
+﻿@model SolarEnergy.ViewModels.MonthlyReportViewModel
+@{
     ViewData["Title"] = "Relatórios Mensais";
 }
 
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-12">
-            <h1>📊Relatórios Mensais</h1>
-            <p class="lead">Análise de desempenho do negócio</p>
-        </div>
+<!-- Reports CSS -->
+<link rel="stylesheet" href="~/css/reports.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.css" />
+
+<!-- Breadcrumb Navigation -->
+<div class="breadcrumb-container">
+    <div class="container-fluid">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a asp-controller="Home" asp-action="Leads">
+                        <i class="fas fa-users"></i> Início
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <i class="fas fa-chart-bar"></i> Relatórios Mensais
+                </li>
+            </ol>
+        </nav>
     </div>
+</div>
 
-    <!-- Métricas Principais -->
-    <div class="row mt-4">
-        <div class="col-md-3 mb-4">
-            <div class="card text-white bg-primary">
-                <div class="card-body">
-                    <h5 class="card-title">Leads Recebidos</h5>
-                    <h2 class="card-text">45</h2>
-                    <p class="card-text">+12% vs mês anterior</p>
+<div class="reports-container">
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="reports-header">
+            <div class="header-content">
+                <div class="header-info">
+                    <h1>
+                        <i class="fas fa-chart-bar text-solar-primary"></i>
+                        Relatórios Mensais
+                    </h1>
+                    <p class="header-subtitle">Análise completa de performance e resultados</p>
+                    <div class="company-info">
+                        <strong>@Model.CompanyName</strong> • @Model.ReportMonth.ToString("MMMM yyyy", new System.Globalization.CultureInfo("pt-BR"))
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <div class="month-selector">
+                        <select id="monthSelector" class="form-select">
+                            @foreach (var month in Model.AvailableMonths)
+                            {
+                                var isSelected = month.Date.Month == Model.ReportMonth.Month && month.Date.Year == Model.ReportMonth.Year;
+                                var isDisabled = !month.HasData;
+                                <option value="@month.Date.ToString("yyyy-MM-dd")" 
+                                        selected="@isSelected"
+                                        disabled="@isDisabled">
+                                    @month.DisplayName @(!month.HasData ? "(Sem dados)" : "")
+                                </option>
+                            }
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-solar-orange" onclick="exportReport()">
+                        <i class="fas fa-download me-2"></i>Exportar
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" onclick="refreshReport()">
+                        <i class="fas fa-sync-alt me-2"></i>Atualizar
+                    </button>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3 mb-4">
-            <div class="card text-white bg-success">
-                <div class="card-body">
-                    <h5 class="card-title">Taxa de Conversão</h5>
-                    <h2 class="card-text">28%</h2>
-                    <p class="card-text">+5% vs mês anterior</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 mb-4">
-            <div class="card text-white bg-warning">
-                <div class="card-body">
-                    <h5 class="card-title">Faturamento</h5>
-                    <h2 class="card-text">R$ 12.540</h2>
-                    <p class="card-text">+18% vs mês anterior</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 mb-4">
-            <div class="card text-white bg-info">
-                <div class="card-body">
-                    <h5 class="card-title">Avaliação Média</h5>
-                    <h2 class="card-text">4.5 ⭐</h2>
-                    <p class="card-text">Baseado em 28 avaliações</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Gráfico Simples -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Crescimento de Leads</h5>
-                </div>
-                <div class="card-body">
-                    <div class="graph-container">
-                        <div class="graph-bar" style="height: 60px; width: 80%; background: #4CAF50; margin: 10px 0;">
-                            <span class="graph-label">Jan: 25 leads</span>
+        <!-- KPI Cards -->
+        <div class="kpi-section">
+            <div class="row g-3 mb-4">
+                <div class="col-xl-3 col-md-6">
+                    <div class="kpi-card leads-card">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="kpi-trend @(Model.LeadMetrics.LeadsGrowthPercentage >= 0 ? "positive" : "negative")">
+                                <i class="fas fa-arrow-@(Model.LeadMetrics.LeadsGrowthPercentage >= 0 ? "up" : "down")"></i>
+                                @Math.Abs(Model.LeadMetrics.LeadsGrowthPercentage)%
+                            </div>
                         </div>
-                        <div class="graph-bar" style="height: 80px; width: 80%; background: #2196F3; margin: 10px 0;">
-                            <span class="graph-label">Fev: 35 leads</span>
+                        <div class="kpi-content">
+                            <h3 class="kpi-value">@Model.LeadMetrics.TotalLeadsReceived</h3>
+                            <p class="kpi-label">Leads Recebidos</p>
+                            <div class="kpi-details">
+                                <span class="kpi-detail">@Model.LeadMetrics.LeadsResponded respondidos</span>
+                                <span class="kpi-detail">@Model.LeadMetrics.ConversionRate% conversão</span>
+                            </div>
                         </div>
-                        <div class="graph-bar" style="height: 100px; width: 80%; background: #FF9800; margin: 10px 0;">
-                            <span class="graph-label">Mar: 45 leads</span>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6">
+                    <div class="kpi-card revenue-card">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="kpi-trend @(Model.FinancialMetrics.RevenueGrowthPercentage >= 0 ? "positive" : "negative")">
+                                <i class="fas fa-arrow-@(Model.FinancialMetrics.RevenueGrowthPercentage >= 0 ? "up" : "down")"></i>
+                                @Math.Abs(Model.FinancialMetrics.RevenueGrowthPercentage)%
+                            </div>
+                        </div>
+                        <div class="kpi-content">
+                            <h3 class="kpi-value">@Model.FinancialMetrics.TotalRevenue.ToString("C0", new System.Globalization.CultureInfo("pt-BR"))</h3>
+                            <p class="kpi-label">Receita Total</p>
+                            <div class="kpi-details">
+                                <span class="kpi-detail">@Model.FinancialMetrics.AverageContractValue.ToString("C0", new System.Globalization.CultureInfo("pt-BR")) ticket médio</span>
+                                <span class="kpi-detail">@Model.FinancialMetrics.ReturnOnInvestment% ROI</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6">
+                    <div class="kpi-card satisfaction-card">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="kpi-trend @(Model.SatisfactionMetrics.RatingImprovement >= 0 ? "positive" : "negative")">
+                                <i class="fas fa-arrow-@(Model.SatisfactionMetrics.RatingImprovement >= 0 ? "up" : "down")"></i>
+                                @(Math.Abs(Model.SatisfactionMetrics.RatingImprovement).ToString("F1"))
+                            </div>
+                        </div>
+                        <div class="kpi-content">
+                            <h3 class="kpi-value">@Model.SatisfactionMetrics.AverageRating.ToString("F1") ⭐</h3>
+                            <p class="kpi-label">Satisfação dos Clientes</p>
+                            <div class="kpi-details">
+                                <span class="kpi-detail">@Model.SatisfactionMetrics.TotalReviews avaliações</span>
+                                <span class="kpi-detail">@Model.SatisfactionMetrics.SatisfactionScore.ToString("F0")% satisfação</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6">
+                    <div class="kpi-card performance-card">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="kpi-trend positive">
+                                <i class="fas fa-check"></i>
+                                @Model.PerformanceMetrics.ResponseRate%
+                            </div>
+                        </div>
+                        <div class="kpi-content">
+                            <h3 class="kpi-value">@(Model.PerformanceMetrics.AverageResponseTime.Hours)h @(Model.PerformanceMetrics.AverageResponseTime.Minutes)m</h3>
+                            <p class="kpi-label">Tempo de Resposta</p>
+                            <div class="kpi-details">
+                                <span class="kpi-detail">@Model.PerformanceMetrics.TotalProposalsSent propostas</span>
+                                <span class="kpi-detail">@Model.PerformanceMetrics.ProposalAcceptanceRate% aceitas</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+            <div class="row g-4 mb-4">
+                <div class="col-lg-6">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h5><i class="fas fa-chart-line me-2"></i>Evolução de Leads (6 meses)</h5>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="leadsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h5><i class="fas fa-chart-area me-2"></i>Evolução de Receita (6 meses)</h5>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 mb-4">
+                <div class="col-lg-4">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h5><i class="fas fa-star me-2"></i>Distribuição de Avaliações</h5>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="ratingChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h5><i class="fas fa-comments me-2"></i>Avaliações Recentes</h5>
+                        </div>
+                        <div class="chart-body">
+                            @if (Model.SatisfactionMetrics.RecentReviews.Any())
+                            {
+                                <div class="reviews-list">
+                                    @foreach (var review in Model.SatisfactionMetrics.RecentReviews)
+                                    {
+                                        <div class="review-item">
+                                            <div class="review-header">
+                                                <span class="review-name">@review.ClientName</span>
+                                                <div class="review-rating">
+                                                    @for (int i = 1; i <= 5; i++)
+                                                    {
+                                                        <i class="fas fa-star @(i <= review.Rating ? "text-warning" : "text-muted")"></i>
+                                                    }
+                                                </div>
+                                                <span class="review-date">@review.Date.ToString("dd/MM/yyyy")</span>
+                                            </div>
+                                            <p class="review-comment">@review.Comment</p>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="empty-state">
+                                    <i class="fas fa-comment-slash fa-2x text-muted mb-2"></i>
+                                    <p class="text-muted">Nenhuma avaliação neste mês</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Metrics -->
+        <div class="detailed-metrics">
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="metrics-card">
+                        <div class="metrics-header">
+                            <h5><i class="fas fa-chart-pie me-2"></i>Análise de Leads</h5>
+                        </div>
+                        <div class="metrics-body">
+                            <div class="metric-row">
+                                <span class="metric-label">Leads Orgânicos:</span>
+                                <span class="metric-value">@Model.LeadMetrics.OrganicLeads</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Leads Pagos:</span>
+                                <span class="metric-value">@Model.LeadMetrics.PaidLeads</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Investimento em Leads:</span>
+                                <span class="metric-value">@Model.LeadMetrics.LeadPurchaseInvestment.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Custo por Lead:</span>
+                                <span class="metric-value">@Model.FinancialMetrics.LeadAcquisitionCost.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="metrics-card">
+                        <div class="metrics-header">
+                            <h5><i class="fas fa-cogs me-2"></i>Performance Operacional</h5>
+                        </div>
+                        <div class="metrics-body">
+                            <div class="metric-row">
+                                <span class="metric-label">Orçamentos Ativos:</span>
+                                <span class="metric-value">@Model.PerformanceMetrics.ActiveQuotes</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Projetos Finalizados:</span>
+                                <span class="metric-value">@Model.PerformanceMetrics.CompletedProjects</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Taxa de Resposta:</span>
+                                <span class="metric-value">@Model.PerformanceMetrics.ResponseRate%</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Retenção de Clientes:</span>
+                                <span class="metric-value">@Model.PerformanceMetrics.CustomerRetentionRate%</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -77,3 +291,500 @@
         </div>
     </div>
 </div>
+
+<!-- Export Modal -->
+<div class="modal fade" id="exportModal" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="exportModalLabel">
+                    <i class="fas fa-download me-2"></i>Exportar Relatório Mensal
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info" role="alert">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Relatório:</strong> @Model.CompanyName - @Model.ReportMonth.ToString("MMMM yyyy", new System.Globalization.CultureInfo("pt-BR"))
+                </div>
+                
+                <form id="exportForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="exportFormat" class="form-label fw-bold">
+                                    <i class="fas fa-file-alt me-1"></i>Formato de Exportação:
+                                </label>
+                                <select id="exportFormat" class="form-select">
+                                    <option value="pdf" selected>
+                                        <i class="fas fa-file-pdf"></i> PDF - Relatório Formatado
+                                    </option>
+                                    <option value="csv">
+                                        <i class="fas fa-file-csv"></i> CSV - Dados para Planilha
+                                    </option>
+                                </select>
+                                <div class="form-text">
+                                    <small class="text-muted">PDF para visualização, CSV para análises</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">
+                                    <i class="fas fa-check-square me-1"></i>Conteúdo a Incluir:
+                                </label>
+                                
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="includeKpis" checked disabled>
+                                    <label class="form-check-label" for="includeKpis">
+                                        <i class="fas fa-chart-bar text-primary me-1"></i>
+                                        <strong>KPIs Principais</strong>
+                                        <small class="d-block text-muted">Leads, Receita, Satisfação, Performance</small>
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="includeAnalytics" checked disabled>
+                                    <label class="form-check-label" for="includeAnalytics">
+                                        <i class="fas fa-chart-pie text-success me-1"></i>
+                                        <strong>Análises Detalhadas</strong>
+                                        <small class="d-block text-muted">Leads orgânicos vs pagos, ROI, custos</small>
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="includeCharts" checked>
+                                    <label class="form-check-label" for="includeCharts">
+                                        <i class="fas fa-chart-line text-warning me-1"></i>
+                                        <strong>Gráficos de Tendência</strong>
+                                        <small class="d-block text-muted">Evolução de 6 meses (somente PDF)</small>
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="includeReviews" checked>
+                                    <label class="form-check-label" for="includeReviews">
+                                        <i class="fas fa-comments text-info me-1"></i>
+                                        <strong>Avaliações de Clientes</strong>
+                                        <small class="d-block text-muted">@Model.SatisfactionMetrics.TotalReviews avaliações disponíveis</small>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="alert alert-secondary" role="alert">
+                                <h6 class="alert-heading">
+                                    <i class="fas fa-eye me-2"></i>Preview do Conteúdo:
+                                </h6>
+                                <div class="row text-center">
+                                    <div class="col-3">
+                                        <div class="border rounded p-2">
+                                            <strong>@Model.LeadMetrics.TotalLeadsReceived</strong>
+                                            <small class="d-block text-muted">Leads</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="border rounded p-2">
+                                            <strong>@Model.FinancialMetrics.TotalRevenue.ToString("C0", new System.Globalization.CultureInfo("pt-BR"))</strong>
+                                            <small class="d-block text-muted">Receita</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="border rounded p-2">
+                                            <strong>@Model.SatisfactionMetrics.AverageRating.ToString("F1") ⭐</strong>
+                                            <small class="d-block text-muted">Avaliação</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="border rounded p-2">
+                                            <strong>@Model.PerformanceMetrics.ResponseRate.ToString("F0")%</strong>
+                                            <small class="d-block text-muted">Resposta</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" onclick="processExport()">
+                    <i class="fas fa-download me-2"></i>Gerar e Baixar Relatório
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Anti-forgery token for AJAX requests -->
+@Html.AntiForgeryToken()
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Global variables
+let leadsChart, revenueChart, ratingChart;
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializeCharts();
+    setupEventListeners();
+});
+
+function initializeCharts() {
+    // Leads Chart
+    const leadsCtx = document.getElementById('leadsChart').getContext('2d');
+    const leadsData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ChartsData.LeadsChart));
+    
+    leadsChart = new Chart(leadsCtx, {
+        type: 'line',
+        data: {
+            labels: leadsData.map(d => d.month),
+            datasets: [{
+                label: 'Leads',
+                data: leadsData.map(d => d.value),
+                borderColor: '#FF6B35',
+                backgroundColor: 'rgba(255, 107, 53, 0.1)',
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // Revenue Chart
+    const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+    const revenueData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ChartsData.RevenueChart));
+    
+    revenueChart = new Chart(revenueCtx, {
+        type: 'bar',
+        data: {
+            labels: revenueData.map(d => d.month),
+            datasets: [{
+                label: 'Receita',
+                data: revenueData.map(d => d.value),
+                backgroundColor: ['#FF6B35', '#F7931E', '#FFD23F', '#06D6A0', '#118AB2', '#073B4C'],
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return new Intl.NumberFormat('pt-BR', {
+                                style: 'currency',
+                                currency: 'BRL',
+                                minimumFractionDigits: 0
+                            }).format(value);
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // Rating Distribution Chart
+    const ratingCtx = document.getElementById('ratingChart').getContext('2d');
+    const ratingData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ChartsData.RatingDistribution));
+    
+    ratingChart = new Chart(ratingCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ratingData.map(d => `${d.stars} estrela${d.stars > 1 ? 's' : ''}`),
+            datasets: [{
+                data: ratingData.map(d => d.count),
+                backgroundColor: ratingData.map(d => d.color),
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
+function setupEventListeners() {
+    // Month selector
+    document.getElementById('monthSelector').addEventListener('change', function() {
+        const selectedDate = this.value;
+        if (selectedDate) {
+            window.location.href = `?month=${selectedDate}`;
+        }
+    });
+}
+
+function refreshReport() {
+    const selectedMonth = document.getElementById('monthSelector').value;
+    
+    // Show loading state
+    const refreshBtn = document.querySelector('button[onclick="refreshReport()"]');
+    const originalHtml = refreshBtn.innerHTML;
+    refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Atualizando...';
+    refreshBtn.disabled = true;
+    
+    // Reload with current month
+    setTimeout(() => {
+        window.location.href = `?month=${selectedMonth}`;
+    }, 500);
+}
+
+function exportReport() {
+    // Update modal content dynamically
+    updateModalContent();
+    
+    const exportModal = new bootstrap.Modal(document.getElementById('exportModal'));
+    exportModal.show();
+}
+
+function updateModalContent() {
+    // Update format description based on selection
+    const formatSelect = document.getElementById('exportFormat');
+    const chartsCheckbox = document.getElementById('includeCharts');
+    
+    formatSelect.addEventListener('change', function() {
+        const formatText = this.options[this.selectedIndex].textContent;
+        const helpText = this.nextElementSibling.querySelector('small');
+        
+        if (this.value === 'pdf') {
+            helpText.textContent = 'PDF formatado para impressão e apresentação';
+            chartsCheckbox.disabled = false;
+            chartsCheckbox.parentElement.style.opacity = '1';
+        } else {
+            helpText.textContent = 'CSV com dados estruturados para Excel e análises';
+            chartsCheckbox.disabled = true;
+            chartsCheckbox.checked = false;
+            chartsCheckbox.parentElement.style.opacity = '0.6';
+        }
+    });
+    
+    // Update reviews count
+    const reviewsLabel = document.querySelector('label[for="includeReviews"] small');
+    if (reviewsLabel) {
+        const totalReviews = @Model.SatisfactionMetrics.TotalReviews;
+        reviewsLabel.textContent = `${totalReviews} avaliações disponíveis`;
+    }
+}
+
+function processExport() {
+    const format = document.getElementById('exportFormat').value;
+    const includeCharts = document.getElementById('includeCharts').checked;
+    const includeReviews = document.getElementById('includeReviews').checked;
+    const monthSelector = document.getElementById('monthSelector');
+    const selectedDate = new Date(monthSelector.value);
+    
+    // Show loading state with better feedback
+    const exportBtn = document.querySelector('button[onclick="processExport()"]');
+    const originalHtml = exportBtn.innerHTML;
+    exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Gerando Relatório...';
+    exportBtn.disabled = true;
+    
+    // Disable modal close buttons
+    const modalElement = document.getElementById('exportModal');
+    const closeButtons = modalElement.querySelectorAll('[data-bs-dismiss="modal"]');
+    closeButtons.forEach(btn => btn.disabled = true);
+    
+    const requestData = {
+        month: selectedDate.toISOString(),
+        format: format,
+        includeCharts: includeCharts,
+        includeReviews: includeReviews,
+        sections: []
+    };
+    
+    // Get anti-forgery token
+    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+    
+    const headers = {
+        'Content-Type': 'application/json'
+    };
+    
+    if (token) {
+        headers['RequestVerificationToken'] = token;
+    }
+    
+    // Create progress indicator
+    const progressDiv = document.createElement('div');
+    progressDiv.className = 'progress mt-3';
+    progressDiv.innerHTML = `
+        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+             role="progressbar" style="width: 100%" 
+             aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+            Processando...
+        </div>
+    `;
+    
+    const modalBody = document.querySelector('#exportModal .modal-body');
+    modalBody.appendChild(progressDiv);
+    
+    // Make the export request
+    fetch('/Reports/ExportReport', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(requestData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(`Erro ${response.status}: ${text || 'Falha na geração do relatório'}`);
+            });
+        }
+        
+        // Check if response is actually a file - more flexible validation
+        const contentType = response.headers.get('content-type');
+        
+        if (!contentType) {
+            throw new Error('Nenhum tipo de conteúdo foi retornado pelo servidor');
+        }
+        
+        // Accept various valid content types for file downloads
+        const validTypes = [
+            'application/pdf',
+            'text/csv',
+            'application/octet-stream',
+            'text/html', // For HTML fallback
+            'text/plain' // For text fallback
+        ];
+        
+        const isValidType = validTypes.some(type => contentType.toLowerCase().includes(type.toLowerCase()));
+        
+        if (!isValidType) {
+            throw new Error(`Tipo de arquivo não suportado: ${contentType}`);
+        }
+        
+        return response.blob();
+    })
+    .then(blob => {
+        // Validate blob
+        if (blob.size === 0) {
+            throw new Error('Arquivo gerado está vazio');
+        }
+        
+        // Create and trigger download
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        
+        const timestamp = new Date().getTime();
+        const formatExt = format === 'pdf' ? 'pdf' : 'csv';
+        a.download = `relatorio-${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, '0')}-${timestamp}.${formatExt}`;
+        
+        document.body.appendChild(a);
+        a.click();
+        
+        // Cleanup
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        
+        // Show success notification
+        showNotification('success', 'Relatório gerado com sucesso!', `Arquivo ${a.download} foi baixado`);
+        
+        // Close modal
+        const exportModal = bootstrap.Modal.getInstance(document.getElementById('exportModal'));
+        exportModal.hide();
+    })
+    .catch(error => {
+        showNotification('error', 'Erro na exportação', error.message);
+    })
+    .finally(() => {
+        // Restore button states
+        exportBtn.innerHTML = originalHtml;
+        exportBtn.disabled = false;
+        
+        // Re-enable modal close buttons
+        closeButtons.forEach(btn => btn.disabled = false);
+        
+        // Remove progress bar
+        if (progressDiv.parentNode) {
+            progressDiv.parentNode.removeChild(progressDiv);
+        }
+    });
+}
+
+function showNotification(type, title, message) {
+    const toastContainer = document.getElementById('toast-container') || createToastContainer();
+    
+    const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+    const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+    
+    const toast = document.createElement('div');
+    toast.className = `alert ${alertClass} alert-dismissible fade show`;
+    toast.style.minWidth = '300px';
+    toast.innerHTML = `
+        <div class="d-flex align-items-center">
+            <i class="fas ${icon} me-2"></i>
+            <div>
+                <strong>${title}</strong>
+                <div class="small">${message}</div>
+            </div>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    
+    toastContainer.appendChild(toast);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.classList.remove('show');
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 150);
+        }
+    }, 5000);
+}
+
+function createToastContainer() {
+    const container = document.createElement('div');
+    container.id = 'toast-container';
+    container.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        max-width: 400px;
+    `;
+    document.body.appendChild(container);
+    return container;
+}
+</script></script>

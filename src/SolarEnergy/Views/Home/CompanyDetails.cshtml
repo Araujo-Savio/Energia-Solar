@@ -48,7 +48,7 @@
                                         }
                                     }
                                 </span>
-                                <span class="text-white ms-2">@Model.AverageRating.ToString("F1") (@Model.TotalReviews @(Model.TotalReviews == 1 ? "avaliaÁ„o" : "avaliaÁıes"))</span>
+                                <span class="text-white ms-2">@Model.AverageRating.ToString("F1") (@Model.TotalReviews @(Model.TotalReviews == 1 ? "avalia√ß√£o" : "avalia√ß√µes"))</span>
                             </div>
                         }
                         @if (!string.IsNullOrWhiteSpace(Model.Location))
@@ -68,11 +68,11 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-8">
-                <!-- Sobre NÛs Section -->
+                <!-- Sobre N√≥s Section -->
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-transparent border-0 py-4">
                         <h3 class="text-solar-orange fw-bold mb-0">
-                            <i class="fas fa-info-circle me-2"></i>Sobre NÛs
+                            <i class="fas fa-info-circle me-2"></i>Sobre N√≥s
                         </h3>
                     </div>
                     <div class="card-body">
@@ -82,7 +82,7 @@
                         }
                         else
                         {
-                            <p class="text-muted mb-4">Esta empresa ainda n„o adicionou uma descriÁ„o detalhada. Entre em contato para mais informaÁıes sobre os serviÁos oferecidos.</p>
+                            <p class="text-muted mb-4">Esta empresa ainda n√£o adicionou uma descri√ß√£o detalhada. Entre em contato para mais informa√ß√µes sobre os servi√ßos oferecidos.</p>
                         }
 
                         <div class="row">
@@ -114,26 +114,26 @@
                     </div>
                 </div>
 
-                <!-- AvaliaÁıes Section -->
+                <!-- Avalia√ß√µes Section -->
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-transparent border-0 py-4">
                         <h3 class="text-solar-orange fw-bold mb-0">
-                            <i class="fas fa-star me-2"></i>AvaliaÁıes
+                            <i class="fas fa-star me-2"></i>Avalia√ß√µes
                         </h3>
                     </div>
                     <div class="card-body">
                         @if (Model.CanUserReview)
                         {
-                            <!-- Formul·rio de AvaliaÁ„o -->
+                            <!-- Formul√°rio de Avalia√ß√£o -->
                             <div class="bg-light rounded p-4 mb-4">
-                                <h5 class="text-solar-blue fw-bold mb-3">Deixe sua avaliaÁ„o</h5>
+                                <h5 class="text-solar-blue fw-bold mb-3">Deixe sua avalia√ß√£o</h5>
                                 <form asp-action="AddReview" method="post">
                                     <input asp-for="@(new AddReviewViewModel().CompanyId)" type="hidden" value="@Model.Id" />
                                     
                                     @if (!Model.HasUserAlreadyRated)
                                     {
                                         <div class="mb-3">
-                                            <label class="form-label">Sua avaliaÁ„o</label>
+                                            <label class="form-label">Sua avalia√ß√£o</label>
                                             <div class="rating-input">
                                                 <input type="radio" name="Rating" value="5" id="star5" />
                                                 <label for="star5" title="5 estrelas"><i class="fas fa-star"></i></label>
@@ -152,23 +152,23 @@
                                     {
                                         <div class="alert alert-info">
                                             <i class="fas fa-info-circle me-2"></i>
-                                            VocÍ j· avaliou esta empresa. VocÍ pode adicionar novos coment·rios, mas n„o pode alterar sua nota.
+                                            Voc√™ j√° avaliou esta empresa. Voc√™ pode adicionar novos coment√°rios, mas n√£o pode alterar sua nota.
                                         </div>
                                     }
 
                                     <div class="mb-3">
-                                        <label for="Comment" class="form-label">Coment·rio</label>
-                                        <textarea name="Comment" id="Comment" class="form-control" rows="3" placeholder="Compartilhe sua experiÍncia com esta empresa..." required></textarea>
+                                        <label for="Comment" class="form-label">Coment√°rio</label>
+                                        <textarea name="Comment" id="Comment" class="form-control" rows="3" placeholder="Compartilhe sua experi√™ncia com esta empresa..." required></textarea>
                                     </div>
 
                                     <button type="submit" class="btn btn-solar-orange">
-                                        <i class="fas fa-paper-plane me-2"></i>Enviar AvaliaÁ„o
+                                        <i class="fas fa-paper-plane me-2"></i>Enviar Avalia√ß√£o
                                     </button>
                                 </form>
                             </div>
                         }
 
-                        <!-- Lista de AvaliaÁıes -->
+                        <!-- Lista de Avalia√ß√µes -->
                         @if (Model.Reviews.Any())
                         {
                             <div class="reviews-list">
@@ -206,7 +206,7 @@
                         {
                             <div class="text-center py-4">
                                 <i class="fas fa-comments fa-3x text-muted mb-3"></i>
-                                <h5 class="text-muted">Nenhuma avaliaÁ„o ainda</h5>
+                                <h5 class="text-muted">Nenhuma avalia√ß√£o ainda</h5>
                                 <p class="text-muted">Seja o primeiro a avaliar esta empresa!</p>
                             </div>
                         }
@@ -217,7 +217,7 @@
             <!-- Sidebar -->
             <div class="col-lg-4">
                 <div class="sticky-top" style="top: 20px;">
-                    <!-- Bot„o Solicitar OrÁamento -->
+                    <!-- Bot√£o Solicitar Or√ßamento -->
                     <div class="card border-0 shadow-sm mb-4">
                         <div class="card-body text-center p-4">
                             @{
@@ -229,25 +229,25 @@
                             {
                                 @if (Model.HasExistingQuote)
                                 {
-                                    <h5 class="text-solar-blue fw-bold mb-3">OrÁamento Solicitado</h5>
-                                    <p class="text-muted small mb-4">VocÍ j· possui um orÁamento solicitado com esta empresa. Acompanhe o status e veja as propostas recebidas.</p>
+                                    <h5 class="text-solar-blue fw-bold mb-3">Or√ßamento Solicitado</h5>
+                                    <p class="text-muted small mb-4">Voc√™ j√° possui um or√ßamento solicitado com esta empresa. Acompanhe o status e veja as propostas recebidas.</p>
                                     <a href="@Url.Action("Details", "Quote", new { id = Model.ExistingQuoteId })" class="btn btn-solar-orange btn-lg w-100">
-                                        <i class="fas fa-eye me-2"></i>VER OR«AMENTO SOLICITADO
+                                        <i class="fas fa-eye me-2"></i>VER OR√áAMENTO SOLICITADO
                                     </a>
                                 }
                                 else
                                 {
-                                    <h5 class="text-solar-blue fw-bold mb-3">Interessado nos serviÁos?</h5>
-                                    <p class="text-muted small mb-4">Solicite um orÁamento personalizado e gratuito para seu projeto de energia solar.</p>
+                                    <h5 class="text-solar-blue fw-bold mb-3">Interessado nos servi√ßos?</h5>
+                                    <p class="text-muted small mb-4">Solicite um or√ßamento personalizado e gratuito para seu projeto de energia solar.</p>
                                     <a href="@Url.Action("Request", "Quote", new { companyId = Model.Id })" class="btn btn-solar-orange btn-lg w-100">
-                                        <i class="fas fa-file-signature me-2"></i>SOLICITAR OR«AMENTO
+                                        <i class="fas fa-file-signature me-2"></i>SOLICITAR OR√áAMENTO
                                     </a>
                                 }
                             }
                             else
                             {
-                                <h5 class="text-solar-blue fw-bold mb-3">¡rea Restrita</h5>
-                                <p class="text-muted small mb-4">Apenas clientes podem solicitar orÁamentos. FaÁa login como cliente para continuar.</p>
+                                <h5 class="text-solar-blue fw-bold mb-3">√Årea Restrita</h5>
+                                <p class="text-muted small mb-4">Apenas clientes podem solicitar or√ßamentos. Fa√ßa login como cliente para continuar.</p>
                                 <a href="@Url.Action("Login", "Auth")" class="btn btn-outline-solar-orange btn-lg w-100">
                                     <i class="fas fa-sign-in-alt me-2"></i>FAZER LOGIN
                                 </a>
@@ -255,21 +255,21 @@
                         </div>
                     </div>
 
-                    <!-- InformaÁıes Adicionais -->
+                    <!-- Informa√ß√µes Adicionais -->
                     @if (Model.TotalReviews > 0)
                     {
                         <div class="card border-0 shadow-sm">
                             <div class="card-body">
                                 <h6 class="fw-bold text-solar-blue mb-3">
                                     <i class="fas fa-chart-bar me-2 text-solar-orange"></i>
-                                    Resumo das AvaliaÁıes
+                                    Resumo das Avalia√ß√µes
                                 </h6>
                                 <div class="d-flex align-items-center justify-content-between mb-3 p-2 rounded" style="background: rgba(255, 107, 53, 0.05);">
-                                    <span class="text-solar-blue fw-semibold">AvaliaÁ„o MÈdia</span>
+                                    <span class="text-solar-blue fw-semibold">Avalia√ß√£o M√©dia</span>
                                     <span class="fw-bold text-solar-orange">@Model.AverageRating.ToString("F1")/5.0</span>
                                 </div>
                                 <div class="d-flex align-items-center justify-content-between p-2 rounded" style="background: rgba(255, 107, 53, 0.05);">
-                                    <span class="text-solar-blue fw-semibold">Total de AvaliaÁıes</span>
+                                    <span class="text-solar-blue fw-semibold">Total de Avalia√ß√µes</span>
                                     <span class="fw-bold text-solar-orange">@Model.TotalReviews</span>
                                 </div>
                             </div>

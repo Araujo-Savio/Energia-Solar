@@ -1,0 +1,427 @@
+@model SolarEnergy.ViewModels.LeadManagementViewModel
+@{
+    ViewData["Title"] = "Gerenciar Leads";
+}
+
+<!-- Lead Management CSS -->
+<link rel="stylesheet" href="~/css/lead-management.css" />
+
+<!-- Breadcrumb Navigation -->
+<div class="breadcrumb-container">
+    <div class="container-fluid">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a asp-controller="Home" asp-action="Leads">
+                        <i class="fas fa-users"></i> Leads
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <i class="fas fa-chart-line"></i> Central de Inteligência
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="management-container">
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="management-header">
+            <div class="header-content">
+                <div class="header-info">
+                    <h1>
+                        <i class="fas fa-chart-line text-solar-primary"></i>
+                        Central de Inteligência
+                    </h1>
+                    <p>Analise seus investimentos, performance e otimize seus resultados</p>
+                </div>
+                <div class="header-actions">
+                    <a asp-action="Purchase" class="action-button">
+                        <i class="fas fa-plus"></i>Comprar Leads
+                    </a>
+                    <a asp-controller="Home" asp-action="Leads" class="action-button secondary">
+                        <i class="fas fa-arrow-left"></i>Voltar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Executive Summary -->
+        <div class="executive-summary">
+            <div class="summary-header">
+                <i class="fas fa-tachometer-alt fa-2x"></i>
+                <h3 class="summary-title">Resumo Executivo</h3>
+            </div>
+            <div class="summary-body">
+                <div class="summary-metrics">
+                    <div class="metric-card available">
+                        <div class="metric-value success">@Model.Balance.AvailableLeads</div>
+                        <div class="metric-label">Leads Disponíveis</div>
+                    </div>
+                    <div class="metric-card consumed">
+                        <div class="metric-value warning">@Model.Balance.ConsumedLeads</div>
+                        <div class="metric-label">Leads Consumidos</div>
+                    </div>
+                    <div class="metric-card investment">
+                        <div class="metric-value primary">@(Model.TotalInvestment.ToString("C0", new System.Globalization.CultureInfo("pt-BR")))</div>
+                        <div class="metric-label">Investimento Total</div>
+                    </div>
+                    <div class="metric-card cost">
+                        <div class="metric-value info">@(Model.AverageLeadCost.ToString("C", new System.Globalization.CultureInfo("pt-BR")))</div>
+                        <div class="metric-label">Custo Médio por Lead</div>
+                    </div>
+                </div>
+                
+                <div class="summary-insights">
+                    <div class="insight-item">
+                        <span class="insight-label">Leads Comprados Este Mês:</span>
+                        <span class="insight-badge success">@Model.LeadsThisMonth leads</span>
+                    </div>
+                    <div class="insight-item">
+                        <span class="insight-label">Leads Consumidos Este Mês:</span>
+                        <span class="insight-badge warning">@Model.ConsumedThisMonth leads</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Sections -->
+        <div class="row g-4 mb-4">
+            <!-- Purchase History -->
+            <div class="col-lg-6">
+                <div class="history-section">
+                    <div class="history-header">
+                        <i class="fas fa-shopping-cart fa-2x text-solar-primary"></i>
+                        <h5 class="history-title">Histórico de Compras</h5>
+                    </div>
+                    <div class="history-body">
+                        @if (Model.PurchaseHistory.Any())
+                        {
+                            <div class="table-responsive">
+                                <table class="history-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Data</th>
+                                            <th>Qtd</th>
+                                            <th>Valor</th>
+                                            <th>Desconto</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var purchase in Model.PurchaseHistory.Take(8))
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <div class="purchase-info">
+                                                        <div class="purchase-date">@purchase.PurchaseDate.ToString("dd/MM/yyyy")</div>
+                                                        <div class="purchase-time">@purchase.PurchaseDate.ToString("HH:mm")</div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span class="lead-badge">@purchase.LeadQuantity</span>
+                                                </td>
+                                                <td>
+                                                    <div class="amount-highlight">@(purchase.TotalAmount.ToString("C", new System.Globalization.CultureInfo("pt-BR")))</div>
+                                                </td>
+                                                <td>
+                                                    @if (purchase.DiscountPercentage > 0)
+                                                    {
+                                                        <span class="discount-indicator">@purchase.DiscountPercentage%</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span style="color: var(--solar-muted);">—</span>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            @if (Model.PurchaseHistory.Count > 8)
+                            {
+                                <div class="text-center mt-3">
+                                    <small style="color: var(--solar-muted);">Mostrando 8 de @Model.PurchaseHistory.Count compras</small>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="empty-state">
+                                <i class="fas fa-shopping-cart empty-icon"></i>
+                                <h6 class="empty-title">Nenhuma compra realizada</h6>
+                                <a asp-action="Purchase" class="empty-action">
+                                    <i class="fas fa-plus"></i>Fazer Primeira Compra
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Consumption History -->
+            <div class="col-lg-6">
+                <div class="history-section">
+                    <div class="history-header">
+                        <i class="fas fa-chart-bar fa-2x text-solar-warning"></i>
+                        <h5 class="history-title">Histórico de Consumo</h5>
+                    </div>
+                    <div class="history-body">
+                        @if (Model.ConsumptionHistory.Any())
+                        {
+                            <div class="table-responsive">
+                                <table class="history-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Cliente</th>
+                                            <th>Consumo</th>
+                                            <th>Data</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var consumption in Model.ConsumptionHistory.Take(8))
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <div class="consumption-info">
+                                                        <div class="client-name">@consumption.ClientName</div>
+                                                        <div class="service-type">@consumption.ServiceType</div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span class="consumption-badge">@consumption.MonthlyConsumptionKwh kWh</span>
+                                                </td>
+                                                <td>
+                                                    <div class="purchase-info">
+                                                        <div class="purchase-date">@consumption.ConsumedAt.ToString("dd/MM/yyyy")</div>
+                                                        <div class="purchase-time">@consumption.ConsumedAt.ToString("HH:mm")</div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            @if (Model.ConsumptionHistory.Count > 8)
+                            {
+                                <div class="text-center mt-3">
+                                    <small style="color: var(--solar-muted);">Mostrando 8 de @Model.ConsumptionHistory.Count consumos</small>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="empty-state">
+                                <i class="fas fa-chart-bar empty-icon"></i>
+                                <h6 class="empty-title">Nenhum lead consumido</h6>
+                                <a asp-controller="Home" asp-action="Leads" class="empty-action">
+                                    <i class="fas fa-unlock"></i>Começar a Usar Leads
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Analysis -->
+        <div class="performance-section">
+            <div class="performance-header">
+                <i class="fas fa-analytics fa-2x"></i>
+                <h3 class="summary-title">Análise de Performance</h3>
+            </div>
+            <div class="performance-body">
+                <div class="performance-metrics">
+                    <div class="performance-metric">
+                        <div class="metric-percentage primary">
+                            @{
+                                var utilizationRate = Model.Balance.TotalPurchasedLeads > 0 ? 
+                                    Math.Round((decimal)Model.Balance.ConsumedLeads / Model.Balance.TotalPurchasedLeads * 100, 1) : 0;
+                            }
+                            @utilizationRate%
+                        </div>
+                        <div class="metric-description">Taxa de Utilização</div>
+                        <div class="metric-detail">Leads usados vs comprados</div>
+                    </div>
+                    <div class="performance-metric">
+                        <div class="metric-percentage warning">
+                            @{
+                                var stockRate = Model.Balance.TotalPurchasedLeads > 0 ? 
+                                    Math.Round((decimal)Model.Balance.AvailableLeads / Model.Balance.TotalPurchasedLeads * 100, 1) : 0;
+                            }
+                            @stockRate%
+                        </div>
+                        <div class="metric-description">Leads em Estoque</div>
+                        <div class="metric-detail">Leads disponíveis para uso</div>
+                    </div>
+                    <div class="performance-metric">
+                        <div class="metric-percentage success">
+                            @{
+                                var monthlyEfficiency = Model.ConsumedThisMonth > 0 && Model.LeadsThisMonth > 0 ? 
+                                    Math.Round((decimal)Model.ConsumedThisMonth / Model.LeadsThisMonth * 100, 1) : 0;
+                            }
+                            @monthlyEfficiency%
+                        </div>
+                        <div class="metric-description">Eficiência Mensal</div>
+                        <div class="metric-detail">Uso vs compra este mês</div>
+                    </div>
+                </div>
+
+                <div class="recommendations-section">
+                    <div class="recommendations-column">
+                        <h6>
+                            <i class="fas fa-lightbulb"></i>
+                            Recomendações
+                        </h6>
+                        <div class="recommendation-list">
+                            @if (Model.Balance.AvailableLeads == 0)
+                            {
+                                <div class="recommendation-item warning">
+                                    <div class="recommendation-icon">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </div>
+                                    <div class="recommendation-content">
+                                        <strong>Sem leads disponíveis</strong>
+                                        <small>Compre mais leads para continuar desbloqueando clientes e expandir seu negócio.</small>
+                                    </div>
+                                </div>
+                            }
+                            else if (Model.Balance.AvailableLeads < 5)
+                            {
+                                <div class="recommendation-item info">
+                                    <div class="recommendation-icon">
+                                        <i class="fas fa-info-circle"></i>
+                                    </div>
+                                    <div class="recommendation-content">
+                                        <strong>Estoque baixo</strong>
+                                        <small>Considere comprar mais leads para não ficar sem créditos no momento crucial.</small>
+                                    </div>
+                                </div>
+                            }
+
+                            @if (Model.ConsumedThisMonth == 0 && Model.LeadsThisMonth > 0)
+                            {
+                                <div class="recommendation-item warning">
+                                    <div class="recommendation-icon">
+                                        <i class="fas fa-lightbulb"></i>
+                                    </div>
+                                    <div class="recommendation-content">
+                                        <strong>Leads não utilizados</strong>
+                                        <small>Você tem leads disponíveis. Comece a desbloquear clientes para gerar mais negócios!</small>
+                                    </div>
+                                </div>
+                            }
+
+                            @if (Model.AverageLeadCost > 12.99m)
+                            {
+                                <div class="recommendation-item success">
+                                    <div class="recommendation-icon">
+                                        <i class="fas fa-piggy-bank"></i>
+                                    </div>
+                                    <div class="recommendation-content">
+                                        <strong>Economize com pacotes</strong>
+                                        <small>Pacotes maiores oferecem descontos de até 15%. Otimize seu investimento!</small>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="recommendations-column">
+                        <h6>
+                            <i class="fas fa-rocket"></i>
+                            Próximos Passos
+                        </h6>
+                        <div class="next-steps">
+                            @if (Model.Balance.AvailableLeads == 0)
+                            {
+                                <a asp-action="Purchase" class="step-button">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    <div>
+                                        <strong>Comprar Leads</strong><br>
+                                        <small>Adquira créditos para continuar crescendo</small>
+                                    </div>
+                                </a>
+                            }
+                            else
+                            {
+                                <a asp-controller="Home" asp-action="Leads" class="step-button">
+                                    <i class="fas fa-unlock"></i>
+                                    <div>
+                                        <strong>Usar Leads Disponíveis</strong><br>
+                                        <small>Desbloqueie clientes e feche mais negócios</small>
+                                    </div>
+                                </a>
+                            }
+
+                            <a asp-action="Purchase" class="step-button secondary">
+                                <i class="fas fa-plus"></i>
+                                <div>
+                                    <strong>Expandir Portfólio</strong><br>
+                                    <small>Compre mais leads e acelere o crescimento</small>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add smooth animations on scroll
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+
+    // Observe all metric cards and sections
+    const elements = document.querySelectorAll('.metric-card, .performance-metric, .history-section, .recommendation-item');
+    elements.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(el);
+    });
+
+    // Add hover effects to metric cards
+    const metricCards = document.querySelectorAll('.metric-card, .performance-metric');
+    metricCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-8px) scale(1.02)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+
+    // Add click analytics (for future implementation)
+    const actionButtons = document.querySelectorAll('.step-button, .empty-action');
+    actionButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Track user interactions for analytics
+            console.log('Action clicked:', this.textContent.trim());
+        });
+    });
+
+    // Auto-refresh data every 5 minutes
+    setInterval(() => {
+        // In a real implementation, you might want to refresh certain metrics
+        console.log('Auto-refresh would happen here');
+    }, 300000);
+});
+</script>

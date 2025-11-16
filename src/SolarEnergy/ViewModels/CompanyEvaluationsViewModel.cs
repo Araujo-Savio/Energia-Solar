@@ -38,12 +38,12 @@ namespace SolarEnergy.ViewModels
         public DateTime UpdatedAt { get; set; }
         
         /// <summary>
-        /// Retorna se a avaliação foi editada
+        /// Retorna se a avaliaÃ§Ã£o foi editada
         /// </summary>
         public bool IsEdited => UpdatedAt > CreatedAt.AddMinutes(1);
         
         /// <summary>
-        /// Retorna texto da data de forma amigável
+        /// Retorna texto da data de forma amigÃ¡vel
         /// </summary>
         public string TimeAgo
         {
@@ -51,11 +51,11 @@ namespace SolarEnergy.ViewModels
             {
                 var timeSpan = DateTime.Now - CreatedAt;
                 if (timeSpan.TotalDays >= 1)
-                    return $"{(int)timeSpan.TotalDays} dia(s) atrás";
+                    return $"{(int)timeSpan.TotalDays} dia(s) atrÃ¡s";
                 if (timeSpan.TotalHours >= 1)
-                    return $"{(int)timeSpan.TotalHours} hora(s) atrás";
+                    return $"{(int)timeSpan.TotalHours} hora(s) atrÃ¡s";
                 if (timeSpan.TotalMinutes >= 1)
-                    return $"{(int)timeSpan.TotalMinutes} minuto(s) atrás";
+                    return $"{(int)timeSpan.TotalMinutes} minuto(s) atrÃ¡s";
                 return "Agora mesmo";
             }
         }

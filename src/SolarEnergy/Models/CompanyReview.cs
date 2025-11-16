@@ -16,18 +16,18 @@ namespace SolarEnergy.Models
         [StringLength(450)]
         public string ReviewerId { get; set; } = string.Empty;
 
-        [Range(1, 5, ErrorMessage = "A avaliaÁ„o deve ser entre 1 e 5 estrelas")]
+        [Range(1, 5, ErrorMessage = "A avalia√ß√£o deve ser entre 1 e 5 estrelas")]
         public int? Rating { get; set; }
 
         [Required]
-        [StringLength(1000, ErrorMessage = "O coment·rio deve ter no m·ximo 1000 caracteres")]
-        [Display(Name = "Coment·rio")]
+        [StringLength(1000, ErrorMessage = "O coment√°rio deve ter no m√°ximo 1000 caracteres")]
+        [Display(Name = "Coment√°rio")]
         public string Comment { get; set; } = string.Empty;
 
-        [Display(Name = "Data da AvaliaÁ„o")]
+        [Display(Name = "Data da Avalia√ß√£o")]
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-        [Display(Name = "⁄ltima AtualizaÁ„o")]
+        [Display(Name = "√öltima Atualiza√ß√£o")]
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         // Navigation properties

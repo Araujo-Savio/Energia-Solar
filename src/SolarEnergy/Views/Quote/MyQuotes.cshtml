@@ -1,6 +1,6 @@
 @model List<SolarEnergy.ViewModels.QuoteListViewModel>
 @{
-    ViewData["Title"] = "Meus OrÁamentos";
+    ViewData["Title"] = "Meus Or√ßamentos";
     var userType = ViewData["UserType"] as SolarEnergy.Models.UserType?;
     var isAdmin = userType == SolarEnergy.Models.UserType.Administrator;
 }
@@ -11,31 +11,31 @@
             <span class="badge bg-solar-orange bg-opacity-75 text-uppercase fw-semibold px-3 py-2">
                 @if (isAdmin)
                 {
-                    <text>AdministraÁ„o - Todos os OrÁamentos</text>
+                    <text>Administra√ß√£o - Todos os Or√ßamentos</text>
                 }
                 else
                 {
-                    <text>¡rea do Cliente</text>
+                    <text>√Årea do Cliente</text>
                 }
             </span>
             <h1 class="display-6 text-solar-blue fw-bold mt-3">
                 @if (isAdmin)
                 {
-                    <text>Gerenciar Todos os OrÁamentos</text>
+                    <text>Gerenciar Todos os Or√ßamentos</text>
                 }
                 else
                 {
-                    <text>Meus OrÁamentos Solicitados</text>
+                    <text>Meus Or√ßamentos Solicitados</text>
                 }
             </h1>
             <p class="text-muted lead">
                 @if (isAdmin)
                 {
-                    <text>Supervis„o geral de todas as solicitaÁıes na plataforma</text>
+                    <text>Supervis√£o geral de todas as solicita√ß√µes na plataforma</text>
                 }
                 else
                 {
-                    <text>Acompanhe o status dos seus orÁamentos e propostas recebidas</text>
+                    <text>Acompanhe o status dos seus or√ßamentos e propostas recebidas</text>
                 }
             </p>
         </div>
@@ -53,7 +53,7 @@
                                         <h6 class="fw-bold text-solar-blue mb-1">
                                             @if (isAdmin)
                                             {
-                                                <span class="small text-muted">SolicitaÁ„o #@quote.QuoteId.ToString("D6")</span><br>
+                                                <span class="small text-muted">Solicita√ß√£o #@quote.QuoteId.ToString("D6")</span><br>
                                                 <span class="fs-6">@quote.CompanyName</span>
                                             }
                                             else
@@ -86,12 +86,30 @@
                                         <div class="d-flex align-items-center">
                                             <i class="fas fa-cogs text-solar-orange me-2"></i>
                                             <div>
-                                                <small class="text-muted d-block">ServiÁo</small>
+                                                <small class="text-muted d-block">Servi√ßo</small>
                                                 <strong class="small">@quote.ServiceType</strong>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+
+                                @if (quote.HasChat)
+                                {
+                                    <div class="alert alert-primary border-0 py-2 px-3 mb-3">
+                                        <i class="fas fa-comments me-2"></i>
+                                        <strong>Chat dispon√≠vel</strong>
+                                        @if (quote.UnreadMessagesCount > 0)
+                                        {
+                                            <span class="badge bg-danger ms-2">@quote.UnreadMessagesCount nova(s)</span>
+                                        }
+                                        @if (quote.LastMessageDate.HasValue)
+                                        {
+                                            <small class="d-block text-primary">
+                                                <i class="fas fa-clock me-1"></i>√öltima mensagem: @quote.LastMessageDate.Value.ToString("dd/MM HH:mm")
+                                            </small>
+                                        }
+                                    </div>
+                                }
 
                                 @if (quote.HasProposal)
                                 {
@@ -106,54 +124,85 @@
                                         }
                                     </div>
                                 }
+                                else if (!string.IsNullOrEmpty(quote.CompanyResponseMessage))
+                                {
+                                    <div class="alert alert-info border-0 py-2 px-3 mb-3">
+                                        <i class="fas fa-reply me-2"></i>
+                                        <strong>Empresa respondeu</strong>
+                                        <small class="d-block text-info">
+                                            <i class="fas fa-comment me-1"></i>Mensagem recebida
+                                        </small>
+                                    </div>
+                                }
                                 else if (quote.Status == "Pendente")
                                 {
                                     <div class="alert alert-warning border-0 py-2 px-3 mb-3">
                                         <i class="fas fa-clock me-2"></i>
                                         @if (isAdmin)
                                         {
-                                            <text>Aguardando an·lise da empresa</text>
+                                            <text>Aguardando an√°lise da empresa</text>
                                         }
                                         else
                                         {
-                                            <text>Sua solicitaÁ„o foi enviada</text>
+                                            <text>Sua solicita√ß√£o foi enviada</text>
                                             <small class="d-block text-warning">
                                                 <i class="fas fa-hourglass-half me-1"></i>Aguardando resposta...
                                             </small>
                                         }
                                     </div>
                                 }
-                                else if (quote.Status == "Em An·lise")
+                                else if (quote.Status == "Em An√°lise")
                                 {
                                     <div class="alert alert-info border-0 py-2 px-3 mb-3">
                                         <i class="fas fa-eye me-2"></i>
                                         @if (isAdmin)
                                         {
-                                            <text>Em an·lise pela empresa</text>
+                                            <text>Em an√°lise pela empresa</text>
                                         }
                                         else
                                         {
-                                            <text>Sua solicitaÁ„o est· sendo analisada</text>
+                                            <text>Sua solicita√ß√£o est√° sendo analisada</text>
                                             <small class="d-block text-info">
-                                                <i class="fas fa-search me-1"></i>A empresa est· preparando uma resposta
+                                                <i class="fas fa-search me-1"></i>A empresa est√° preparando uma resposta
                                             </small>
                                         }
                                     </div>
                                 }
                             </div>
                             <div class="card-footer bg-transparent border-0 pt-0">
-                                <a asp-action="Details" asp-route-id="@quote.QuoteId" 
-                                   class="btn btn-solar-orange w-100">
-                                    <i class="fas fa-eye me-2"></i>
-                                    @if (isAdmin)
-                                    {
-                                        <text>Ver Detalhes Administrativos</text>
-                                    }
-                                    else
-                                    {
-                                        <text>Ver Detalhes e Propostas</text>
-                                    }
-                                </a>
+                                @if (quote.HasChat)
+                                {
+                                    <div class="d-grid gap-2">
+                                        <a asp-controller="Chat" asp-action="Index" asp-route-quoteId="@quote.QuoteId" 
+                                           class="btn btn-primary">
+                                            <i class="fas fa-comments me-2"></i>
+                                            Abrir Chat
+                                            @if (quote.UnreadMessagesCount > 0)
+                                            {
+                                                <span class="badge bg-danger ms-2">@quote.UnreadMessagesCount</span>
+                                            }
+                                        </a>
+                                        <a asp-action="Details" asp-route-id="@quote.QuoteId" 
+                                           class="btn btn-outline-solar-orange">
+                                            <i class="fas fa-eye me-2"></i>Ver Detalhes
+                                        </a>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <a asp-action="Details" asp-route-id="@quote.QuoteId" 
+                                       class="btn btn-solar-orange w-100">
+                                        <i class="fas fa-eye me-2"></i>
+                                        @if (isAdmin)
+                                        {
+                                            <text>Ver Detalhes Administrativos</text>
+                                        }
+                                        else
+                                        {
+                                            <text>Ver Detalhes e Propostas</text>
+                                        }
+                                    </a>
+                                }
                             </div>
                         </div>
                     </div>
@@ -179,21 +228,21 @@
                             <h4 class="text-solar-blue fw-bold mb-3">
                                 @if (isAdmin)
                                 {
-                                    <text>Nenhuma solicitaÁ„o encontrada</text>
+                                    <text>Nenhuma solicita√ß√£o encontrada</text>
                                 }
                                 else
                                 {
-                                    <text>VocÍ ainda n„o solicitou orÁamentos</text>
+                                    <text>Voc√™ ainda n√£o solicitou or√ßamentos</text>
                                 }
                             </h4>
                             <p class="text-muted mb-4">
                                 @if (isAdmin)
                                 {
-                                    <text>Quando clientes solicitarem orÁamentos, eles aparecer„o aqui para supervis„o.</text>
+                                    <text>Quando clientes solicitarem or√ßamentos, eles aparecer√£o aqui para supervis√£o.</text>
                                 }
                                 else
                                 {
-                                    <text>Explore nossa rede de empresas parceiras e solicite orÁamentos personalizados para seu projeto de energia solar.</text>
+                                    <text>Explore nossa rede de empresas parceiras e solicite or√ßamentos personalizados para seu projeto de energia solar.</text>
                                 }
                             </p>
                             @if (!isAdmin)
@@ -203,7 +252,7 @@
                                         <i class="fas fa-search me-2"></i>Buscar Empresas
                                     </a>
                                     <a asp-controller="Home" asp-action="Simulation" class="btn btn-outline-solar-orange">
-                                        <i class="fas fa-calculator me-2"></i>Fazer SimulaÁ„o
+                                        <i class="fas fa-calculator me-2"></i>Fazer Simula√ß√£o
                                     </a>
                                 </div>
                             }
@@ -239,7 +288,7 @@
         return status switch
         {
             "Pendente" => "bg-warning text-dark",
-            "Em An·lise" => "bg-info text-white",
+            "Em An√°lise" => "bg-info text-white",
             "Proposta Enviada" => "bg-success text-white",
             "Aceito" => "bg-primary text-white",
             "Recusado" => "bg-danger text-white",

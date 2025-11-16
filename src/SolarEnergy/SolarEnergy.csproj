@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -8,13 +8,33 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Views\NovaPasta1\**" />
     <Compile Remove="Views\NovaPasta\**" />
+    <Compile Remove="Views\Orcamento\**" />
+    <Content Remove="Views\NovaPasta1\**" />
     <Content Remove="Views\NovaPasta\**" />
+    <Content Remove="Views\Orcamento\**" />
+    <EmbeddedResource Remove="Views\NovaPasta1\**" />
     <EmbeddedResource Remove="Views\NovaPasta\**" />
+    <EmbeddedResource Remove="Views\Orcamento\**" />
+    <None Remove="Views\NovaPasta1\**" />
     <None Remove="Views\NovaPasta\**" />
+    <None Remove="Views\Orcamento\**" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="CHAT_DESIGN.md" />
+    <None Remove="CHAT_FIXES.md" />
+    <None Remove="CHAT_IMPLEMENTATION.md" />
+    <None Remove="clear_data.sql" />
+    <None Remove="RELATORIOS_FIXES.md" />
+    <None Remove="REPORTS_DOCUMENTATION.md" />
+    <None Remove="verify_data.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="itext7" Version="9.3.0" />
+    <PackageReference Include="itext7.bouncy-castle-adapter" Version="9.3.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.10">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -26,11 +46,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Views\NovaPasta1\" />
-    <Folder Include="Views\Orcamento\" />
   </ItemGroup>
 
 </Project>

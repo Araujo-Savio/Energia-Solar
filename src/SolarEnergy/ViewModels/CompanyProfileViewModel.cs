@@ -8,45 +8,45 @@ namespace SolarEnergy.ViewModels
     {
         public string Id { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "O nome completo È obrigatÛrio")]
+        [Required(ErrorMessage = "O nome completo √© obrigat√≥rio")]
         [Display(Name = "Nome Completo")]
-        [StringLength(100, ErrorMessage = "O nome deve ter no m·ximo 100 caracteres")]
+        [StringLength(100, ErrorMessage = "O nome deve ter no m√°ximo 100 caracteres")]
         public string FullName { get; set; } = string.Empty;
 
-        [Display(Name = "Raz„o Social")]
-        [StringLength(120, ErrorMessage = "A raz„o social deve ter no m·ximo 120 caracteres")]
+        [Display(Name = "Raz√£o Social")]
+        [StringLength(120, ErrorMessage = "A raz√£o social deve ter no m√°ximo 120 caracteres")]
         public string? CompanyLegalName { get; set; }
 
         [Display(Name = "Nome Fantasia")]
-        [StringLength(120, ErrorMessage = "O nome fantasia deve ter no m·ximo 120 caracteres")]
+        [StringLength(120, ErrorMessage = "O nome fantasia deve ter no m√°ximo 120 caracteres")]
         public string? CompanyTradeName { get; set; }
 
-        [Required(ErrorMessage = "O e-mail È obrigatÛrio")]
-        [EmailAddress(ErrorMessage = "E-mail inv·lido")]
+        [Required(ErrorMessage = "O e-mail √© obrigat√≥rio")]
+        [EmailAddress(ErrorMessage = "E-mail inv√°lido")]
         [Display(Name = "E-mail")]
         public string Email { get; set; } = string.Empty;
 
         [Display(Name = "Telefone")]
-        [Phone(ErrorMessage = "Telefone inv·lido")]
+        [Phone(ErrorMessage = "Telefone inv√°lido")]
         public string? Phone { get; set; }
 
         [Display(Name = "Telefone Comercial")]
-        [Phone(ErrorMessage = "Telefone inv·lido")]
+        [Phone(ErrorMessage = "Telefone inv√°lido")]
         public string? CompanyPhone { get; set; }
 
         [Display(Name = "Site da Empresa")]
-        [Url(ErrorMessage = "Informe um endereÁo de site v·lido")]
+        [Url(ErrorMessage = "Informe um endere√ßo de site v√°lido")]
         public string? CompanyWebsite { get; set; }
 
-        [Display(Name = "DescriÁ„o da Empresa")]
-        [StringLength(500, ErrorMessage = "A descriÁ„o deve ter no m·ximo 500 caracteres")]
+        [Display(Name = "Descri√ß√£o da Empresa")]
+        [StringLength(500, ErrorMessage = "A descri√ß√£o deve ter no m√°ximo 500 caracteres")]
         public string? CompanyDescription { get; set; }
 
-        [Display(Name = "Tipo de ServiÁo Solar")]
+        [Display(Name = "Tipo de Servi√ßo Solar")]
         public SolarServiceType? ServiceType { get; set; }
 
-        [Display(Name = "LocalizaÁ„o")]
-        [StringLength(120, ErrorMessage = "A localizaÁ„o deve ter no m·ximo 120 caracteres")]
+        [Display(Name = "Localiza√ß√£o")]
+        [StringLength(120, ErrorMessage = "A localiza√ß√£o deve ter no m√°ximo 120 caracteres")]
         public string? Location { get; set; }
 
         [Display(Name = "Status da Empresa")]
@@ -65,16 +65,16 @@ namespace SolarEnergy.ViewModels
         [Display(Name = "CNPJ")]
         public string? CNPJ { get; set; }
 
-        [Display(Name = "InscriÁ„o Estadual")]
+        [Display(Name = "Inscri√ß√£o Estadual")]
         public string? StateRegistration { get; set; }
 
-        [Display(Name = "Nome do Respons·vel")]
+        [Display(Name = "Nome do Respons√°vel")]
         public string? ResponsibleName { get; set; }
 
-        [Display(Name = "CPF do Respons·vel")]
+        [Display(Name = "CPF do Respons√°vel")]
         public string? ResponsibleCPF { get; set; }
 
-        [Display(Name = "Tipo de Usu·rio")]
+        [Display(Name = "Tipo de Usu√°rio")]
         public UserType UserType { get; set; }
 
         [Display(Name = "Data de Cadastro")]

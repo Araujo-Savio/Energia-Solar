@@ -14,7 +14,12 @@ namespace SolarEnergy.Data
         public DbSet<CompanyReview> CompanyReviews { get; set; }
         public DbSet<Quote> Quotes { get; set; }
         public DbSet<Proposal> Proposals { get; set; }
-        public DbSet<CompanyParameters> CompanyParameters { get; set; }
+        public DbSet<QuoteMessage> QuoteMessages { get; set; }
+
+        // Lead System
+        public DbSet<CompanyLeadBalance> CompanyLeadBalances { get; set; }
+        public DbSet<LeadPurchase> LeadPurchases { get; set; }
+        public DbSet<LeadConsumption> LeadConsumptions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -46,26 +51,6 @@ namespace SolarEnergy.Data
                 // Índices únicos
                 entity.HasIndex(e => e.CPF).IsUnique().HasFilter("[CPF] IS NOT NULL");
                 entity.HasIndex(e => e.CNPJ).IsUnique().HasFilter("[CNPJ] IS NOT NULL");
-            });
-
-            // Configuração da entidade CompanyParameters
-            builder.Entity<CompanyParameters>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.CompanyId).IsRequired().HasMaxLength(450);
-                entity.Property(e => e.PricePerKwP).HasColumnType("decimal(18,2)");
-                entity.Property(e => e.AnnualMaintenance).HasColumnType("decimal(18,2)");
-                entity.Property(e => e.InstallationDiscount).HasColumnType("decimal(18,2)");
-                entity.Property(e => e.RentalPercent).HasColumnType("decimal(18,2)");
-                entity.Property(e => e.MinRentalValue).HasColumnType("decimal(18,2)");
-                entity.Property(e => e.RentalSetupFee).HasColumnType("decimal(18,2)");
-                entity.Property(e => e.AnnualRentIncrease).HasColumnType("decimal(18,2)");
-                entity.Property(e => e.RentDiscount).HasColumnType("decimal(18,2)");
-                entity.Property(e => e.KwhPerKwp).HasColumnType("decimal(18,2)");
-                entity.Property(e => e.MinSystemPower).HasColumnType("decimal(18,2)");
-                entity.Property(e => e.UpdatedAt).IsRequired();
-
-                entity.HasIndex(e => e.CompanyId).IsUnique();
             });
 
             // Configuração da entidade CompanyReview
@@ -133,6 +118,100 @@ namespace SolarEnergy.Data
                     .WithMany(q => q.Proposals)
                     .HasForeignKey(e => e.QuoteId)
                     .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // Configuração da entidade QuoteMessage
+            builder.Entity<QuoteMessage>(entity =>
+            {
+                entity.ToTable("QuoteMessages");
+                entity.HasKey(e => e.MessageId);
+                entity.Property(e => e.SenderId).IsRequired().HasMaxLength(450);
+                entity.Property(e => e.Message).IsRequired().HasMaxLength(2000);
+                entity.Property(e => e.SenderType).HasConversion<int>().IsRequired();
+                
+                // A propriedade IsRead é [NotMapped], então não configuramos aqui
+
+                // Relacionamentos
+                entity.HasOne(e => e.Quote)
+                    .WithMany(q => q.Messages)
+                    .HasForeignKey(e => e.QuoteId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.Sender)
+                    .WithMany()
+                    .HasForeignKey(e => e.SenderId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                // Índices
+                entity.HasIndex(e => e.QuoteId);
+                entity.HasIndex(e => e.SenderId);
+                entity.HasIndex(e => e.SentDate);
+                entity.HasIndex(e => e.ReadDate);
+            });
+
+            // Configuração das entidades do sistema de leads
+            builder.Entity<CompanyLeadBalance>(entity =>
+            {
+                entity.ToTable("CompanyLeadBalances");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.CompanyId).IsRequired().HasMaxLength(450);
+                entity.Property(e => e.AvailableLeads).IsRequired();
+                entity.Property(e => e.ConsumedLeads).IsRequired();
+                entity.Property(e => e.TotalPurchasedLeads).IsRequired();
+
+                entity.HasOne(e => e.Company)
+                    .WithMany()
+                    .HasForeignKey(e => e.CompanyId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(e => e.CompanyId).IsUnique();
+            });
+
+            builder.Entity<LeadPurchase>(entity =>
+            {
+                entity.ToTable("LeadPurchases");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.CompanyId).IsRequired().HasMaxLength(450);
+                entity.Property(e => e.LeadQuantity).IsRequired();
+                entity.Property(e => e.UnitPrice).IsRequired().HasPrecision(18, 2);
+                entity.Property(e => e.DiscountPercentage).IsRequired().HasPrecision(5, 2);
+                entity.Property(e => e.TotalAmount).IsRequired().HasPrecision(18, 2);
+                entity.Property(e => e.PaymentStatus).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.TransactionId).HasMaxLength(100);
+                entity.Property(e => e.Notes).HasMaxLength(500);
+
+                entity.HasOne(e => e.Company)
+                    .WithMany()
+                    .HasForeignKey(e => e.CompanyId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(e => e.CompanyId);
+                entity.HasIndex(e => e.PurchaseDate);
+                entity.HasIndex(e => e.TransactionId);
+            });
+
+            builder.Entity<LeadConsumption>(entity =>
+            {
+                entity.ToTable("LeadConsumptions");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.CompanyId).IsRequired().HasMaxLength(450);
+                entity.Property(e => e.QuoteId).IsRequired();
+                entity.Property(e => e.Notes).HasMaxLength(200);
+
+                entity.HasOne(e => e.Company)
+                    .WithMany()
+                    .HasForeignKey(e => e.CompanyId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.Quote)
+                    .WithMany()
+                    .HasForeignKey(e => e.QuoteId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(e => e.CompanyId);
+                entity.HasIndex(e => e.QuoteId);
+                entity.HasIndex(e => new { e.CompanyId, e.QuoteId }).IsUnique();
+                entity.HasIndex(e => e.ConsumedAt);
             });
         }
     }

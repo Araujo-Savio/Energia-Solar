@@ -1,157 +1,30 @@
-@{ 
+@{
     ViewData["Title"] = "Simulador";
-    var isCompanyUser = User.IsInRole("Company");
-    var companyParametersJson = ViewBag.CompanyParametersJson as string ?? "null";
-}
-
-@section Styles {
-    <style>
-        .custom-modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.55);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .custom-modal {
-            background: #fff;
-            padding: 30px;
-            border-radius: 12px;
-            width: 380px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            animation: scaleUp 0.3s ease;
-        }
-
-            .custom-modal h2 {
-                font-weight: 700;
-                margin-bottom: 10px;
-            }
-
-            .custom-modal p {
-                color: #6c757d;
-                margin-bottom: 0;
-            }
-
-        .modal-icon {
-            font-size: 48px;
-            color: #4CAF50;
-            margin-bottom: 10px;
-        }
-
-        .btn-orange {
-            background-color: #ff7a00;
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: none;
-            font-size: 16px;
-            margin-top: 15px;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
-
-            .btn-orange:hover {
-                background-color: #e56d00;
-            }
-
-        /* Campos de parâmetros da empresa */
-        .company-param.param-preset {
-            background-color: #f3f4f6; /* cinza claro, indicando valor padrão/carregado */
-        }
-
-        .company-param.param-custom {
-            background-color: #fff7e6; /* leve amarelo para destacar alteração manual */
-            border-left: 4px solid #ff9800; /* barra lateral laranja */
-        }
-
-        /* Badges usadas na comparação de economia */
-        .badge-positive {
-            background-color: #16a34a;
-            color: #fff;
-        }
-
-        .badge-negative {
-            background-color: #dc2626;
-            color: #fff;
-        }
-
-        
-        @@keyframes fadeIn {
-            from
-
-        {
-            opacity: 0;
-        }
-
-        to {
-            opacity: 1;
-        }
-
-        }
-
-        @@keyframes scaleUp {
-            from {
-                transform: scale(0.85);
-                opacity: 0;
-            }
-
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-    </style>
 }
 
 <div class="solar-page economy-simulator">
     <div class="container-fluid px-4">
         <div class="solar-page-header d-flex flex-wrap justify-content-between align-items-center mb-4">
             <div>
-                <div class="d-flex align-items-center gap-2">
-                    <h1 class="solar-page-title mb-0">Simulador de Economia</h1>
-                    <button type="button"
-                            class="summary-info"
-                            data-bs-toggle="tooltip"
-                            data-bs-placement="right"
-                            title="Combine dados reais de consumo para comparar instalação própria e aluguel de energia.">
-                        <i class="fas fa-info"></i>
-                    </button>
-                </div>
+                <h1 class="solar-page-title">Simulador de Economia</h1>
+                <p class="solar-page-subtitle mb-0">Combine dados reais de consumo para comparar instalação própria e aluguel de energia.</p>
             </div>
             <div class="text-end">
-                <span class="badge bg-status-online mb-2">
-                    <i class="fas fa-bolt me-1"></i>Cálculo sob demanda
-                </span>
+                <span class="badge bg-status-online mb-2"><i class="fas fa-bolt me-1"></i>Cálculo sob demanda</span>
                 <p class="text-muted small mb-0">Informe os parâmetros básicos, depois utilize o botão de cálculo para atualizar a simulação.</p>
             </div>
         </div>
 
-        <div class="row g-4 align-items-start">
-            <!-- COLUNA ESQUERDA: PARÂMETROS -->
+        <div class="row g-4 align-items-stretch">
             <div class="col-xxl-4 col-lg-5">
-                <div class="solar-card">
+                <div class="solar-card h-100">
                     <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div class="d-flex align-items-center gap-2">
-                            <h5 class="solar-card-title mb-0">Métricas de Economia</h5>
-                            <button type="button"
-                                    class="summary-info"
-                                    data-bs-toggle="tooltip"
-                                    data-bs-placement="right"
-                                    title="Nesse campo, insira as métricas básicas para alimentar o simulador: consumo médio da rede, índice de cobertura desejado, horizonte de tempo e inflação anual da tarifa. Você também pode informar o desconto aplicado em contratos de aluguel para refletir o benefício na conta.">
-                                <i class="fas fa-info"></i>
-                            </button>
-                        </div>
+                        <h5 class="solar-card-title mb-0">Métricas de Economia</h5>
                         <span class="badge bg-status-warning text-uppercase small fw-semibold">Base do cálculo</span>
                     </div>
-
+                    <p class="text-muted small mb-4">
+                        Nesse campo, insira as métricas básicas para alimentar o simulador: consumo médio da rede, índice de cobertura desejado, horizonte de tempo e inflação anual da tarifa. Você também pode informar o desconto aplicado em contratos de aluguel para refletir o benefício na conta.
+                    </p>
                     <div class="simulator-section">
                         <h6 class="simulator-section-title">
                             <i class="fas fa-chart-line me-2 text-solar-orange"></i>Parâmetros básicos
@@ -163,7 +36,7 @@
                             </div>
                             <div>
                                 <label class="form-label" for="energyTariff">Tarifa da energia (R$/kWh)</label>
-                                <input id="energyTariff" type="number" min="0" step="0.01" class="form-control" value="0" data-sim-input="energy-tariff" />
+                                <input id="energyTariff" type="number" min="0" step="0.01" class="form-control" value="0.92" data-sim-input="energy-tariff" />
                             </div>
                             <div>
                                 <label class="form-label" for="coverage">Cobertura do sistema (%)</label>
@@ -171,7 +44,7 @@
                             </div>
                             <div>
                                 <label class="form-label" for="degradation">Degradação anual do sistema (%)</label>
-                                <input id="degradation" type="number" min="0" max="5" step="0.1" class="form-control" value="0.8" data-sim-input="degradation" />
+                                <input id="degradation" type="number" min="0" max="5" step="0.1" class="form-control" value="0.7" data-sim-input="degradation" />
                             </div>
                             <div>
                                 <label class="form-label" for="horizon">Horizonte de análise (anos)</label>
@@ -179,22 +52,10 @@
                             </div>
                             <div>
                                 <label class="form-label" for="inflation">Inflação anual da tarifa (%)</label>
-                                <input id="inflation" type="number" min="0" max="25" step="0.1" class="form-control" value="7" data-sim-input="inflation" />
+                                <input id="inflation" type="number" min="0" max="25" step="0.1" class="form-control" value="7.5" data-sim-input="inflation" />
                             </div>
                         </div>
                     </div>
-
-                    @if (isCompanyUser)
-                    {
-                        <div class="d-flex justify-content-end mt-3">
-                            <button type="button"
-                                    class="btn btn-outline-secondary btn-sm"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#companyParametersModal">
-                                <i class="fas fa-sliders-h me-1"></i> Editar parâmetros da empresa
-                            </button>
-                        </div>
-                    }
 
                     <div class="alert alert-info mt-4 mb-0 small" role="status">
                         <i class="fas fa-robot me-2 text-solar-blue"></i>Os custos de instalação e aluguel são estimados automaticamente a partir do consumo informado, considerando padrões médios de mercado.
@@ -209,27 +70,19 @@
                 </div>
             </div>
 
-            <!-- COLUNA CENTRAL: GRÁFICO + RESUMO -->
             <div class="col-xxl-5 col-lg-7">
                 <div class="solar-card h-100 d-flex flex-column">
                     <div class="d-flex flex-wrap justify-content-between align-items-start mb-3">
-                        <div class="d-flex align-items-center gap-2">
-                            <h5 class="solar-card-title mb-1 mb-lg-0">Comparativo de economia</h5>
-                            <button type="button"
-                                    class="summary-info"
-                                    data-bs-toggle="tooltip"
-                                    data-bs-placement="right"
-                                    title="Compare a economia total estimada entre instalação própria e aluguel de energia.">
-                                <i class="fas fa-info"></i>
-                            </button>
+                        <div>
+                            <h5 class="solar-card-title mb-1">Projeção comparativa</h5>
+                            <p class="text-muted small mb-0">
+                                Compare o custo total projetado de cada cenário considerando inflação, degradação do sistema e despesas adicionais.
+                            </p>
                         </div>
                         <span class="badge bg-status-alert">Resultados dinâmicos</span>
                     </div>
-
-                    <div class="chart-wrapper" style="min-height:260px;">
-                        <canvas id="economyComparisonChart"
-                                aria-label="Economia total entre instalação e aluguel"
-                                role="img"></canvas>
+                    <div class="chart-wrapper">
+                        <canvas id="costComparisonChart" aria-label="Comparativo de custos dos cenários" role="img"></canvas>
                     </div>
 
                     <div class="simulator-summary mt-4">
@@ -318,23 +171,16 @@
                 </div>
             </div>
 
-            <!-- COLUNA DIREITA: RESUMOS -->
             <div class="col-xxl-3">
-                <div class="d-flex flex-column gap-3">
-                    <div class="solar-card insight-card">
+                <div class="d-flex flex-column gap-3 h-100">
+                    <div class="solar-card insight-card h-100">
                         <div class="insight-header">
                             <div class="insight-icon bg-solar-blue text-white">
                                 <i class="fas fa-solar-panel"></i>
                             </div>
-                            <div class="d-flex align-items-center gap-2">
+                            <div>
                                 <h6 class="mb-1">Instalação própria</h6>
-                                <button type="button"
-                                        class="summary-info"
-                                        data-bs-toggle="tooltip"
-                                        data-bs-placement="top"
-                                        title="Resumo do cenário baseado nos dados informados.">
-                                    <i class="fas fa-info"></i>
-                                </button>
+                                <p class="text-muted small mb-0">Resumo do cenário baseado nos dados informados.</p>
                             </div>
                             <span class="badge bg-status-online" data-sim-output="install-badge">-</span>
                         </div>
@@ -358,20 +204,14 @@
                         </ul>
                     </div>
 
-                    <div class="solar-card insight-card">
+                    <div class="solar-card insight-card h-100">
                         <div class="insight-header">
                             <div class="insight-icon bg-solar-orange text-white">
                                 <i class="fas fa-handshake"></i>
                             </div>
-                            <div class="d-flex align-items-center gap-2">
+                            <div>
                                 <h6 class="mb-1">Aluguel de energia</h6>
-                                <button type="button"
-                                        class="summary-info"
-                                        data-bs-toggle="tooltip"
-                                        data-bs-placement="top"
-                                        title="Mensalidade fixa e descontos aplicados na conta.">
-                                    <i class="fas fa-info"></i>
-                                </button>
+                                <p class="text-muted small mb-0">Mensalidade fixa e descontos aplicados na conta.</p>
                             </div>
                             <span class="badge bg-status-warning" data-sim-output="rental-badge">-</span>
                         </div>
@@ -395,20 +235,14 @@
                         </ul>
                     </div>
 
-                    <div class="solar-card insight-card flex-fill">
+                    <div class="solar-card insight-card h-100">
                         <div class="insight-header">
                             <div class="insight-icon bg-solar-blue text-white">
                                 <i class="fas fa-clipboard-check"></i>
                             </div>
-                            <div class="d-flex align-items-center gap-2">
+                            <div>
                                 <h6 class="mb-1">Próximos passos</h6>
-                                <button type="button"
-                                        class="summary-info"
-                                        data-bs-toggle="tooltip"
-                                        data-bs-placement="top"
-                                        title="Utilize estes indicadores para direcionar a proposta ao cliente.">
-                                    <i class="fas fa-info"></i>
-                                </button>
+                                <p class="text-muted small mb-0">Utilize estes indicadores para direcionar a proposta ao cliente.</p>
                             </div>
                         </div>
                         <ul class="insight-list">
@@ -436,87 +270,8 @@
     </div>
 </div>
 
-@if (isCompanyUser)
-{
-    <div class="modal fade" id="companyParametersModal" tabindex="-1" aria-labelledby="companyParametersModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="companyParametersModalLabel">
-                        <i class="fas fa-building me-2 text-solar-blue"></i>Parâmetros da empresa
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="companyParametersForm">
-                        @Html.AntiForgeryToken()
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label" for="pricePerKwP">Preço do sistema por kWp (R$/kWp)</label>
-                                <input id="pricePerKwP" type="number" min="0" step="0.01" class="form-control company-param" placeholder="4200" data-company-input="system-price-kwp" />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" for="annualMaintenance">% Manutenção anual sobre o investimento</label>
-                                <input id="annualMaintenance" type="number" min="0" step="0.1" class="form-control company-param" placeholder="1,2" data-company-input="maintenance-percent" />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" for="installationDiscount">% Incentivo/desconto na instalação</label>
-                                <input id="installationDiscount" type="number" min="0" step="0.1" class="form-control company-param" placeholder="4" data-company-input="incentive-percent" />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" for="rentalPercent">% da conta usado como mensalidade de aluguel</label>
-                                <input id="rentalPercent" type="number" min="0" step="1" class="form-control company-param" placeholder="68" data-company-input="rental-factor-percent" />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" for="minRentalValue">Mensalidade mínima de aluguel (R$)</label>
-                                <input id="minRentalValue" type="number" min="0" step="1" class="form-control company-param" placeholder="250" data-company-input="rental-minimum" />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" for="rentalSetupFee">Taxa de instalação/configuração do aluguel (R$/kWp)</label>
-                                <input id="rentalSetupFee" type="number" min="0" step="1" class="form-control company-param" placeholder="150" data-company-input="rental-setup-kwp" />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" for="annualRentIncrease">% de reajuste anual do aluguel</label>
-                                <input id="annualRentIncrease" type="number" min="0" step="0.1" class="form-control company-param" placeholder="4,5" data-company-input="rental-increase-percent" />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" for="rentDiscount">% de desconto na conta (modelo aluguel)</label>
-                                <input id="rentDiscount" type="number" min="0" step="0.1" class="form-control company-param" placeholder="14" data-company-input="rental-discount-percent" />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" for="kwhPerKwp">kWh/mês por kWp do sistema</label>
-                                <input id="kwhPerKwp" type="number" min="0" step="1" class="form-control company-param" placeholder="120" data-company-input="kwh-per-kwp" />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" for="minSystemPower">Potência mínima do sistema (kWp)</label>
-                                <input id="minSystemPower" type="number" min="0" step="0.1" class="form-control company-param" placeholder="2,5" data-company-input="min-system-kw" />
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-solar-orange" id="saveCompanyParameters">
-                        <i class="fas fa-save me-1"></i>Salvar parâmetros
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-}
-
-<div id="successModal" class="custom-modal-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="successModalTitle" aria-describedby="successModalDescription">
-    <div class="custom-modal">
-        <div class="modal-icon" aria-hidden="true">✓</div>
-        <h2 id="successModalTitle">Parâmetros salvos com sucesso!</h2>
-        <p id="successModalDescription">As configurações foram atualizadas corretamente.</p>
-        <button type="button" id="closeSuccessModal" class="btn-orange">OK</button>
-    </div>
-</div>
-
 @section Scripts {
-    <!-- Chart.js SEM integrity/crossorigin para evitar bloqueio -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" integrity="sha384-MV6cFQhfZc6AtZ1I928PDScdJtba8pI99O2mHaFxN4iAdCKfFsRJg7xvHRvgqBBz" crossorigin="anonymous"></script>
     <script>
         (function () {
             const currencyFormatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -547,155 +302,8 @@
                 fiveYearSavings: document.querySelector('[data-sim-output="five-year-savings"]'),
                 horizonLabel: document.querySelector('[data-sim-output="horizon-label"]')
             };
-
             const coverageProgress = document.querySelector('[data-sim-progress="coverage"]');
             const actionButtons = document.querySelectorAll('[data-sim-action="recalculate"]');
-            const successModal = document.getElementById('successModal');
-            const closeSuccessModalButton = document.getElementById('closeSuccessModal');
-
-            function showSuccessModal() {
-                if (successModal) {
-                    successModal.style.display = 'flex';
-                }
-            }
-
-            if (closeSuccessModalButton) {
-                closeSuccessModalButton.addEventListener('click', () => {
-                    if (successModal) {
-                        successModal.style.display = 'none';
-                    }
-                });
-            }
-
-            const isCompanyRole = '@(isCompanyUser.ToString().ToLowerInvariant())' === 'true';
-            const initialCompanyParameters = JSON.parse('@Html.Raw(companyParametersJson ?? "null")');
-            let companyParametersData = initialCompanyParameters ? { ...initialCompanyParameters } : null;
-
-            const companyParameterSelectors = {
-                pricePerKwP: 'pricePerKwP',
-                annualMaintenance: 'annualMaintenance',
-                installationDiscount: 'installationDiscount',
-                rentalPercent: 'rentalPercent',
-                minRentalValue: 'minRentalValue',
-                rentalSetupFee: 'rentalSetupFee',
-                annualRentIncrease: 'annualRentIncrease',
-                rentDiscount: 'rentDiscount',
-                kwhPerKwp: 'kwhPerKwp',
-                minSystemPower: 'minSystemPower'
-            };
-
-            const companyParameterInputs = document.querySelectorAll('.company-param');
-
-            function applyPresetStyles() {
-                companyParameterInputs.forEach((input) => {
-                    input.classList.add('param-preset');
-                    input.classList.remove('param-custom');
-                });
-            }
-
-            applyPresetStyles();
-
-            document.querySelectorAll(".company-param").forEach(input => {
-                input.addEventListener("input", () => {
-                    input.classList.remove("param-preset");
-                    input.classList.add("param-custom");
-                });
-            });
-
-            function populateCompanyParameters() {
-                if (!companyParametersData) {
-                    return;
-                }
-
-                Object.entries(companyParameterSelectors).forEach(([prop, inputId]) => {
-                    const input = document.getElementById(inputId);
-                    if (!input) {
-                        return;
-                    }
-
-                    const value = companyParametersData[prop];
-                    if (value === undefined || value === null) {
-                        return;
-                    }
-
-                    input.value = value;
-                });
-
-                applyPresetStyles();
-            }
-
-            function normalizeDecimal(value) {
-                if (typeof value !== 'string') {
-                    value = value?.toString() ?? '';
-                }
-
-                const normalized = value.replace(',', '.');
-                const parsed = parseFloat(normalized);
-                return Number.isFinite(parsed) ? parsed : 0;
-            }
-
-            function collectCompanyParametersPayload() {
-                const payload = {};
-                Object.entries(companyParameterSelectors).forEach(([prop, inputId]) => {
-                    const input = document.getElementById(inputId);
-                    payload[prop] = normalizeDecimal(input?.value ?? '0');
-                });
-                return payload;
-            }
-
-            function bindSaveParameters() {
-                if (!isCompanyRole) {
-                    return;
-                }
-
-                populateCompanyParameters();
-
-                const saveButton = document.getElementById('saveCompanyParameters');
-                if (!saveButton) {
-                    return;
-                }
-
-                const form = document.getElementById('companyParametersForm');
-                const tokenInput = form ? form.querySelector('input[name="__RequestVerificationToken"]') : null;
-                const antiForgeryToken = tokenInput ? tokenInput.value : '';
-
-                saveButton.addEventListener('click', async () => {
-                    const payload = collectCompanyParametersPayload();
-                    try {
-                        const response = await fetch('/CompanyParameters/Save', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'RequestVerificationToken': antiForgeryToken
-                            },
-                            body: JSON.stringify(payload)
-                        });
-
-                        if (!response.ok) {
-                            throw new Error('Falha ao salvar parâmetros');
-                        }
-
-                        const result = await response.json();
-                        if (result?.success) {
-                            companyParametersData = { ...payload };
-                            applyPresetStyles();
-                            const modalElement = document.getElementById('companyParametersModal');
-                            if (modalElement && window.bootstrap) {
-                                const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
-                                modalInstance.hide();
-                            }
-                            showSuccessModal();
-                        } else {
-                            alert('Não foi possível salvar os parâmetros. Tente novamente.');
-                        }
-                    } catch (error) {
-                        console.error(error);
-                        alert('Ocorreu um erro ao salvar os parâmetros.');
-                    }
-                });
-            }
-
-            bindSaveParameters();
 
             const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             tooltipTriggerList.forEach((tooltipTriggerEl) => {
@@ -704,25 +312,13 @@
                 }
             });
 
-            let economyChartInstance;
+            let chartInstance;
 
             function parseInput(inputName) {
                 const element = document.querySelector(`[data-sim-input="${inputName}"]`);
                 if (!element) return 0;
                 const value = parseFloat((element.value || '').toString().replace(',', '.'));
                 return Number.isFinite(value) ? value : 0;
-            }
-
-            function parseCompanyInput(name, defaultValue) {
-                const element = document.querySelector(`[data-company-input="${name}"]`);
-                if (!element) return defaultValue;
-                const rawValue = (element.value || '').toString().trim();
-                if (rawValue === '') {
-                    return defaultValue;
-                }
-                const normalizedValue = rawValue.replace(',', '.');
-                const parsedValue = parseFloat(normalizedValue);
-                return Number.isFinite(parsedValue) ? parsedValue : defaultValue;
             }
 
             function formatCurrency(value) {
@@ -769,40 +365,33 @@
                 }
             }
 
-            // Gráfico instantâneo: economia total instalação x aluguel
-            function buildEconomyChart(installSavingsTotal, rentalSavingsTotal) {
-                const canvas = document.getElementById('economyComparisonChart');
+            function buildChart(totals) {
+                const canvas = document.getElementById('costComparisonChart');
                 if (!canvas) return;
-                const ctx = canvas.getContext('2d');
-                if (!ctx) return;
+                const context = canvas.getContext('2d');
+                if (!context) return;
 
-                const labels = ['Instalação própria', 'Aluguel de energia'];
-                const dataValues = [
-                    Number.isFinite(installSavingsTotal) ? installSavingsTotal : 0,
-                    Number.isFinite(rentalSavingsTotal) ? rentalSavingsTotal : 0
-                ];
+                const labels = ['Sem energia solar', 'Instalação própria', 'Aluguel de energia'];
+                const dataValues = [totals.base, totals.installation, totals.rental];
+                const backgroundColors = ['#1a2b3d', '#ff6b35', '#2563eb'];
 
-                const tooltipLabel = function (context) {
-                    const value = context.parsed.y;
-                    return `${context.label}: ${formatCurrency(value)}`;
-                };
-
-                if (economyChartInstance) {
-                    economyChartInstance.data.labels = labels;
-                    economyChartInstance.data.datasets[0].data = dataValues;
-                    economyChartInstance.update();
+                if (chartInstance) {
+                    chartInstance.data.labels = labels;
+                    chartInstance.data.datasets[0].data = dataValues;
+                    chartInstance.data.datasets[0].backgroundColor = backgroundColors;
+                    chartInstance.update();
                     return;
                 }
 
-                economyChartInstance = new Chart(ctx, {
+                chartInstance = new Chart(context, {
                     type: 'bar',
                     data: {
                         labels,
                         datasets: [
                             {
-                                label: 'Economia total no horizonte',
+                                label: 'Custo total projetado',
                                 data: dataValues,
-                                backgroundColor: ['#16a34a', '#0ea5e9'],
+                                backgroundColor: backgroundColors,
                                 borderRadius: 12,
                                 maxBarThickness: 64
                             }
@@ -816,27 +405,30 @@
                                 display: false
                             },
                             tooltip: {
-                                enabled: true,
                                 callbacks: {
-                                    label: tooltipLabel
+                                    label: function(context) {
+                                        const value = typeof context.parsed.x === 'number' ? context.parsed.x : context.parsed.y;
+                                        return `${context.label}: ${formatCurrency(value)}`;
+                                    }
                                 }
                             }
                         },
                         scales: {
-                            y: {
+                            x: {
                                 ticks: {
                                     callback: (value) => formatCurrency(value)
                                 },
                                 grid: {
-                                    color: 'rgba(26, 43, 61, 0.06)'
+                                    color: 'rgba(26, 43, 61, 0.05)'
                                 }
                             },
-                            x: {
+                            y: {
                                 grid: {
                                     display: false
                                 }
                             }
-                        }
+                        },
+                        indexAxis: 'y'
                     }
                 });
             }
@@ -845,30 +437,16 @@
                 const safeConsumption = Math.max(monthlyConsumption, 0);
                 const safeTariff = Math.max(energyTariff, 0);
                 const monthlyBill = safeConsumption * safeTariff;
-                const systemPricePerKwp = Math.max(parseCompanyInput('system-price-kwp', 4200), 0);
-                const maintenancePercent = Math.max(parseCompanyInput('maintenance-percent', 1.2), 0) / 100;
-                const incentivePercent = Math.max(parseCompanyInput('incentive-percent', 4), 0) / 100;
-                const rentalFactorPercent = Math.max(parseCompanyInput('rental-factor-percent', 68), 0) / 100;
-                const rentalMinimum = Math.max(parseCompanyInput('rental-minimum', 250), 0);
-                const rentalSetupPerKwp = Math.max(parseCompanyInput('rental-setup-kwp', 150), 0);
-                const rentalIncreasePercent = Math.max(parseCompanyInput('rental-increase-percent', 4.5), 0) / 100;
-                const kwhPerKwpInput = parseCompanyInput('kwh-per-kwp', 120);
-                const minSystemKwInput = parseCompanyInput('min-system-kw', 2.5);
-                const effectiveKwhPerKwp = kwhPerKwpInput > 0 ? kwhPerKwpInput : 120;
-                const effectiveMinSystemKw = minSystemKwInput > 0 ? minSystemKwInput : 2.5;
-                const systemSizeKw = Math.max(effectiveKwhPerKwp > 0 ? safeConsumption / effectiveKwhPerKwp : 0, effectiveMinSystemKw);
-                const installationCost = systemSizeKw * systemPricePerKwp;
-                const maintenanceAnnual = installationCost * maintenancePercent;
-                const installationIncentive = installationCost * incentivePercent;
+                const systemSizeKw = Math.max(safeConsumption / 120, 2.5);
+                const installationCost = systemSizeKw * 4200;
+                const maintenanceAnnual = installationCost * 0.012;
+                const installationIncentive = installationCost * 0.04;
                 const installationTimeMonths = Math.min(Math.max(systemSizeKw * 0.8, 2), 8);
 
-                const rentalMonthly = Math.max(monthlyBill * rentalFactorPercent, rentalMinimum);
-                const rentalSetup = Math.max(systemSizeKw * rentalSetupPerKwp, 0);
-                const rentalIncreaseRate = rentalIncreasePercent;
-                const rentalDiscountInput = parseCompanyInput('rental-discount-percent', Number.NaN);
-                const rentalDiscountRate = Number.isFinite(rentalDiscountInput)
-                    ? Math.max(rentalDiscountInput, 0) / 100
-                    : Math.min(0.18, 0.1 + (systemSizeKw / 100));
+                const rentalMonthly = Math.max(monthlyBill * 0.68, 250);
+                const rentalSetup = Math.max(systemSizeKw * 150, 0);
+                const rentalIncreaseRate = 0.045;
+                const rentalDiscountRate = Math.min(0.18, 0.1 + (systemSizeKw / 100));
 
                 return {
                     installationCost,
@@ -1009,16 +587,18 @@
                     coverageProgress.setAttribute('aria-valuenow', progressValue.toFixed(0));
                 }
 
-                // Atualiza o gráfico de economia total
-                buildEconomyChart(totalInstallSavings, totalRentalSavings);
+                buildChart({
+                    base: totalBaseCost,
+                    installation: totalInstallCost,
+                    rental: totalRentalCost
+                });
             }
 
             actionButtons.forEach((button) => {
                 button.addEventListener('click', recalculate);
             });
 
-            // Gráfico só aparece após o primeiro cálculo
-
+            recalculate();
         })();
     </script>
 }

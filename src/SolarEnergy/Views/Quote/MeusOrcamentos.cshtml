@@ -1,6 +1,6 @@
 @model List<SolarEnergy.ViewModels.QuoteListViewModel>
 @{
-    ViewData["Title"] = "Meus Orçamentos";
+    ViewData["Title"] = "Meus OrÃ§amentos";
     var isCompany = User.IsInRole("Company");
     var isAdmin = User.IsInRole("Administrator");
 }
@@ -11,39 +11,39 @@
             <span class="badge bg-solar-orange bg-opacity-75 text-uppercase fw-semibold px-3 py-2">
                 @if (isCompany)
                 {
-                    <text>Orçamentos Recebidos</text>
+                    <text>OrÃ§amentos Recebidos</text>
                 }
                 else if (isAdmin)
                 {
-                    <text>Todos os Orçamentos</text>
+                    <text>Todos os OrÃ§amentos</text>
                 }
                 else
                 {
-                    <text>Meus Orçamentos</text>
+                    <text>Meus OrÃ§amentos</text>
                 }
             </span>
             <h1 class="display-6 text-solar-blue fw-bold mt-3">
                 @if (isCompany)
                 {
-                    <text>Solicitações de Orçamento</text>
+                    <text>SolicitaÃ§Ãµes de OrÃ§amento</text>
                 }
                 else if (isAdmin)
                 {
-                    <text>Gerenciar Orçamentos</text>
+                    <text>Gerenciar OrÃ§amentos</text>
                 }
                 else
                 {
-                    <text>Meus Orçamentos Solicitados</text>
+                    <text>Meus OrÃ§amentos Solicitados</text>
                 }
             </h1>
             <p class="text-muted lead">
                 @if (isCompany)
                 {
-                    <text>Gerencie as solicitações de orçamento recebidas</text>
+                    <text>Gerencie as solicitaÃ§Ãµes de orÃ§amento recebidas</text>
                 }
                 else
                 {
-                    <text>Acompanhe o status dos seus orçamentos solicitados</text>
+                    <text>Acompanhe o status dos seus orÃ§amentos solicitados</text>
                 }
             </p>
         </div>
@@ -95,7 +95,7 @@
                                         <div class="d-flex align-items-center">
                                             <i class="fas fa-cogs text-solar-orange me-2"></i>
                                             <div>
-                                                <small class="text-muted d-block">Serviço</small>
+                                                <small class="text-muted d-block">ServiÃ§o</small>
                                                 <strong>@quote.ServiceType</strong>
                                             </div>
                                         </div>
@@ -140,21 +140,21 @@
                             <h4 class="text-solar-blue fw-bold mb-3">
                                 @if (isCompany)
                                 {
-                                    <text>Nenhuma solicitação recebida</text>
+                                    <text>Nenhuma solicitaÃ§Ã£o recebida</text>
                                 }
                                 else
                                 {
-                                    <text>Nenhum orçamento solicitado</text>
+                                    <text>Nenhum orÃ§amento solicitado</text>
                                 }
                             </h4>
                             <p class="text-muted mb-4">
                                 @if (isCompany)
                                 {
-                                    <text>Quando clientes solicitarem orçamentos, eles aparecerão aqui.</text>
+                                    <text>Quando clientes solicitarem orÃ§amentos, eles aparecerÃ£o aqui.</text>
                                 }
                                 else
                                 {
-                                    <text>Você ainda não solicitou nenhum orçamento. Explore as empresas disponíveis.</text>
+                                    <text>VocÃª ainda nÃ£o solicitou nenhum orÃ§amento. Explore as empresas disponÃ­veis.</text>
                                 }
                             </p>
                             @if (!isCompany)
@@ -188,7 +188,7 @@
         return status switch
         {
             "Pendente" => "bg-warning text-dark",
-            "Em Análise" => "bg-info text-white",
+            "Em AnÃ¡lise" => "bg-info text-white",
             "Proposta Enviada" => "bg-success text-white",
             "Aceito" => "bg-primary text-white",
             "Recusado" => "bg-danger text-white",

@@ -1,7 +1,7 @@
 @model SolarEnergy.ViewModels.RequestQuoteViewModel
 @using SolarEnergy.Extensions
 @{
-    ViewData["Title"] = "Solicitar Orçamento";
+    ViewData["Title"] = "Solicitar OrÃ§amento";
 }
 
 <section class="py-5 bg-light">
@@ -9,12 +9,12 @@
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="text-center mb-5">
-                    <span class="badge bg-solar-orange bg-opacity-75 text-uppercase fw-semibold px-3 py-2">Solicitar Orçamento</span>
-                    <h1 class="display-6 text-solar-blue fw-bold mt-3">Solicite um orçamento personalizado</h1>
+                    <span class="badge bg-solar-orange bg-opacity-75 text-uppercase fw-semibold px-3 py-2">Solicitar OrÃ§amento</span>
+                    <h1 class="display-6 text-solar-blue fw-bold mt-3">Solicite um orÃ§amento personalizado</h1>
                     <p class="text-muted lead">Informe seus dados de consumo para receber uma proposta detalhada</p>
                 </div>
 
-                <!-- Informações da Empresa -->
+                <!-- InformaÃ§Ãµes da Empresa -->
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-solar-blue text-white">
                         <h5 class="mb-0">
@@ -57,11 +57,11 @@
                     </div>
                 </div>
 
-                <!-- Formulário de Solicitação -->
+                <!-- FormulÃ¡rio de SolicitaÃ§Ã£o -->
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-transparent border-0 py-4">
                         <h5 class="text-solar-blue fw-bold mb-0">
-                            <i class="fas fa-file-signature me-2"></i>Dados do Orçamento
+                            <i class="fas fa-file-signature me-2"></i>Dados do OrÃ§amento
                         </h5>
                     </div>
                     <div class="card-body">
@@ -72,7 +72,7 @@
                             <div class="row">
                                 <div class="col-md-6 mb-4">
                                     <label asp-for="MonthlyConsumptionKwh" class="form-label fw-semibold">
-                                        <i class="fas fa-bolt text-solar-orange me-1"></i>Consumo Médio Mensal (kWh) *
+                                        <i class="fas fa-bolt text-solar-orange me-1"></i>Consumo MÃ©dio Mensal (kWh) *
                                     </label>
                                     <div class="input-group">
                                         <input asp-for="MonthlyConsumptionKwh" class="form-control form-control-lg" 
@@ -83,20 +83,20 @@
                                     <div class="form-text">
                                         <small class="text-muted">
                                             <i class="fas fa-info-circle me-1"></i>
-                                            Consulte sua conta de energia elétrica para obter esse valor
+                                            Consulte sua conta de energia elÃ©trica para obter esse valor
                                         </small>
                                     </div>
                                 </div>
 
                                 <div class="col-md-6 mb-4">
                                     <label asp-for="ServiceType" class="form-label fw-semibold">
-                                        <i class="fas fa-cogs text-solar-orange me-1"></i>Tipo de Serviço *
+                                        <i class="fas fa-cogs text-solar-orange me-1"></i>Tipo de ServiÃ§o *
                                     </label>
                                     <select asp-for="ServiceType" class="form-select form-select-lg">
-                                        <option value="">Selecione o tipo de serviço</option>
+                                        <option value="">Selecione o tipo de serviÃ§o</option>
                                         @if (Model.ServiceTypeEnum == SolarEnergy.Models.SolarServiceType.PanelSales || Model.ServiceTypeEnum == SolarEnergy.Models.SolarServiceType.Both)
                                         {
-                                            <option value="Venda de Painéis">Venda de Painéis Solares</option>
+                                            <option value="Venda de PainÃ©is">Venda de PainÃ©is Solares</option>
                                         }
                                         @if (Model.ServiceTypeEnum == SolarEnergy.Models.SolarServiceType.EnergyRental || Model.ServiceTypeEnum == SolarEnergy.Models.SolarServiceType.Both)
                                         {
@@ -116,17 +116,17 @@
                                     <i class="fas fa-comment text-solar-orange me-1"></i>Mensagem Adicional
                                 </label>
                                 <textarea asp-for="Message" class="form-control" rows="4" 
-                                          placeholder="Descreva detalhes sobre sua propriedade, necessidades específicas, ou outras informações que possam ajudar na elaboração do orçamento..."></textarea>
+                                          placeholder="Descreva detalhes sobre sua propriedade, necessidades especÃ­ficas, ou outras informaÃ§Ãµes que possam ajudar na elaboraÃ§Ã£o do orÃ§amento..."></textarea>
                                 <span asp-validation-for="Message" class="text-danger small"></span>
                                 <div class="form-text">
                                     <small class="text-muted">
                                         <i class="fas fa-lightbulb me-1"></i>
-                                        Opcional: Informações adicionais ajudam a empresa a elaborar uma proposta mais precisa
+                                        Opcional: InformaÃ§Ãµes adicionais ajudam a empresa a elaborar uma proposta mais precisa
                                     </small>
                                 </div>
                             </div>
 
-                            <!-- Informações sobre o processo -->
+                            <!-- InformaÃ§Ãµes sobre o processo -->
                             <div class="alert alert-info border-0 bg-solar-blue bg-opacity-10">
                                 <div class="d-flex">
                                     <div class="flex-shrink-0">
@@ -135,10 +135,10 @@
                                     <div class="flex-grow-1 ms-3">
                                         <h6 class="text-solar-blue fw-bold mb-2">Como funciona:</h6>
                                         <ul class="mb-0 small text-muted">
-                                            <li>Sua solicitação será enviada diretamente para a empresa</li>
-                                            <li>A empresa analisará seus dados e entrará em contato</li>
-                                            <li>Você receberá uma proposta personalizada</li>
-                                            <li>Você pode solicitar apenas <strong>um orçamento por empresa</strong></li>
+                                            <li>Sua solicitaÃ§Ã£o serÃ¡ enviada diretamente para a empresa</li>
+                                            <li>A empresa analisarÃ¡ seus dados e entrarÃ¡ em contato</li>
+                                            <li>VocÃª receberÃ¡ uma proposta personalizada</li>
+                                            <li>VocÃª pode solicitar apenas <strong>um orÃ§amento por empresa</strong></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -146,10 +146,10 @@
 
                             <div class="d-flex justify-content-between align-items-center">
                                 <a asp-controller="Home" asp-action="SearchCompanies" class="btn btn-outline-secondary">
-                                    <i class="fas fa-arrow-left me-2"></i>Voltar à Busca
+                                    <i class="fas fa-arrow-left me-2"></i>Voltar Ã  Busca
                                 </a>
                                 <button type="submit" class="btn btn-solar-orange btn-lg px-5">
-                                    <i class="fas fa-paper-plane me-2"></i>Solicitar Orçamento
+                                    <i class="fas fa-paper-plane me-2"></i>Solicitar OrÃ§amento
                                 </button>
                             </div>
                         </form>

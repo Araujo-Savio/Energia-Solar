@@ -34,13 +34,13 @@ namespace SolarEnergy.ViewModels
 
     public class AddReviewViewModel
     {
-        [Required(ErrorMessage = "O coment·rio È obrigatÛrio")]
-        [StringLength(1000, ErrorMessage = "O coment·rio deve ter no m·ximo 1000 caracteres")]
-        [Display(Name = "Coment·rio")]
+        [Required(ErrorMessage = "O coment√°rio √© obrigat√≥rio")]
+        [StringLength(1000, ErrorMessage = "O coment√°rio deve ter no m√°ximo 1000 caracteres")]
+        [Display(Name = "Coment√°rio")]
         public string Comment { get; set; } = string.Empty;
 
-        [Range(1, 5, ErrorMessage = "A avaliaÁ„o deve ser entre 1 e 5 estrelas")]
-        [Display(Name = "AvaliaÁ„o")]
+        [Range(1, 5, ErrorMessage = "A avalia√ß√£o deve ser entre 1 e 5 estrelas")]
+        [Display(Name = "Avalia√ß√£o")]
         public int? Rating { get; set; }
 
         public string CompanyId { get; set; } = string.Empty;

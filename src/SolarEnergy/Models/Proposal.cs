@@ -17,11 +17,11 @@ namespace SolarEnergy.Models
         [Column(TypeName = "decimal(18,2)")]
         public decimal Value { get; set; }
 
-        [Display(Name = "DescriÁ„o da Proposta")]
-        [StringLength(2000, ErrorMessage = "A descriÁ„o deve ter no m·ximo 2000 caracteres")]
+        [Display(Name = "Descri√ß√£o da Proposta")]
+        [StringLength(2000, ErrorMessage = "A descri√ß√£o deve ter no m√°ximo 2000 caracteres")]
         public string? Description { get; set; }
 
-        [Display(Name = "Prazo de InstalaÁ„o (dias)")]
+        [Display(Name = "Prazo de Instala√ß√£o (dias)")]
         [Range(1, 365, ErrorMessage = "O prazo deve ser entre 1 e 365 dias")]
         public int? InstallationTimeframe { get; set; }
 
@@ -37,7 +37,7 @@ namespace SolarEnergy.Models
         [Display(Name = "Data da Proposta")]
         public DateTime ProposalDate { get; set; } = DateTime.Now;
 
-        [Display(Name = "V·lida AtÈ")]
+        [Display(Name = "V√°lida At√©")]
         public DateTime? ValidUntil { get; set; }
 
         [Required]
