@@ -1,6 +1,7 @@
 @{
     ViewData["Title"] = "Simulador";
     var isCompanyUser = User.IsInRole("Company");
+    var companyParametersJson = ViewBag.CompanyParametersJson as string ?? "null";
 }
 
 <div class="solar-page economy-simulator">
@@ -15,6 +16,20 @@
                 <p class="text-muted small mb-0">Informe os parâmetros básicos, depois utilize o botão de cálculo para atualizar a simulação.</p>
             </div>
         </div>
+
+        @if (isCompanyUser)
+        {
+            <div class="d-flex justify-content-end align-items-center gap-3 flex-wrap mb-3">
+                <button type="button"
+                        class="btn btn-outline-secondary"
+                        id="btnOpenCompanyParametersModal"
+                        data-bs-toggle="modal"
+                        data-bs-target="#companyParametersModal">
+                    ⚙ Editar parâmetros da empresa
+                </button>
+            </div>
+            <div id="companyParametersAlert" class="alert alert-success d-none mb-4" role="alert"></div>
+        }
 
         <div class="row g-4 align-items-start">
             <div class="col-xxl-4 col-lg-5">
@@ -67,139 +82,6 @@
                     <div class="alert alert-info mt-4 mb-0 small" role="status">
                         <i class="fas fa-robot me-2 text-solar-blue"></i>Os custos de instalação e aluguel são estimados automaticamente a partir do consumo informado, considerando padrões médios de mercado.
                     </div>
-
-                    @if (isCompanyUser)
-                    {
-                        <div class="simulator-section mt-4 company-parameters">
-                            <div class="d-flex align-items-center justify-content-between mb-3">
-                                <div class="d-flex flex-column">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <i class="fas fa-gear text-muted"></i>
-                                        <h6 class="simulator-section-title mb-0">Parâmetros da empresa</h6>
-                                    </div>
-                                    <small class="text-muted">Ajuste abaixo os parâmetros padrão usados no cálculo, de acordo com a política comercial da sua empresa.</small>
-                                </div>
-                                <span class="badge bg-status-warning text-uppercase small">Somente empresa</span>
-                            </div>
-                            <div class="company-params-grid metrics-grid">
-                                <div>
-                                    <label class="form-label" for="companyPricePerKwp">Preço do sistema por kWp (R$/kWp)</label>
-                                    <input id="companyPricePerKwp"
-                                           type="number"
-                                           min="0"
-                                           step="50"
-                                           class="form-control"
-                                           value="4200"
-                                           data-company-param="price-per-kwp" />
-                                    <small class="text-muted">Valor usado para calcular o custo de instalação.</small>
-                                </div>
-                                <div>
-                                    <label class="form-label" for="companyMaintenancePercent">Manutenção anual (% do investimento)</label>
-                                    <input id="companyMaintenancePercent"
-                                           type="number"
-                                           min="0"
-                                           max="50"
-                                           step="0.1"
-                                           class="form-control"
-                                           value="1.2"
-                                           data-company-param="maintenance-percent" />
-                                    <small class="text-muted">Percentual do investimento aplicado por ano.</small>
-                                </div>
-                                <div>
-                                    <label class="form-label" for="companyInstallDiscount">Incentivo / desconto na instalação (%)</label>
-                                    <input id="companyInstallDiscount"
-                                           type="number"
-                                           min="0"
-                                           max="100"
-                                           step="0.1"
-                                           class="form-control"
-                                           value="4"
-                                           data-company-param="install-discount-percent" />
-                                    <small class="text-muted">Percentual aplicado sobre o valor da instalação.</small>
-                                </div>
-                                <div>
-                                    <label class="form-label" for="companyRentalFactor">Fator da mensalidade do aluguel (% da conta)</label>
-                                    <input id="companyRentalFactor"
-                                           type="number"
-                                           min="0"
-                                           max="100"
-                                           step="1"
-                                           class="form-control"
-                                           value="68"
-                                           data-company-param="rental-factor-percent" />
-                                    <small class="text-muted">Fração da conta transformada em mensalidade.</small>
-                                </div>
-                                <div>
-                                    <label class="form-label" for="companyRentalMinMonthly">Mensalidade mínima de aluguel (R$)</label>
-                                    <input id="companyRentalMinMonthly"
-                                           type="number"
-                                           min="0"
-                                           step="10"
-                                           class="form-control"
-                                           value="250"
-                                           data-company-param="rental-min-monthly" />
-                                    <small class="text-muted">Valor mínimo praticado.</small>
-                                </div>
-                                <div>
-                                    <label class="form-label" for="companyRentalSetup">Taxa de instalação do aluguel (R$ por kWp ou projeto)</label>
-                                    <input id="companyRentalSetup"
-                                           type="number"
-                                           min="0"
-                                           step="10"
-                                           class="form-control"
-                                           value="150"
-                                           data-company-param="rental-setup-per-kwp" />
-                                    <small class="text-muted">Taxa de setup aplicada ao aluguel.</small>
-                                </div>
-                                <div>
-                                    <label class="form-label" for="companyRentalIncrease">Reajuste anual da mensalidade do aluguel (%)</label>
-                                    <input id="companyRentalIncrease"
-                                           type="number"
-                                           min="0"
-                                           max="50"
-                                           step="0.1"
-                                           class="form-control"
-                                           value="4.5"
-                                           data-company-param="rental-annual-increase-percent" />
-                                    <small class="text-muted">Percentual aplicado a cada ano.</small>
-                                </div>
-                                <div>
-                                    <label class="form-label" for="companyRentalDiscount">Desconto na conta no modelo de aluguel (%)</label>
-                                    <input id="companyRentalDiscount"
-                                           type="number"
-                                           min="0"
-                                           max="100"
-                                           step="0.1"
-                                           class="form-control"
-                                           value="15"
-                                           data-company-param="rental-discount-percent" />
-                                    <small class="text-muted">Percentual médio aplicado na fatura.</small>
-                                </div>
-                                <div>
-                                    <label class="form-label" for="companyConsumptionPerKwp">Consumo mensal por 1 kWp (kWh/mês por kWp)</label>
-                                    <input id="companyConsumptionPerKwp"
-                                           type="number"
-                                           min="1"
-                                           step="1"
-                                           class="form-control"
-                                           value="120"
-                                           data-company-param="consumption-per-kwp" />
-                                    <small class="text-muted">Conversão usada para dimensionamento.</small>
-                                </div>
-                                <div>
-                                    <label class="form-label" for="companyMinSystemSize">Potência mínima do sistema (kWp)</label>
-                                    <input id="companyMinSystemSize"
-                                           type="number"
-                                           min="0"
-                                           step="0.1"
-                                           class="form-control"
-                                           value="2.5"
-                                           data-company-param="min-system-size-kwp" />
-                                    <small class="text-muted">Limite mínimo da solução ofertada.</small>
-                                </div>
-                            </div>
-                        </div>
-                    }
 
                     <button type="button" class="btn btn-solar-orange w-100 mt-4" data-sim-action="recalculate">
                         <i class="fas fa-rotate me-2"></i>Calcular projeção
@@ -437,11 +319,157 @@
     </div>
 </div>
 
+@if (isCompanyUser)
+{
+    <div class="modal fade" id="companyParametersModal" tabindex="-1" aria-labelledby="companyParametersModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div>
+                        <h5 class="modal-title" id="companyParametersModalLabel">Parâmetros da empresa</h5>
+                        <p class="text-muted small mb-0">Ajuste abaixo os parâmetros padrão usados no cálculo, de acordo com a política comercial da sua empresa.</p>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="companyParametersForm">
+                        @Html.AntiForgeryToken()
+                        <div class="company-params-grid metrics-grid">
+                            <div>
+                                <label class="form-label" for="companyPricePerKwp">Preço do sistema por kWp (R$/kWp)</label>
+                                <input id="companyPricePerKwp"
+                                       type="number"
+                                       min="0"
+                                       step="50"
+                                       class="form-control"
+                                       value="4200"
+                                       data-company-param="price-per-kwp" />
+                                <small class="text-muted">Valor usado para calcular o custo de instalação.</small>
+                            </div>
+                            <div>
+                                <label class="form-label" for="companyMaintenancePercent">Manutenção anual (% do investimento)</label>
+                                <input id="companyMaintenancePercent"
+                                       type="number"
+                                       min="0"
+                                       max="50"
+                                       step="0.1"
+                                       class="form-control"
+                                       value="1.2"
+                                       data-company-param="maintenance-percent" />
+                                <small class="text-muted">Percentual do investimento aplicado por ano.</small>
+                            </div>
+                            <div>
+                                <label class="form-label" for="companyInstallDiscount">Incentivo / desconto na instalação (%)</label>
+                                <input id="companyInstallDiscount"
+                                       type="number"
+                                       min="0"
+                                       max="100"
+                                       step="0.1"
+                                       class="form-control"
+                                       value="4"
+                                       data-company-param="install-discount-percent" />
+                                <small class="text-muted">Percentual aplicado sobre o valor da instalação.</small>
+                            </div>
+                            <div>
+                                <label class="form-label" for="companyRentalFactor">Fator da mensalidade do aluguel (% da conta)</label>
+                                <input id="companyRentalFactor"
+                                       type="number"
+                                       min="0"
+                                       max="100"
+                                       step="1"
+                                       class="form-control"
+                                       value="68"
+                                       data-company-param="rental-factor-percent" />
+                                <small class="text-muted">Fração da conta transformada em mensalidade.</small>
+                            </div>
+                            <div>
+                                <label class="form-label" for="companyRentalMinMonthly">Mensalidade mínima de aluguel (R$)</label>
+                                <input id="companyRentalMinMonthly"
+                                       type="number"
+                                       min="0"
+                                       step="10"
+                                       class="form-control"
+                                       value="250"
+                                       data-company-param="rental-min-monthly" />
+                                <small class="text-muted">Valor mínimo praticado.</small>
+                            </div>
+                            <div>
+                                <label class="form-label" for="companyRentalSetup">Taxa de instalação do aluguel (R$ por kWp ou projeto)</label>
+                                <input id="companyRentalSetup"
+                                       type="number"
+                                       min="0"
+                                       step="10"
+                                       class="form-control"
+                                       value="150"
+                                       data-company-param="rental-setup-per-kwp" />
+                                <small class="text-muted">Taxa de setup aplicada ao aluguel.</small>
+                            </div>
+                            <div>
+                                <label class="form-label" for="companyRentalIncrease">Reajuste anual da mensalidade do aluguel (%)</label>
+                                <input id="companyRentalIncrease"
+                                       type="number"
+                                       min="0"
+                                       max="50"
+                                       step="0.1"
+                                       class="form-control"
+                                       value="4.5"
+                                       data-company-param="rental-annual-increase-percent" />
+                                <small class="text-muted">Percentual aplicado a cada ano.</small>
+                            </div>
+                            <div>
+                                <label class="form-label" for="companyRentalDiscount">Desconto na conta no modelo de aluguel (%)</label>
+                                <input id="companyRentalDiscount"
+                                       type="number"
+                                       min="0"
+                                       max="100"
+                                       step="0.1"
+                                       class="form-control"
+                                       value="15"
+                                       data-company-param="rental-discount-percent" />
+                                <small class="text-muted">Percentual médio aplicado na fatura.</small>
+                            </div>
+                            <div>
+                                <label class="form-label" for="companyConsumptionPerKwp">Consumo mensal por 1 kWp (kWh/mês por kWp)</label>
+                                <input id="companyConsumptionPerKwp"
+                                       type="number"
+                                       min="1"
+                                       step="1"
+                                       class="form-control"
+                                       value="120"
+                                       data-company-param="consumption-per-kwp" />
+                                <small class="text-muted">Conversão usada para dimensionamento.</small>
+                            </div>
+                            <div>
+                                <label class="form-label" for="companyMinSystemSize">Potência mínima do sistema (kWp)</label>
+                                <input id="companyMinSystemSize"
+                                       type="number"
+                                       min="0"
+                                       step="0.1"
+                                       class="form-control"
+                                       value="2.5"
+                                       data-company-param="min-system-size-kwp" />
+                                <small class="text-muted">Limite mínimo da solução ofertada.</small>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="alert d-none mt-3" id="companyParametersModalFeedback" role="alert"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-solar-orange" id="btnSaveCompanyParameters">Salvar parâmetros</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @section Scripts {
     <!-- Chart.js (sem integrity para não ser bloqueado) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
 
     <script>
+        window.companyParameters = @Html.Raw(companyParametersJson);
+
         (function () {
             const currencyFormatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
             const numberFormatter = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 });
@@ -449,6 +477,163 @@
 
             const simulatorRoot = document.querySelector('[data-simulator-root]');
             const isCompanyUser = simulatorRoot?.dataset.companyUser === 'true';
+
+            const companyParametersAlert = document.getElementById('companyParametersAlert');
+            const companyParametersModalElement = document.getElementById('companyParametersModal');
+            const companyParametersForm = document.getElementById('companyParametersForm');
+            const companyParametersModalFeedback = document.getElementById('companyParametersModalFeedback');
+            const saveCompanyParametersButton = document.getElementById('btnSaveCompanyParameters');
+            const companyParametersFields = [
+                { id: 'companyPricePerKwp', prop: 'PricePerKwp' },
+                { id: 'companyMaintenancePercent', prop: 'MaintenancePercent' },
+                { id: 'companyInstallDiscount', prop: 'InstallDiscountPercent' },
+                { id: 'companyRentalFactor', prop: 'RentalFactorPercent' },
+                { id: 'companyRentalMinMonthly', prop: 'RentalMinMonthly' },
+                { id: 'companyRentalSetup', prop: 'RentalSetupPerKwp' },
+                { id: 'companyRentalIncrease', prop: 'RentalAnnualIncreasePercent' },
+                { id: 'companyRentalDiscount', prop: 'RentalDiscountPercent' },
+                { id: 'companyConsumptionPerKwp', prop: 'ConsumptionPerKwp' },
+                { id: 'companyMinSystemSize', prop: 'MinSystemSizeKwp' }
+            ];
+            let companyParametersAlertTimeout;
+
+            function showCompanyParametersAlert(message, type = 'success') {
+                if (!companyParametersAlert) return;
+                companyParametersAlert.textContent = message;
+                companyParametersAlert.classList.remove('d-none', 'alert-success', 'alert-danger');
+                companyParametersAlert.classList.add(type === 'error' ? 'alert-danger' : 'alert-success');
+
+                if (companyParametersAlertTimeout) {
+                    clearTimeout(companyParametersAlertTimeout);
+                }
+
+                companyParametersAlertTimeout = window.setTimeout(() => {
+                    companyParametersAlert?.classList.add('d-none');
+                }, 4000);
+            }
+
+            function setCompanyParametersModalFeedback(message, type = 'danger') {
+                if (!companyParametersModalFeedback) return;
+                companyParametersModalFeedback.textContent = message;
+                companyParametersModalFeedback.classList.remove('d-none', 'alert-success', 'alert-danger');
+                companyParametersModalFeedback.classList.add(type === 'success' ? 'alert-success' : 'alert-danger');
+            }
+
+            function clearCompanyParametersModalFeedback() {
+                if (!companyParametersModalFeedback) return;
+                companyParametersModalFeedback.textContent = '';
+                companyParametersModalFeedback.classList.add('d-none');
+            }
+
+            function applyCompanyParametersToInputs(params) {
+                if (!isCompanyUser || !params) return;
+
+                companyParametersFields.forEach((field) => {
+                    const input = document.getElementById(field.id);
+                    if (!input) return;
+
+                    const value = params[field.prop];
+                    if (value !== undefined && value !== null && Number.isFinite(Number(value))) {
+                        input.value = value;
+                    }
+                });
+            }
+
+            function collectCompanyParametersFromInputs() {
+                const payload = {};
+
+                companyParametersFields.forEach((field) => {
+                    const input = document.getElementById(field.id);
+                    if (!input) {
+                        payload[field.prop] = 0;
+                        return;
+                    }
+
+                    const rawValue = parseFloat((input.value || '').toString().replace(',', '.'));
+                    payload[field.prop] = Number.isFinite(rawValue) ? rawValue : 0;
+                });
+
+                return payload;
+            }
+
+            function getRequestVerificationToken() {
+                if (!companyParametersForm) {
+                    return null;
+                }
+
+                const tokenInput = companyParametersForm.querySelector('input[name="__RequestVerificationToken"]');
+                return tokenInput?.value ?? null;
+            }
+
+            function hideCompanyParametersModal() {
+                if (!companyParametersModalElement || !window.bootstrap || !bootstrap.Modal) return;
+                const modalInstance = bootstrap.Modal.getOrCreateInstance(companyParametersModalElement);
+                modalInstance.hide();
+            }
+
+            async function handleCompanyParametersSave() {
+                if (!isCompanyUser || !saveCompanyParametersButton || !companyParametersForm) {
+                    return;
+                }
+
+                clearCompanyParametersModalFeedback();
+
+                const token = getRequestVerificationToken();
+                if (!token) {
+                    setCompanyParametersModalFeedback('Token de verificação não encontrado. Atualize a página e tente novamente.');
+                    return;
+                }
+
+                const payload = collectCompanyParametersFromInputs();
+
+                saveCompanyParametersButton.setAttribute('disabled', 'disabled');
+
+                try {
+                    const response = await fetch('/CompanyParameters/SaveForCurrentCompany', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': token
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Erro ao salvar os parâmetros da empresa.');
+                    }
+
+                    const savedParameters = await response.json();
+                    window.companyParameters = savedParameters;
+                    applyCompanyParametersToInputs(savedParameters);
+                    hideCompanyParametersModal();
+                    showCompanyParametersAlert('Parâmetros da empresa salvos com sucesso.');
+                    recalculate();
+                } catch (error) {
+                    const message = error instanceof Error ? error.message : 'Erro inesperado ao salvar.';
+                    setCompanyParametersModalFeedback(message, 'danger');
+                } finally {
+                    saveCompanyParametersButton.removeAttribute('disabled');
+                }
+            }
+
+            function initializeCompanyParametersModal() {
+                if (!isCompanyUser || !companyParametersModalElement || !window.bootstrap || !bootstrap.Modal) {
+                    return;
+                }
+
+                applyCompanyParametersToInputs(window.companyParameters);
+
+                companyParametersModalElement.addEventListener('show.bs.modal', () => {
+                    applyCompanyParametersToInputs(window.companyParameters);
+                    clearCompanyParametersModalFeedback();
+                });
+
+                if (saveCompanyParametersButton) {
+                    saveCompanyParametersButton.addEventListener('click', handleCompanyParametersSave);
+                }
+            }
+
+            initializeCompanyParametersModal();
 
             const outputs = {
                 baseTotal: document.querySelector('[data-sim-output="base-total"]'),
