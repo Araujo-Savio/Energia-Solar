@@ -86,9 +86,16 @@ namespace SolarEnergy.Controllers
             }
             catch (DbUpdateException dbEx)
             {
-                _logger.LogError(dbEx, "Erro de banco ao salvar parâmetros da empresa {CompanyId}.", companyId);
-                return StatusCode(500, "Erro ao salvar parâmetros da empresa (banco de dados).");
+                var detailedMessage = dbEx.InnerException?.Message ?? dbEx.Message;
+
+                _logger.LogError(dbEx,
+                    "Erro de banco ao salvar parâmetros da empresa {CompanyId}. Detalhe: {Message}",
+                    companyId, detailedMessage);
+
+                // TEMPORÁRIO: só pra debug, pra gente ver a mensagem real do SQL
+                return StatusCode(500, detailedMessage);
             }
+
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro inesperado ao salvar parâmetros da empresa {CompanyId}.", companyId);
