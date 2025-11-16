@@ -45,7 +45,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
-// Adicionar os serviÁos
+// Adicionar os servi√ßos
 builder.Services.AddScoped<SolarEnergy.Services.ILeadService, SolarEnergy.Services.LeadService>();
 builder.Services.AddScoped<SolarEnergy.Services.IReportService, SolarEnergy.Services.ReportService>();
 
@@ -98,7 +98,7 @@ using (var scope = app.Services.CreateScope())
             }
         }
 
-        // Criar usu·rio administrador padr„o se n„o existir
+        // Criar usu√°rio administrador padr√£o se n√£o existir
         var adminEmail = "admin@solarenergy.com";
         var adminUser = await userManager.FindByEmailAsync(adminEmail);
         if (adminUser == null)
@@ -129,3 +129,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
+
+// # Comandos que voc√™ precisa rodar manualmente:
+// dotnet ef migrations add AddCompanyParametersBusinessFields
+// dotnet ef database update

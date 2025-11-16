@@ -15,6 +15,7 @@ namespace SolarEnergy.Data
         public DbSet<Quote> Quotes { get; set; }
         public DbSet<Proposal> Proposals { get; set; }
         public DbSet<QuoteMessage> QuoteMessages { get; set; }
+        public DbSet<CompanyParameters> CompanyParameters { get; set; }
 
         // Lead System
         public DbSet<CompanyLeadBalance> CompanyLeadBalances { get; set; }
@@ -212,6 +213,31 @@ namespace SolarEnergy.Data
                 entity.HasIndex(e => e.QuoteId);
                 entity.HasIndex(e => new { e.CompanyId, e.QuoteId }).IsUnique();
                 entity.HasIndex(e => e.ConsumedAt);
+            });
+
+            builder.Entity<CompanyParameters>(entity =>
+            {
+                entity.ToTable("CompanyParameters");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.CompanyId).IsRequired().HasMaxLength(450);
+                entity.Property(e => e.PricePerKwp).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.MaintenancePercent).HasColumnType("decimal(5,2)");
+                entity.Property(e => e.InstallDiscountPercent).HasColumnType("decimal(5,2)");
+                entity.Property(e => e.RentalFactorPercent).HasColumnType("decimal(5,2)");
+                entity.Property(e => e.RentalMinMonthly).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.RentalSetupPerKwp).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.RentalAnnualIncreasePercent).HasColumnType("decimal(5,2)");
+                entity.Property(e => e.RentalDiscountPercent).HasColumnType("decimal(5,2)");
+                entity.Property(e => e.ConsumptionPerKwp).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.MinSystemSizeKwp).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.UpdatedAt).HasColumnType("datetime2");
+
+                entity.HasOne(e => e.Company)
+                    .WithOne()
+                    .HasForeignKey<CompanyParameters>(e => e.CompanyId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(e => e.CompanyId).IsUnique();
             });
         }
     }

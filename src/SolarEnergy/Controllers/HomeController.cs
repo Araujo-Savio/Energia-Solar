@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -381,6 +382,52 @@ namespace SolarEnergy.Controllers
         public async Task<IActionResult> Simulation()
         {
             await SetUserTypeInViewData();
+
+            if (User.IsInRole("Company"))
+            {
+                var companyUser = await _userManager.GetUserAsync(User);
+                if (companyUser is not null)
+                {
+                    var parameters = await _context.CompanyParameters
+                        .AsNoTracking()
+                        .SingleOrDefaultAsync(p => p.CompanyId == companyUser.Id);
+
+                    if (parameters is null)
+                    {
+                        parameters = new CompanyParameters
+                        {
+                            CompanyId = companyUser.Id,
+                            PricePerKwp = 4200m,
+                            MaintenancePercent = 1.2m,
+                            InstallDiscountPercent = 4m,
+                            RentalFactorPercent = 68m,
+                            RentalMinMonthly = 250m,
+                            RentalSetupPerKwp = 150m,
+                            RentalAnnualIncreasePercent = 4.5m,
+                            RentalDiscountPercent = 15m,
+                            ConsumptionPerKwp = 120m,
+                            MinSystemSizeKwp = 2.5m
+                        };
+                    }
+
+                    var parametersDto = new CompanyParametersInputModel
+                    {
+                        PricePerKwp = parameters.PricePerKwp,
+                        MaintenancePercent = parameters.MaintenancePercent,
+                        InstallDiscountPercent = parameters.InstallDiscountPercent,
+                        RentalFactorPercent = parameters.RentalFactorPercent,
+                        RentalMinMonthly = parameters.RentalMinMonthly,
+                        RentalSetupPerKwp = parameters.RentalSetupPerKwp,
+                        RentalAnnualIncreasePercent = parameters.RentalAnnualIncreasePercent,
+                        RentalDiscountPercent = parameters.RentalDiscountPercent,
+                        ConsumptionPerKwp = parameters.ConsumptionPerKwp,
+                        MinSystemSizeKwp = parameters.MinSystemSizeKwp
+                    };
+
+                    ViewBag.CompanyParametersJson = JsonSerializer.Serialize(parametersDto);
+                }
+            }
+
             return View();
         }
 
