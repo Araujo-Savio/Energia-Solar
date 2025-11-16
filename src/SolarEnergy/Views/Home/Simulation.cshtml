@@ -1,7 +1,89 @@
-@{
+@{ 
     ViewData["Title"] = "Simulador";
     var isCompanyUser = User.IsInRole("Company");
     var companyParametersJson = ViewBag.CompanyParametersJson as string ?? "null";
+}
+
+@section Styles {
+    <style>
+        .custom-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.55);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .custom-modal {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            width: 380px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            animation: scaleUp 0.3s ease;
+        }
+
+        .custom-modal h2 {
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .custom-modal p {
+            color: #6c757d;
+            margin-bottom: 0;
+        }
+
+        .modal-icon {
+            font-size: 48px;
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+
+        .btn-orange {
+            background-color: #ff7a00;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-orange:hover {
+            background-color: #e56d00;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes scaleUp {
+            from {
+                transform: scale(0.85);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
 }
 
 <div class="solar-page economy-simulator">
@@ -398,6 +480,15 @@
     </div>
 }
 
+<div id="successModal" class="custom-modal-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="successModalTitle" aria-describedby="successModalDescription">
+    <div class="custom-modal">
+        <div class="modal-icon" aria-hidden="true">✓</div>
+        <h2 id="successModalTitle">Parâmetros salvos com sucesso!</h2>
+        <p id="successModalDescription">As configurações foram atualizadas corretamente.</p>
+        <button type="button" id="closeSuccessModal" class="btn-orange">OK</button>
+    </div>
+</div>
+
 @section Scripts {
     <!-- Chart.js SEM integrity/crossorigin para evitar bloqueio -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
@@ -434,6 +525,22 @@
 
             const coverageProgress = document.querySelector('[data-sim-progress="coverage"]');
             const actionButtons = document.querySelectorAll('[data-sim-action="recalculate"]');
+            const successModal = document.getElementById('successModal');
+            const closeSuccessModalButton = document.getElementById('closeSuccessModal');
+
+            function showSuccessModal() {
+                if (successModal) {
+                    successModal.style.display = 'flex';
+                }
+            }
+
+            if (closeSuccessModalButton) {
+                closeSuccessModalButton.addEventListener('click', () => {
+                    if (successModal) {
+                        successModal.style.display = 'none';
+                    }
+                });
+            }
 
             const isCompanyRole = @(isCompanyUser.ToString().ToLowerInvariant());
             const initialCompanyParameters = @Html.Raw(companyParametersJson);
@@ -552,7 +659,7 @@
                                 const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
                                 modalInstance.hide();
                             }
-                            alert('Parâmetros salvos com sucesso!');
+                            showSuccessModal();
                         } else {
                             alert('Não foi possível salvar os parâmetros. Tente novamente.');
                         }
