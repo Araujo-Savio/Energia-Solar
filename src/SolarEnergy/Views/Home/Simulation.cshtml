@@ -713,7 +713,24 @@
                     });
 
                     if (!response.ok) {
-                        throw new Error('Erro ao salvar os parâmetros da empresa.');
+                        let errorMessage = 'Erro ao salvar os parâmetros da empresa.';
+
+                        try {
+                            const contentType = response.headers.get('content-type') ?? '';
+                            if (contentType.includes('application/json')) {
+                                const errorJson = await response.json();
+                                errorMessage = (errorJson && (errorJson.message || errorJson.error)) || errorMessage;
+                            } else {
+                                const errorText = await response.text();
+                                errorMessage = errorText || errorMessage;
+                            }
+                        } catch (parseError) {
+                            console.error('Falha ao ler resposta de erro ao salvar parâmetros:', parseError);
+                        }
+
+                        console.error('Erro ao salvar parâmetros:', response.status, errorMessage);
+                        setCompanyParametersModalFeedback(errorMessage, 'danger');
+                        return;
                     }
 
                     const savedParameters = await response.json();
@@ -723,6 +740,7 @@
                     showCompanyParametersAlert('Parâmetros da empresa salvos com sucesso.');
                     recalculate();
                 } catch (error) {
+                    console.error('Erro inesperado ao salvar parâmetros da empresa:', error);
                     const message = error instanceof Error ? error.message : 'Erro inesperado ao salvar.';
                     setCompanyParametersModalFeedback(message, 'danger');
                 } finally {
