@@ -390,26 +390,41 @@ namespace SolarEnergy.Controllers
                 {
                     var parameters = await _context.CompanyParameters
                         .AsNoTracking()
-                        .FirstOrDefaultAsync(p => p.CompanyId == companyUser.Id);
+                        .SingleOrDefaultAsync(p => p.CompanyId == companyUser.Id);
 
-                    if (parameters is not null)
+                    if (parameters is null)
                     {
-                        var parametersDto = new CompanyParametersInputModel
+                        parameters = new CompanyParameters
                         {
-                            PricePerKwp = parameters.PricePerKwp,
-                            MaintenancePercent = parameters.MaintenancePercent,
-                            InstallDiscountPercent = parameters.InstallDiscountPercent,
-                            RentalFactorPercent = parameters.RentalFactorPercent,
-                            RentalMinMonthly = parameters.RentalMinMonthly,
-                            RentalSetupPerKwp = parameters.RentalSetupPerKwp,
-                            RentalAnnualIncreasePercent = parameters.RentalAnnualIncreasePercent,
-                            RentalDiscountPercent = parameters.RentalDiscountPercent,
-                            ConsumptionPerKwp = parameters.ConsumptionPerKwp,
-                            MinSystemSizeKwp = parameters.MinSystemSizeKwp
+                            CompanyId = companyUser.Id,
+                            PricePerKwp = 4200m,
+                            MaintenancePercent = 1.2m,
+                            InstallDiscountPercent = 4m,
+                            RentalFactorPercent = 68m,
+                            RentalMinMonthly = 250m,
+                            RentalSetupPerKwp = 150m,
+                            RentalAnnualIncreasePercent = 4.5m,
+                            RentalDiscountPercent = 15m,
+                            ConsumptionPerKwp = 120m,
+                            MinSystemSizeKwp = 2.5m
                         };
-
-                        ViewBag.CompanyParametersJson = JsonSerializer.Serialize(parametersDto);
                     }
+
+                    var parametersDto = new CompanyParametersInputModel
+                    {
+                        PricePerKwp = parameters.PricePerKwp,
+                        MaintenancePercent = parameters.MaintenancePercent,
+                        InstallDiscountPercent = parameters.InstallDiscountPercent,
+                        RentalFactorPercent = parameters.RentalFactorPercent,
+                        RentalMinMonthly = parameters.RentalMinMonthly,
+                        RentalSetupPerKwp = parameters.RentalSetupPerKwp,
+                        RentalAnnualIncreasePercent = parameters.RentalAnnualIncreasePercent,
+                        RentalDiscountPercent = parameters.RentalDiscountPercent,
+                        ConsumptionPerKwp = parameters.ConsumptionPerKwp,
+                        MinSystemSizeKwp = parameters.MinSystemSizeKwp
+                    };
+
+                    ViewBag.CompanyParametersJson = JsonSerializer.Serialize(parametersDto);
                 }
             }
 
