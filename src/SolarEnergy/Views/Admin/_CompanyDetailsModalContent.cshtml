@@ -1,0 +1,208 @@
+@model SolarEnergy.ViewModels.AdminCompanyDetailViewModel
+@using SolarEnergy.Extensions
+@using System.Globalization
+@{
+    var culture = CultureInfo.GetCultureInfo("pt-BR");
+    Func<decimal, string> formatCurrency = value => string.Format(culture, "{0:C}", value);
+    Func<decimal, string> formatPercent = value => string.Format(culture, "{0:N1}%", value);
+    Func<DateTime?, string> formatDate = value => value.HasValue ? value.Value.ToString("dd/MM/yyyy") : "—";
+    var serviceDisplay = Model.ServiceType?.GetServiceTypeDisplayName() ?? "Não informado";
+    var serviceIcon = Model.ServiceType?.GetServiceTypeIcon() ?? "fas fa-question-circle";
+    var serviceBadgeClass = Model.ServiceType?.GetServiceTypeColor() ?? "bg-secondary";
+}
+
+<div class="verification-details">
+    <div class="detail-group detail-header">
+        <div class="detail-heading">
+            <h4 class="mb-1 text-solar-blue">@Model.DisplayName</h4>
+            @if (!string.IsNullOrWhiteSpace(Model.LegalName) && !string.Equals(Model.DisplayName, Model.LegalName, StringComparison.OrdinalIgnoreCase))
+            {
+                <p class="text-muted mb-0">@Model.LegalName</p>
+            }
+            <p class="text-muted small mb-0">
+                <i class="fas fa-map-marker-alt me-1"></i>
+                @(string.IsNullOrWhiteSpace(Model.Location) ? "Localização não informada" : Model.Location)
+            </p>
+        </div>
+        <span class="status-chip @Model.StatusClass">
+            <i class="fas @(Model.IsVerified ? "fa-check" : "fa-clock") me-1"></i>
+            @Model.StatusLabel
+        </span>
+    </div>
+
+    <div class="detail-group">
+        <div class="detail-label">
+            <i class="fas fa-id-card me-2"></i>
+            Dados cadastrais
+        </div>
+        <div class="detail-grid">
+            <div class="detail-card">
+                <span class="detail-title">CNPJ</span>
+                <strong>@(Model.Cnpj ?? "Não informado")</strong>
+                <span class="detail-caption">Inscrição estadual: @(Model.StateRegistration ?? "Não informada")</span>
+            </div>
+            <div class="detail-card">
+                <span class="detail-title">Contato principal</span>
+                <strong>@(Model.Phone ?? "Não informado")</strong>
+                <span class="detail-caption">Email: @(Model.Email ?? "Não informado")</span>
+            </div>
+            <div class="detail-card">
+                <span class="detail-title">Responsável</span>
+                <strong>@(Model.ResponsibleName ?? "Não informado")</strong>
+                <span class="detail-caption">CPF: @(Model.ResponsibleCpf ?? "Não informado")</span>
+            </div>
+            <div class="detail-card">
+                <span class="detail-title">Website</span>
+                @if (!string.IsNullOrWhiteSpace(Model.Website))
+                {
+                    <a href="@Model.Website" target="_blank" class="detail-link">@Model.Website</a>
+                }
+                else
+                {
+                    <strong>Não informado</strong>
+                }
+                <span class="detail-caption">Data de cadastro: @formatDate(Model.CreatedAt)</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-group">
+        <div class="detail-label">
+            <i class="fas fa-sliders-h me-2 text-solar-orange"></i>
+            Parâmetros individuais da empresa
+        </div>
+        <div class="parameter-grid">
+            <div class="parameter-item">
+                <span class="parameter-label">Tipo de serviço</span>
+                <div class="parameter-value">
+                    <span class="badge @serviceBadgeClass">
+                        <i class="@serviceIcon me-1"></i>@serviceDisplay
+                    </span>
+                </div>
+            </div>
+            <div class="parameter-item">
+                <span class="parameter-label">Área de atendimento</span>
+                <div class="parameter-value">@(Model.Location ?? "Não informada")</div>
+            </div>
+            <div class="parameter-item">
+                <span class="parameter-label">Último orçamento</span>
+                <div class="parameter-value">@formatDate(Model.LastQuoteDate)</div>
+            </div>
+            <div class="parameter-item">
+                <span class="parameter-label">Última compra de leads</span>
+                <div class="parameter-value">@formatDate(Model.LastLeadPurchaseDate)</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-group">
+        <div class="detail-label">
+            <i class="fas fa-chart-line me-2"></i>
+            Desempenho comercial
+        </div>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <span class="metric-label">Orçamentos recebidos</span>
+                <strong class="metric-value">@Model.TotalQuotes</strong>
+                <span class="metric-caption">Respondidos: @Model.RespondedQuotes</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-label">Propostas enviadas</span>
+                <strong class="metric-value">@Model.TotalProposals</strong>
+                <span class="metric-caption">Aceitas: @Model.AcceptedProposals</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-label">Ticket médio</span>
+                <strong class="metric-value">@formatCurrency(Model.AverageProposalValue)</strong>
+                <span class="metric-caption">Baseado nas propostas registradas</span>
+            </div>
+        </div>
+        <div class="progress-metrics">
+            <div>
+                <div class="progress-label">Taxa de resposta</div>
+                <div class="progress progress-compact">
+                    <div class="progress-bar bg-status-warning" role="progressbar" style="width: @Model.ResponseRate%" aria-valuenow="@Model.ResponseRate" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <small class="text-muted">@formatPercent(Model.ResponseRate)</small>
+            </div>
+            <div>
+                <div class="progress-label">Conversão</div>
+                <div class="progress progress-compact">
+                    <div class="progress-bar bg-status-online" role="progressbar" style="width: @Model.ConversionRate%" aria-valuenow="@Model.ConversionRate" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <small class="text-muted">@formatPercent(Model.ConversionRate)</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-group">
+        <div class="detail-label">
+            <i class="fas fa-coins me-2"></i>
+            Leads e investimentos
+        </div>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <span class="metric-label">Leads disponíveis</span>
+                <strong class="metric-value">@Model.AvailableLeads</strong>
+                <span class="metric-caption">Total adquirido: @Model.TotalPurchasedLeads</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-label">Leads consumidos</span>
+                <strong class="metric-value">@Model.ConsumedLeads</strong>
+                <span class="metric-caption">Utilização: @formatPercent(Model.LeadUtilizationRate)</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-label">Investimento total</span>
+                <strong class="metric-value">@formatCurrency(Model.TotalLeadInvestment)</strong>
+                <span class="metric-caption">Pagamentos confirmados</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-group">
+        <div class="detail-label">
+            <i class="fas fa-star me-2 text-warning"></i>
+            Satisfação dos clientes
+        </div>
+        <div class="review-highlight">
+            <div>
+                <span class="review-score">@Model.AverageRating.ToString("N1", culture)</span>
+                <p class="mb-0 text-muted">Média de @Model.TotalReviews @(Model.TotalReviews == 1 ? "avaliação" : "avaliações")</p>
+            </div>
+            <div class="rating-stars">
+                @for (int i = 1; i <= 5; i++)
+                {
+                    <i class="fas fa-star @(i <= Math.Round(Model.AverageRating) ? "text-warning" : "text-muted")"></i>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-group">
+        <div class="detail-label">
+            <i class="fas fa-align-left me-2"></i>
+            Descrição
+        </div>
+        <div class="description-card">
+            <p class="mb-0">
+                @(string.IsNullOrWhiteSpace(Model.CompanyDescription)
+                    ? "A empresa ainda não forneceu uma descrição detalhada."
+                    : Model.CompanyDescription)
+            </p>
+        </div>
+    </div>
+
+    @if (!Model.IsVerified)
+    {
+        <div class="verification-actions">
+            <button type="button" class="verification-btn approve" onclick="approveCompany('@Model.Id')">
+                <i class="fas fa-check me-1"></i>
+                Aprovar empresa
+            </button>
+            <button type="button" class="verification-btn reject" onclick="rejectCompany('@Model.Id')">
+                <i class="fas fa-times me-1"></i>
+                Rejeitar
+            </button>
+        </div>
+    }
+</div>

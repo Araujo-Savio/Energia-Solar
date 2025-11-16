@@ -35,7 +35,7 @@ namespace SolarEnergy.Controllers
                 InactiveUsers = await _context.Users.CountAsync(u => !u.IsActive),
                 TotalQuotes = await _context.Quotes.CountAsync(),
                 PendingQuotes = await _context.Quotes.CountAsync(q => q.Status == "Pendente"),
-                CompletedQuotes = await _context.Quotes.CountAsync(q => q.Status == "Aceito" || q.Status == "ConcluÌdo"),
+                CompletedQuotes = await _context.Quotes.CountAsync(q => q.Status == "Aceito" || q.Status == "Conclu√≠do"),
                 TotalProposals = await _context.Proposals.CountAsync(),
                 TotalReviews = await _context.CompanyReviews.CountAsync(),
                 PendingCompanies = await _context.Users.CountAsync(u => u.UserType == UserType.Company && !u.IsActive),
@@ -45,7 +45,7 @@ namespace SolarEnergy.Controllers
                     .SumAsync(p => p.TotalAmount)
             };
 
-            // EstatÌsticas mensais dos ˙ltimos 6 meses
+            // Estat√≠sticas mensais dos √∫ltimos 6 meses
             var monthlyStats = new List<AdminMonthlyStatViewModel>();
             for (int i = 5; i >= 0; i--)
             {
@@ -70,7 +70,7 @@ namespace SolarEnergy.Controllers
             // Atividades recentes
             var recentActivities = new List<AdminActivityViewModel>();
 
-            // Novos usu·rios
+            // Novos usu√°rios
             var newUsers = await _context.Users
                 .OrderByDescending(u => u.CreatedAt)
                 .Take(10)
@@ -85,7 +85,7 @@ namespace SolarEnergy.Controllers
                 .ToListAsync();
             recentActivities.AddRange(newUsers);
 
-            // Novos orÁamentos
+            // Novos or√ßamentos
             var newQuotes = await _context.Quotes
                 .Include(q => q.Client)
                 .Include(q => q.Company)
@@ -94,7 +94,7 @@ namespace SolarEnergy.Controllers
                 .Select(q => new AdminActivityViewModel
                 {
                     Type = "quote_requested",
-                    Description = $"{q.Client.FullName} solicitou orÁamento para {q.Company.CompanyTradeName ?? q.Company.FullName}",
+                    Description = $"{q.Client.FullName} solicitou or√ßamento para {q.Company.CompanyTradeName ?? q.Company.FullName}",
                     Date = q.RequestDate,
                     UserName = q.Client.FullName,
                     UserId = q.ClientId
@@ -102,7 +102,7 @@ namespace SolarEnergy.Controllers
                 .ToListAsync();
             recentActivities.AddRange(newQuotes);
 
-            // Novas avaliaÁıes
+            // Novas avalia√ß√µes
             var newReviews = await _context.CompanyReviews
                 .Include(r => r.Reviewer)
                 .Include(r => r.Company)
@@ -127,7 +127,7 @@ namespace SolarEnergy.Controllers
             return View(adminStats);
         }
 
-        // Gerenciamento de usu·rios
+        // Gerenciamento de usu√°rios
         public async Task<IActionResult> Users(string? search, string? userType, string? status, int page = 1, int pageSize = 20)
         {
             var query = _context.Users.AsQueryable();
@@ -186,7 +186,7 @@ namespace SolarEnergy.Controllers
             return View(model);
         }
 
-        // Detalhes do usu·rio
+        // Detalhes do usu√°rio
         public async Task<IActionResult> UserDetails(string id)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
@@ -215,7 +215,7 @@ namespace SolarEnergy.Controllers
                 ServiceType = user.ServiceType
             };
 
-            // EstatÌsticas especÌficas por tipo de usu·rio
+            // Estat√≠sticas espec√≠ficas por tipo de usu√°rio
             if (user.UserType == UserType.Company)
             {
                 model.CompanyStats = new AdminCompanyStatsViewModel
@@ -240,14 +240,14 @@ namespace SolarEnergy.Controllers
             return View(model);
         }
 
-        // Ativar/Desativar usu·rio
+        // Ativar/Desativar usu√°rio
         [HttpPost]
         public async Task<IActionResult> ToggleUserStatus(string id)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (user == null)
             {
-                return Json(new { success = false, message = "Usu·rio n„o encontrado" });
+                return Json(new { success = false, message = "Usu√°rio n√£o encontrado" });
             }
 
             user.IsActive = !user.IsActive;
@@ -260,7 +260,7 @@ namespace SolarEnergy.Controllers
 
             return Json(new { 
                 success = true, 
-                message = $"Usu·rio {(user.IsActive ? "ativado" : "desativado")} com sucesso",
+                message = $"Usu√°rio {(user.IsActive ? "ativado" : "desativado")} com sucesso",
                 isActive = user.IsActive
             });
         }
@@ -344,6 +344,117 @@ namespace SolarEnergy.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetCompanyDetails(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return BadRequest("Identificador de empresa inv√°lido");
+            }
+
+            var company = await _context.Users
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == id && u.UserType == UserType.Company);
+
+            if (company == null)
+            {
+                return NotFound("Empresa n√£o encontrada");
+            }
+
+            var quotes = await _context.Quotes
+                .AsNoTracking()
+                .Where(q => q.CompanyId == id)
+                .Select(q => new { q.Status, q.RequestDate })
+                .ToListAsync();
+
+            var proposals = await _context.Proposals
+                .AsNoTracking()
+                .Where(p => p.Quote.CompanyId == id)
+                .Select(p => new { p.Status, p.Value })
+                .ToListAsync();
+
+            var ratings = await _context.CompanyReviews
+                .AsNoTracking()
+                .Where(r => r.CompanyId == id && r.Rating.HasValue && r.Rating > 0)
+                .Select(r => r.Rating!.Value)
+                .ToListAsync();
+
+            var leadBalance = await _context.CompanyLeadBalances
+                .AsNoTracking()
+                .FirstOrDefaultAsync(lb => lb.CompanyId == id);
+
+            var totalLeadInvestment = await _context.LeadPurchases
+                .AsNoTracking()
+                .Where(p => p.CompanyId == id && (p.PaymentStatus == "Completed" || p.PaymentStatus == "Paid"))
+                .SumAsync(p => (decimal?)p.TotalAmount) ?? 0m;
+
+            var lastLeadPurchaseDate = await _context.LeadPurchases
+                .AsNoTracking()
+                .Where(p => p.CompanyId == id)
+                .OrderByDescending(p => p.PurchaseDate)
+                .Select(p => (DateTime?)p.PurchaseDate)
+                .FirstOrDefaultAsync();
+
+            var totalQuotes = quotes.Count;
+            var pendingQuotes = quotes.Count(q => IsPendingStatus(q.Status));
+            var respondedQuotes = quotes.Count(q => IsRespondedStatus(q.Status));
+            var acceptedQuotes = quotes.Count(q => IsAcceptedStatus(q.Status));
+            var lastQuoteDate = quotes.Any() ? quotes.Max(q => q.RequestDate) : (DateTime?)null;
+
+            var totalProposals = proposals.Count;
+            var acceptedProposals = proposals.Count(p => IsAcceptedProposalStatus(p.Status));
+            var averageProposalValue = proposals.Any() ? proposals.Average(p => p.Value) : 0m;
+
+            var model = new AdminCompanyDetailViewModel
+            {
+                Id = company.Id,
+                CompanyName = company.CompanyTradeName ?? company.CompanyLegalName ?? company.FullName,
+                LegalName = company.CompanyLegalName,
+                Cnpj = company.CNPJ,
+                StateRegistration = company.StateRegistration,
+                Email = company.Email,
+                Phone = company.CompanyPhone ?? company.Phone ?? company.PhoneNumber,
+                CompanyPhone = company.CompanyPhone,
+                Website = company.CompanyWebsite,
+                ResponsibleName = company.ResponsibleName,
+                ResponsibleCpf = company.ResponsibleCPF,
+                Location = company.Location,
+                ServiceType = company.ServiceType,
+                IsVerified = company.IsActive,
+                CreatedAt = company.CreatedAt,
+                LastQuoteDate = lastQuoteDate,
+                LastLeadPurchaseDate = lastLeadPurchaseDate,
+                CompanyDescription = company.CompanyDescription,
+                TotalQuotes = totalQuotes,
+                PendingQuotes = pendingQuotes,
+                RespondedQuotes = respondedQuotes,
+                AcceptedQuotes = acceptedQuotes,
+                TotalProposals = totalProposals,
+                AcceptedProposals = acceptedProposals,
+                AverageProposalValue = averageProposalValue,
+                TotalReviews = ratings.Count,
+                AverageRating = ratings.Any() ? Math.Round(ratings.Average(), 1) : 0,
+                AvailableLeads = leadBalance?.AvailableLeads ?? 0,
+                ConsumedLeads = leadBalance?.ConsumedLeads ?? 0,
+                TotalPurchasedLeads = leadBalance?.TotalPurchasedLeads ?? 0,
+                TotalLeadInvestment = totalLeadInvestment
+            };
+
+            model.ResponseRate = totalQuotes > 0
+                ? Math.Round((decimal)respondedQuotes / totalQuotes * 100, 1)
+                : 0;
+
+            model.ConversionRate = totalQuotes > 0
+                ? Math.Round((decimal)acceptedQuotes / totalQuotes * 100, 1)
+                : 0;
+
+            model.LeadUtilizationRate = (leadBalance?.TotalPurchasedLeads ?? 0) > 0
+                ? Math.Round((decimal)(leadBalance?.ConsumedLeads ?? 0) / (leadBalance?.TotalPurchasedLeads ?? 0) * 100, 1)
+                : 0;
+
+            return PartialView("~/Views/Admin/_CompanyDetailsModalContent.cshtml", model);
+        }
+
         // Verificar empresa
         [HttpPost]
         public async Task<IActionResult> VerifyCompany(string id)
@@ -351,7 +462,7 @@ namespace SolarEnergy.Controllers
             var company = await _context.Users.FirstOrDefaultAsync(u => u.Id == id && u.UserType == UserType.Company);
             if (company == null)
             {
-                return Json(new { success = false, message = "Empresa n„o encontrada" });
+                return Json(new { success = false, message = "Empresa n√£o encontrada" });
             }
 
             company.IsActive = true;
@@ -366,7 +477,7 @@ namespace SolarEnergy.Controllers
             });
         }
 
-        // ModeraÁ„o de avaliaÁıes
+        // Modera√ß√£o de avalia√ß√µes
         public async Task<IActionResult> Reviews(string? search, int? rating, int page = 1, int pageSize = 20)
         {
             var query = _context.CompanyReviews
@@ -421,14 +532,14 @@ namespace SolarEnergy.Controllers
             return View(model);
         }
 
-        // Deletar avaliaÁ„o
+        // Deletar avalia√ß√£o
         [HttpPost]
         public async Task<IActionResult> DeleteReview(int id)
         {
             var review = await _context.CompanyReviews.FirstOrDefaultAsync(r => r.Id == id);
             if (review == null)
             {
-                return Json(new { success = false, message = "AvaliaÁ„o n„o encontrada" });
+                return Json(new { success = false, message = "Avalia√ß√£o n√£o encontrada" });
             }
 
             _context.CompanyReviews.Remove(review);
@@ -439,11 +550,11 @@ namespace SolarEnergy.Controllers
 
             return Json(new { 
                 success = true, 
-                message = "AvaliaÁ„o removida com sucesso"
+                message = "Avalia√ß√£o removida com sucesso"
             });
         }
 
-        // RelatÛrios melhorados com dados reais
+        // Relat√≥rios melhorados com dados reais
         public async Task<IActionResult> Reports()
         {
             // Calcular receita real baseada nas compras de leads das empresas
@@ -451,11 +562,11 @@ namespace SolarEnergy.Controllers
                 .Where(p => p.PaymentStatus == "Completed" || p.PaymentStatus == "Paid")
                 .SumAsync(p => p.TotalAmount);
 
-            // Usu·rios novos no ˙ltimo mÍs
+            // Usu√°rios novos no √∫ltimo m√™s
             var newUsersCount = await _context.Users
                 .CountAsync(u => u.CreatedAt >= DateTime.Now.AddMonths(-1));
 
-            // Empresas novas no ˙ltimo mÍs
+            // Empresas novas no √∫ltimo m√™s
             var newCompaniesCount = await _context.Users
                 .CountAsync(u => u.UserType == UserType.Company && u.CreatedAt >= DateTime.Now.AddMonths(-1));
 
@@ -465,7 +576,7 @@ namespace SolarEnergy.Controllers
                            (p.PaymentStatus == "Completed" || p.PaymentStatus == "Paid"))
                 .SumAsync(p => p.TotalAmount);
 
-            // Dados mensais dos ˙ltimos 6 meses
+            // Dados mensais dos √∫ltimos 6 meses
             var monthlyData = new List<MonthlyReportData>();
             for (int i = 5; i >= 0; i--)
             {
@@ -489,7 +600,7 @@ namespace SolarEnergy.Controllers
                 });
             }
 
-            // Top empresas que mais gastaram e receberam orÁamentos
+            // Top empresas que mais gastaram e receberam or√ßamentos
             var companyData = await _context.Users
                 .Where(u => u.UserType == UserType.Company)
                 .ToListAsync();
@@ -521,7 +632,7 @@ namespace SolarEnergy.Controllers
                 .Take(5)
                 .ToList();
 
-            // MÈtricas por regi„o baseadas nos dados reais
+            // M√©tricas por regi√£o baseadas nos dados reais
             var companyLocations = await _context.Users
                 .Where(u => u.UserType == UserType.Company && !string.IsNullOrEmpty(u.Location))
                 .ToListAsync();
@@ -559,8 +670,8 @@ namespace SolarEnergy.Controllers
                 TotalQuotes = await _context.Quotes.CountAsync(),
                 ClientCount = await _context.Users.CountAsync(u => u.UserType == UserType.Client),
                 CompanyCount = await _context.Users.CountAsync(u => u.UserType == UserType.Company),
-                ActiveUsers = 0, // Placeholder - seria necess·rio rastreamento de sess„o
-                ActiveSessions = 0, // Placeholder - seria necess·rio rastreamento de sess„o
+                ActiveUsers = 0, // Placeholder - seria necess√°rio rastreamento de sess√£o
+                ActiveSessions = 0, // Placeholder - seria necess√°rio rastreamento de sess√£o
                 QuotesToday = await _context.Quotes.CountAsync(q => q.RequestDate.Date == DateTime.Today),
                 RevenueToday = revenueToday,
                 MonthlyData = monthlyData,
@@ -571,7 +682,7 @@ namespace SolarEnergy.Controllers
             return View(model);
         }
 
-        // ConfiguraÁıes do sistema
+        // Configura√ß√µes do sistema
         public async Task<IActionResult> Settings()
         {
             var model = new AdminSettingsViewModel
@@ -600,7 +711,7 @@ namespace SolarEnergy.Controllers
             return View(model);
         }
 
-        // Endpoint para notificaÁıes (usado pelo JavaScript)
+        // Endpoint para notifica√ß√µes (usado pelo JavaScript)
         [HttpGet]
         public async Task<IActionResult> GetNotifications()
         {
@@ -608,7 +719,7 @@ namespace SolarEnergy.Controllers
             {
                 var notifications = new List<object>();
 
-                // Verificar empresas pendentes de aprovaÁ„o
+                // Verificar empresas pendentes de aprova√ß√£o
                 var pendingCompanies = await _context.Users
                     .CountAsync(u => u.UserType == UserType.Company && !u.IsActive);
 
@@ -617,11 +728,11 @@ namespace SolarEnergy.Controllers
                     notifications.Add(new
                     {
                         type = "info",
-                        message = $"H· {pendingCompanies} empresa(s) aguardando aprovaÁ„o."
+                        message = $"H√° {pendingCompanies} empresa(s) aguardando aprova√ß√£o."
                     });
                 }
 
-                // Verificar orÁamentos recentes (˙ltimas 24h)
+                // Verificar or√ßamentos recentes (√∫ltimas 24h)
                 var recentQuotes = await _context.Quotes
                     .CountAsync(q => q.RequestDate >= DateTime.Now.AddHours(-24));
 
@@ -630,11 +741,11 @@ namespace SolarEnergy.Controllers
                     notifications.Add(new
                     {
                         type = "success",
-                        message = $"{recentQuotes} novos orÁamentos nas ˙ltimas 24 horas."
+                        message = $"{recentQuotes} novos or√ßamentos nas √∫ltimas 24 horas."
                     });
                 }
 
-                // Verificar possÌveis problemas com usu·rios inativos h· muito tempo
+                // Verificar poss√≠veis problemas com usu√°rios inativos h√° muito tempo
                 var staleUsers = await _context.Users
                     .CountAsync(u => !u.IsActive && u.CreatedAt <= DateTime.Now.AddDays(-30));
 
@@ -643,7 +754,7 @@ namespace SolarEnergy.Controllers
                     notifications.Add(new
                     {
                         type = "warning",
-                        message = $"{staleUsers} usu·rios inativos h· mais de 30 dias."
+                        message = $"{staleUsers} usu√°rios inativos h√° mais de 30 dias."
                     });
                 }
 
@@ -651,7 +762,7 @@ namespace SolarEnergy.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao buscar notificaÁıes do admin");
+                _logger.LogError(ex, "Erro ao buscar notifica√ß√µes do admin");
                 return Json(new List<object>());
             }
         }
@@ -666,5 +777,17 @@ namespace SolarEnergy.Controllers
                 _ => "Desconhecido"
             };
         }
+
+        private static bool StatusIsOneOf(string? status, params string[] statuses)
+        {
+            if (string.IsNullOrWhiteSpace(status)) return false;
+            var trimmed = status.Trim();
+            return statuses.Any(option => trimmed.Equals(option, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private static bool IsPendingStatus(string? status) => StatusIsOneOf(status, "Pendente", "Em An√°lise", "Em Analise");
+        private static bool IsRespondedStatus(string? status) => StatusIsOneOf(status, "Respondido", "Proposta Enviada", "Em Negocia√ß√£o", "Em Negociacao");
+        private static bool IsAcceptedStatus(string? status) => StatusIsOneOf(status, "Aceito", "Aceita", "Conclu√≠do", "Concluido", "Completed");
+        private static bool IsAcceptedProposalStatus(string? status) => StatusIsOneOf(status, "Accepted", "Aceito", "Aceita", "Conclu√≠do", "Concluido");
     }
 }

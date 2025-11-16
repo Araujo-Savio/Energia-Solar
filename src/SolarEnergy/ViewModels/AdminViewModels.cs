@@ -309,4 +309,52 @@ namespace SolarEnergy.ViewModels
         public double? AverageRating { get; set; }
         public int ReviewCount { get; set; }
     }
+
+    public class AdminCompanyDetailViewModel
+    {
+        public string Id { get; set; } = string.Empty;
+        public string? CompanyName { get; set; }
+        public string? LegalName { get; set; }
+        public string? Cnpj { get; set; }
+        public string? StateRegistration { get; set; }
+        public string? Email { get; set; }
+        public string? Phone { get; set; }
+        public string? CompanyPhone { get; set; }
+        public string? Website { get; set; }
+        public string? ResponsibleName { get; set; }
+        public string? ResponsibleCpf { get; set; }
+        public string? Location { get; set; }
+        public SolarServiceType? ServiceType { get; set; }
+        public bool IsVerified { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? LastQuoteDate { get; set; }
+        public DateTime? LastLeadPurchaseDate { get; set; }
+        public string? CompanyDescription { get; set; }
+
+        public int TotalQuotes { get; set; }
+        public int PendingQuotes { get; set; }
+        public int RespondedQuotes { get; set; }
+        public int AcceptedQuotes { get; set; }
+        public int TotalProposals { get; set; }
+        public int AcceptedProposals { get; set; }
+        public decimal AverageProposalValue { get; set; }
+        public int TotalReviews { get; set; }
+        public double AverageRating { get; set; }
+
+        public int AvailableLeads { get; set; }
+        public int ConsumedLeads { get; set; }
+        public int TotalPurchasedLeads { get; set; }
+        public decimal TotalLeadInvestment { get; set; }
+
+        public decimal ResponseRate { get; set; }
+        public decimal ConversionRate { get; set; }
+        public decimal LeadUtilizationRate { get; set; }
+
+        public string DisplayName => !string.IsNullOrWhiteSpace(CompanyName)
+            ? CompanyName!
+            : LegalName ?? "Empresa";
+
+        public string StatusLabel => IsVerified ? "Verificada" : "Pendente";
+        public string StatusClass => IsVerified ? "status-chip--success" : "status-chip--pending";
+    }
 }
