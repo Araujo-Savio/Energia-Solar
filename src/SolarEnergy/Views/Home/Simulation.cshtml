@@ -239,43 +239,43 @@
                             <div class="metrics-grid">
                                 <div>
                                     <label class="form-label" for="displayPricePerKwp">Preço do sistema por kWp (R$/kWp)</label>
-                                    <input id="displayPricePerKwp" type="number" class="form-control" value="@Model.CompanyParameters.PricePerKwp" data-company-param="price-per-kwp" readonly />
+                                    <input id="displayPricePerKwp" type="number" class="form-control" value="@(Model.CompanyParameters?.SystemPricePerKwp ?? 0)" data-company-param="system-price-per-kwp" readonly />
                                 </div>
                                 <div>
                                     <label class="form-label" for="displayMaintenance">Manutenção anual (% do investimento)</label>
-                                    <input id="displayMaintenance" type="number" class="form-control" value="@Model.CompanyParameters.MaintenancePercent" data-company-param="maintenance-percent" readonly />
+                                    <input id="displayMaintenance" type="number" class="form-control" value="@(Model.CompanyParameters?.MaintenancePercent ?? 0)" data-company-param="maintenance-percent" readonly />
                                 </div>
                                 <div>
                                     <label class="form-label" for="displayInstallDiscount">Desconto na instalação (%)</label>
-                                    <input id="displayInstallDiscount" type="number" class="form-control" value="@Model.CompanyParameters.InstallDiscountPercent" data-company-param="install-discount-percent" readonly />
+                                    <input id="displayInstallDiscount" type="number" class="form-control" value="@(Model.CompanyParameters?.InstallDiscountPercent ?? 0)" data-company-param="install-discount-percent" readonly />
                                 </div>
                                 <div>
                                     <label class="form-label" for="displayRentalFactor">Fator da mensalidade (% da conta)</label>
-                                    <input id="displayRentalFactor" type="number" class="form-control" value="@Model.CompanyParameters.RentalFactorPercent" data-company-param="rental-factor-percent" readonly />
+                                    <input id="displayRentalFactor" type="number" class="form-control" value="@(Model.CompanyParameters?.RentalFactorPercent ?? 0)" data-company-param="rental-factor-percent" readonly />
                                 </div>
                                 <div>
                                     <label class="form-label" for="displayRentalMinMonthly">Mensalidade mínima (R$)</label>
-                                    <input id="displayRentalMinMonthly" type="number" class="form-control" value="@Model.CompanyParameters.RentalMinMonthly" data-company-param="rental-min-monthly" readonly />
+                                    <input id="displayRentalMinMonthly" type="number" class="form-control" value="@(Model.CompanyParameters?.RentalMinMonthly ?? 0)" data-company-param="rental-min-monthly" readonly />
                                 </div>
                                 <div>
                                     <label class="form-label" for="displayRentalSetup">Taxa de setup por kWp (R$)</label>
-                                    <input id="displayRentalSetup" type="number" class="form-control" value="@Model.CompanyParameters.RentalSetupPerKwp" data-company-param="rental-setup-per-kwp" readonly />
+                                    <input id="displayRentalSetup" type="number" class="form-control" value="@(Model.CompanyParameters?.RentalSetupPerKwp ?? 0)" data-company-param="rental-setup-per-kwp" readonly />
                                 </div>
                                 <div>
                                     <label class="form-label" for="displayRentalIncrease">Reajuste anual do aluguel (%)</label>
-                                    <input id="displayRentalIncrease" type="number" class="form-control" value="@Model.CompanyParameters.RentalAnnualIncreasePercent" data-company-param="rental-annual-increase-percent" readonly />
+                                    <input id="displayRentalIncrease" type="number" class="form-control" value="@(Model.CompanyParameters?.RentalAnnualIncreasePercent ?? 0)" data-company-param="rental-annual-increase-percent" readonly />
                                 </div>
                                 <div>
                                     <label class="form-label" for="displayRentalDiscount">Desconto na conta (%)</label>
-                                    <input id="displayRentalDiscount" type="number" class="form-control" value="@Model.CompanyParameters.RentalDiscountPercent" data-company-param="rental-discount-percent" readonly />
+                                    <input id="displayRentalDiscount" type="number" class="form-control" value="@(Model.CompanyParameters?.RentalDiscountPercent ?? 0)" data-company-param="rental-discount-percent" readonly />
                                 </div>
                                 <div>
                                     <label class="form-label" for="displayConsumption">Consumo mensal por 1 kWp (kWh)</label>
-                                    <input id="displayConsumption" type="number" class="form-control" value="@Model.CompanyParameters.ConsumptionPerKwp" data-company-param="consumption-per-kwp" readonly />
+                                    <input id="displayConsumption" type="number" class="form-control" value="@(Model.CompanyParameters?.ConsumptionPerKwp ?? 0)" data-company-param="consumption-per-kwp" readonly />
                                 </div>
                                 <div>
                                     <label class="form-label" for="displayMinSystem">Potência mínima do sistema (kWp)</label>
-                                    <input id="displayMinSystem" type="number" class="form-control" value="@Model.CompanyParameters.MinSystemSizeKwp" data-company-param="min-system-size-kwp" readonly />
+                                    <input id="displayMinSystem" type="number" class="form-control" value="@(Model.CompanyParameters?.MinSystemSizeKwp ?? 0)" data-company-param="min-system-size-kwp" readonly />
                                 </div>
                             </div>
                         </div>
@@ -424,8 +424,8 @@
                                        min="0"
                                        step="50"
                                        class="form-control"
-                                       value="4200"
-                                       data-company-param="price-per-kwp" />
+                                       value="@(Model.CompanyParameters?.SystemPricePerKwp ?? 0)"
+                                       data-company-param="system-price-per-kwp" />
                                 <small class="text-muted">Valor usado para calcular o custo de instalação.</small>
                             </div>
                             <div>
@@ -436,7 +436,7 @@
                                        max="50"
                                        step="0.1"
                                        class="form-control"
-                                       value="1.2"
+                                       value="@(Model.CompanyParameters?.MaintenancePercent ?? 0)"
                                        data-company-param="maintenance-percent" />
                                 <small class="text-muted">Percentual do investimento aplicado por ano.</small>
                             </div>
@@ -448,7 +448,7 @@
                                        max="100"
                                        step="0.1"
                                        class="form-control"
-                                       value="4"
+                                       value="@(Model.CompanyParameters?.InstallDiscountPercent ?? 0)"
                                        data-company-param="install-discount-percent" />
                                 <small class="text-muted">Percentual aplicado sobre o valor da instalação.</small>
                             </div>
@@ -460,7 +460,7 @@
                                        max="100"
                                        step="1"
                                        class="form-control"
-                                       value="68"
+                                       value="@(Model.CompanyParameters?.RentalFactorPercent ?? 0)"
                                        data-company-param="rental-factor-percent" />
                                 <small class="text-muted">Fração da conta transformada em mensalidade.</small>
                             </div>
@@ -471,7 +471,7 @@
                                        min="0"
                                        step="10"
                                        class="form-control"
-                                       value="250"
+                                       value="@(Model.CompanyParameters?.RentalMinMonthly ?? 0)"
                                        data-company-param="rental-min-monthly" />
                                 <small class="text-muted">Valor mínimo praticado.</small>
                             </div>
@@ -482,7 +482,7 @@
                                        min="0"
                                        step="10"
                                        class="form-control"
-                                       value="150"
+                                       value="@(Model.CompanyParameters?.RentalSetupPerKwp ?? 0)"
                                        data-company-param="rental-setup-per-kwp" />
                                 <small class="text-muted">Taxa de setup aplicada ao aluguel.</small>
                             </div>
@@ -494,7 +494,7 @@
                                        max="50"
                                        step="0.1"
                                        class="form-control"
-                                       value="4.5"
+                                       value="@(Model.CompanyParameters?.RentalAnnualIncreasePercent ?? 0)"
                                        data-company-param="rental-annual-increase-percent" />
                                 <small class="text-muted">Percentual aplicado a cada ano.</small>
                             </div>
@@ -506,7 +506,7 @@
                                        max="100"
                                        step="0.1"
                                        class="form-control"
-                                       value="15"
+                                       value="@(Model.CompanyParameters?.RentalDiscountPercent ?? 0)"
                                        data-company-param="rental-discount-percent" />
                                 <small class="text-muted">Percentual médio aplicado na fatura.</small>
                             </div>
@@ -514,10 +514,10 @@
                                 <label class="form-label" for="companyConsumptionPerKwp">Consumo mensal por 1 kWp (kWh/mês por kWp)</label>
                                 <input id="companyConsumptionPerKwp"
                                        type="number"
-                                       min="1"
+                                       min="0"
                                        step="1"
                                        class="form-control"
-                                       value="120"
+                                       value="@(Model.CompanyParameters?.ConsumptionPerKwp ?? 0)"
                                        data-company-param="consumption-per-kwp" />
                                 <small class="text-muted">Conversão usada para dimensionamento.</small>
                             </div>
@@ -528,7 +528,7 @@
                                        min="0"
                                        step="0.1"
                                        class="form-control"
-                                       value="2.5"
+                                       value="@(Model.CompanyParameters?.MinSystemSizeKwp ?? 0)"
                                        data-company-param="min-system-size-kwp" />
                                 <small class="text-muted">Limite mínimo da solução ofertada.</small>
                             </div>
@@ -561,36 +561,29 @@
             const isCompanyUser = simulatorRoot?.dataset.companyUser === 'true';
             const saveCompanyParametersUrl = '@Url.Action("SaveForCurrentCompany", "CompanyParameters")';
 
-            const companyParamKeys = {
-                'price-per-kwp': ['PricePerKwp', 'pricePerKwp'],
-                'maintenance-percent': ['MaintenancePercent', 'maintenancePercent'],
-                'install-discount-percent': ['InstallDiscountPercent', 'installDiscountPercent'],
-                'rental-factor-percent': ['RentalFactorPercent', 'rentalFactorPercent'],
-                'rental-min-monthly': ['RentalMinMonthly', 'rentalMinMonthly'],
-                'rental-setup-per-kwp': ['RentalSetupPerKwp', 'rentalSetupPerKwp'],
-                'rental-annual-increase-percent': ['RentalAnnualIncreasePercent', 'rentalAnnualIncreasePercent'],
-                'rental-discount-percent': ['RentalDiscountPercent', 'rentalDiscountPercent'],
-                'consumption-per-kwp': ['ConsumptionPerKwp', 'consumptionPerKwp'],
-                'min-system-size-kwp': ['MinSystemSizeKwp', 'minSystemSizeKwp']
-            };
+            const companyParametersFields = [
+                { id: 'companyPricePerKwp', dataKey: 'system-price-per-kwp', pascalKey: 'SystemPricePerKwp', camelKey: 'systemPricePerKwp', legacyKeys: ['PricePerKwp', 'pricePerKwp'] },
+                { id: 'companyMaintenancePercent', dataKey: 'maintenance-percent', pascalKey: 'MaintenancePercent', camelKey: 'maintenancePercent' },
+                { id: 'companyInstallDiscount', dataKey: 'install-discount-percent', pascalKey: 'InstallDiscountPercent', camelKey: 'installDiscountPercent' },
+                { id: 'companyRentalFactor', dataKey: 'rental-factor-percent', pascalKey: 'RentalFactorPercent', camelKey: 'rentalFactorPercent' },
+                { id: 'companyRentalMinMonthly', dataKey: 'rental-min-monthly', pascalKey: 'RentalMinMonthly', camelKey: 'rentalMinMonthly' },
+                { id: 'companyRentalSetup', dataKey: 'rental-setup-per-kwp', pascalKey: 'RentalSetupPerKwp', camelKey: 'rentalSetupPerKwp' },
+                { id: 'companyRentalIncrease', dataKey: 'rental-annual-increase-percent', pascalKey: 'RentalAnnualIncreasePercent', camelKey: 'rentalAnnualIncreasePercent' },
+                { id: 'companyRentalDiscount', dataKey: 'rental-discount-percent', pascalKey: 'RentalDiscountPercent', camelKey: 'rentalDiscountPercent' },
+                { id: 'companyConsumptionPerKwp', dataKey: 'consumption-per-kwp', pascalKey: 'ConsumptionPerKwp', camelKey: 'consumptionPerKwp' },
+                { id: 'companyMinSystemSize', dataKey: 'min-system-size-kwp', pascalKey: 'MinSystemSizeKwp', camelKey: 'minSystemSizeKwp' }
+            ];
+
+            const companyParamKeys = companyParametersFields.reduce((acc, field) => {
+                acc[field.dataKey] = [field.pascalKey, field.camelKey, ...(field.legacyKeys ?? [])];
+                return acc;
+            }, {});
 
             const companyParametersAlert = document.getElementById('companyParametersAlert');
             const companyParametersModalElement = document.getElementById('companyParametersModal');
             const companyParametersForm = document.getElementById('companyParametersForm');
             const companyParametersModalFeedback = document.getElementById('companyParametersModalFeedback');
             const saveCompanyParametersButton = document.getElementById('btnSaveCompanyParameters');
-            const companyParametersFields = [
-                { id: 'companyPricePerKwp', prop: 'PricePerKwp' },
-                { id: 'companyMaintenancePercent', prop: 'MaintenancePercent' },
-                { id: 'companyInstallDiscount', prop: 'InstallDiscountPercent' },
-                { id: 'companyRentalFactor', prop: 'RentalFactorPercent' },
-                { id: 'companyRentalMinMonthly', prop: 'RentalMinMonthly' },
-                { id: 'companyRentalSetup', prop: 'RentalSetupPerKwp' },
-                { id: 'companyRentalIncrease', prop: 'RentalAnnualIncreasePercent' },
-                { id: 'companyRentalDiscount', prop: 'RentalDiscountPercent' },
-                { id: 'companyConsumptionPerKwp', prop: 'ConsumptionPerKwp' },
-                { id: 'companyMinSystemSize', prop: 'MinSystemSizeKwp' }
-            ];
             let companyParametersAlertTimeout;
 
             function showCompanyParametersAlert(message, type = 'success') {
@@ -621,20 +614,19 @@
                 companyParametersModalFeedback.classList.add('d-none');
             }
 
-            function getParamValueFromPayload(payload, key) {
-                if (!payload || typeof payload !== 'object') {
+            function getParamValueFromPayload(payload, field) {
+                if (!payload || typeof payload !== 'object' || !field) {
                     return null;
                 }
 
-                const pascalValue = payload[key];
-                if (pascalValue !== undefined && pascalValue !== null && Number.isFinite(Number(pascalValue))) {
-                    return pascalValue;
-                }
+                const keysToCheck = [field.pascalKey, field.camelKey, ...(field.legacyKeys ?? [])];
 
-                const camelKey = key.charAt(0).toLowerCase() + key.slice(1);
-                const camelValue = payload[camelKey];
-                if (camelValue !== undefined && camelValue !== null && Number.isFinite(Number(camelValue))) {
-                    return camelValue;
+                for (const key of keysToCheck) {
+                    if (!key) continue;
+                    const value = payload[key];
+                    if (value !== undefined && value !== null && Number.isFinite(Number(value))) {
+                        return value;
+                    }
                 }
 
                 return null;
@@ -647,7 +639,7 @@
                     const input = document.getElementById(field.id);
                     if (!input) return;
 
-                    const value = getParamValueFromPayload(params, field.prop);
+                    const value = getParamValueFromPayload(params, field);
                     if (value !== null) {
                         input.value = value;
                     }
@@ -660,12 +652,12 @@
                 companyParametersFields.forEach((field) => {
                     const input = document.getElementById(field.id);
                     if (!input) {
-                        payload[field.prop] = 0;
+                        payload[field.camelKey] = 0;
                         return;
                     }
 
                     const rawValue = parseFloat((input.value || '').toString().replace(',', '.'));
-                    payload[field.prop] = Number.isFinite(rawValue) ? rawValue : 0;
+                    payload[field.camelKey] = Number.isFinite(rawValue) ? rawValue : 0;
                 });
 
                 return payload;
@@ -998,16 +990,16 @@
                 const hasCompanyParameters = !!(window.companyParameters && typeof window.companyParameters === 'object');
 
                 if (isCompanyUser || hasCompanyParameters) {
-                    const pricePerKwp = parseCompanyParam('price-per-kwp', 4200);
-                    const maintenancePercent = parseCompanyParam('maintenance-percent', 1.2);
-                    const installDiscountPercent = parseCompanyParam('install-discount-percent', 4);
-                    const rentalFactorPercent = parseCompanyParam('rental-factor-percent', 68);
-                    const rentalMinMonthly = parseCompanyParam('rental-min-monthly', 250);
-                    const rentalSetupPerKwp = parseCompanyParam('rental-setup-per-kwp', 150);
-                    const rentalAnnualIncreasePercent = parseCompanyParam('rental-annual-increase-percent', 4.5);
-                    const rentalDiscountPercent = parseCompanyParam('rental-discount-percent', 15);
-                    const consumptionPerKwp = parseCompanyParam('consumption-per-kwp', 120);
-                    const minSystemSizeKwp = parseCompanyParam('min-system-size-kwp', 2.5);
+                    const pricePerKwp = parseCompanyParam('system-price-per-kwp', 0);
+                    const maintenancePercent = parseCompanyParam('maintenance-percent', 0);
+                    const installDiscountPercent = parseCompanyParam('install-discount-percent', 0);
+                    const rentalFactorPercent = parseCompanyParam('rental-factor-percent', 0);
+                    const rentalMinMonthly = parseCompanyParam('rental-min-monthly', 0);
+                    const rentalSetupPerKwp = parseCompanyParam('rental-setup-per-kwp', 0);
+                    const rentalAnnualIncreasePercent = parseCompanyParam('rental-annual-increase-percent', 0);
+                    const rentalDiscountPercent = parseCompanyParam('rental-discount-percent', 0);
+                    const consumptionPerKwp = parseCompanyParam('consumption-per-kwp', 0);
+                    const minSystemSizeKwp = parseCompanyParam('min-system-size-kwp', 0);
 
                     const baseSystemSize = consumptionPerKwp > 0 ? safeConsumption / consumptionPerKwp : safeConsumption;
                     systemSizeKw = Math.max(baseSystemSize, minSystemSizeKwp);

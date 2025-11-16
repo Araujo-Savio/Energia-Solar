@@ -398,10 +398,11 @@ namespace SolarEnergy.Controllers
                 {
                     var parameters = await _context.CompanyParameters
                         .AsNoTracking()
-                        .SingleOrDefaultAsync(p => p.CompanyId == companyUser.Id)
-                        ?? CreateDefaultParameters(companyUser.Id);
+                        .SingleOrDefaultAsync(p => p.CompanyId == companyUser.Id);
 
-                    var parametersDto = MapToParametersInputModel(parameters);
+                    var parametersDto = parameters is not null
+                        ? MapToParametersInputModel(parameters)
+                        : CreateDefaultParameters();
 
                     model.CompanyParameters = parametersDto;
                     model.CompanyParametersJson = JsonSerializer.Serialize(parametersDto, new JsonSerializerOptions
@@ -432,7 +433,7 @@ namespace SolarEnergy.Controllers
 
                 var parametersDto = parameters != null
                     ? MapToParametersInputModel(parameters)
-                    : new CompanyParametersInputModel();
+                    : CreateDefaultParameters();
 
                 model.CompanyParameters = parametersDto;
                 model.CompanyParametersJson = JsonSerializer.Serialize(parametersDto, new JsonSerializerOptions
@@ -444,21 +445,20 @@ namespace SolarEnergy.Controllers
             return View(model);
         }
 
-        private static CompanyParameters CreateDefaultParameters(string companyId)
+        private static CompanyParametersInputModel CreateDefaultParameters()
         {
-            return new CompanyParameters
+            return new CompanyParametersInputModel
             {
-                CompanyId = companyId,
-                PricePerKwp = 4200m,
-                MaintenancePercent = 1.2m,
-                InstallDiscountPercent = 4m,
-                RentalFactorPercent = 68m,
-                RentalMinMonthly = 250m,
-                RentalSetupPerKwp = 150m,
-                RentalAnnualIncreasePercent = 4.5m,
-                RentalDiscountPercent = 15m,
-                ConsumptionPerKwp = 120m,
-                MinSystemSizeKwp = 2.5m
+                SystemPricePerKwp = 0m,
+                MaintenancePercent = 0m,
+                InstallDiscountPercent = 0m,
+                RentalFactorPercent = 0m,
+                RentalMinMonthly = 0m,
+                RentalSetupPerKwp = 0m,
+                RentalAnnualIncreasePercent = 0m,
+                RentalDiscountPercent = 0m,
+                ConsumptionPerKwp = 0m,
+                MinSystemSizeKwp = 0m
             };
         }
 
@@ -466,7 +466,7 @@ namespace SolarEnergy.Controllers
         {
             return new CompanyParametersInputModel
             {
-                PricePerKwp = parameters.PricePerKwp,
+                SystemPricePerKwp = parameters.PricePerKwp,
                 MaintenancePercent = parameters.MaintenancePercent,
                 InstallDiscountPercent = parameters.InstallDiscountPercent,
                 RentalFactorPercent = parameters.RentalFactorPercent,
