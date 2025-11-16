@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -381,6 +382,37 @@ namespace SolarEnergy.Controllers
         public async Task<IActionResult> Simulation()
         {
             await SetUserTypeInViewData();
+
+            if (User.IsInRole("Company"))
+            {
+                var companyUser = await _userManager.GetUserAsync(User);
+                if (companyUser is not null)
+                {
+                    var parameters = await _context.CompanyParameters
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(p => p.CompanyId == companyUser.Id);
+
+                    if (parameters is not null)
+                    {
+                        var parametersDto = new CompanyParametersInputModel
+                        {
+                            PricePerKwp = parameters.PricePerKwp,
+                            MaintenancePercent = parameters.MaintenancePercent,
+                            InstallDiscountPercent = parameters.InstallDiscountPercent,
+                            RentalFactorPercent = parameters.RentalFactorPercent,
+                            RentalMinMonthly = parameters.RentalMinMonthly,
+                            RentalSetupPerKwp = parameters.RentalSetupPerKwp,
+                            RentalAnnualIncreasePercent = parameters.RentalAnnualIncreasePercent,
+                            RentalDiscountPercent = parameters.RentalDiscountPercent,
+                            ConsumptionPerKwp = parameters.ConsumptionPerKwp,
+                            MinSystemSizeKwp = parameters.MinSystemSizeKwp
+                        };
+
+                        ViewBag.CompanyParametersJson = JsonSerializer.Serialize(parametersDto);
+                    }
+                }
+            }
+
             return View();
         }
 

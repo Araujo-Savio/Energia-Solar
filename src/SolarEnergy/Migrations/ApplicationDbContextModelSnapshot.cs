@@ -336,6 +336,60 @@ namespace SolarEnergy.Migrations
                     b.ToTable("CompanyLeadBalances", (string)null);
                 });
 
+            modelBuilder.Entity("SolarEnergy.Models.CompanyParameters", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CompanyId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<decimal>("ConsumptionPerKwp")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("InstallDiscountPercent")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("MaintenancePercent")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("MinSystemSizeKwp")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("PricePerKwp")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("RentalAnnualIncreasePercent")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("RentalDiscountPercent")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("RentalFactorPercent")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("RentalMinMonthly")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("RentalSetupPerKwp")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId")
+                        .IsUnique();
+
+                    b.ToTable("CompanyParameters", (string)null);
+                });
+
             modelBuilder.Entity("SolarEnergy.Models.CompanyReview", b =>
                 {
                     b.Property<int>("Id")
@@ -679,6 +733,17 @@ namespace SolarEnergy.Migrations
                     b.HasOne("SolarEnergy.Models.ApplicationUser", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("SolarEnergy.Models.CompanyParameters", b =>
+                {
+                    b.HasOne("SolarEnergy.Models.ApplicationUser", "Company")
+                        .WithOne()
+                        .HasForeignKey("SolarEnergy.Models.CompanyParameters", "CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
