@@ -31,55 +31,58 @@ namespace SolarEnergy.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveForCurrentCompany([FromBody] CompanyParametersInputModel? input)
         {
-            if (input is null)
-            {
-                return BadRequest(new { message = "Parâmetros inválidos." });
-            }
-
-            var companyUser = await _userManager.GetUserAsync(User);
-            if (companyUser is null)
-            {
-                _logger.LogWarning("Company user not found while saving parameters.");
-                return Unauthorized();
-            }
-
-            var parameters = await _context.CompanyParameters
-                .SingleOrDefaultAsync(p => p.CompanyId == companyUser.Id);
-
-            if (parameters is null)
-            {
-                parameters = new CompanyParameters
-                {
-                    CompanyId = companyUser.Id
-                };
-
-                _context.CompanyParameters.Add(parameters);
-            }
-
-            parameters.PricePerKwp = ClampNonNegative(input.PricePerKwp);
-            parameters.MaintenancePercent = ClampNonNegative(input.MaintenancePercent);
-            parameters.InstallDiscountPercent = ClampNonNegative(input.InstallDiscountPercent);
-            parameters.RentalFactorPercent = ClampNonNegative(input.RentalFactorPercent);
-            parameters.RentalMinMonthly = ClampNonNegative(input.RentalMinMonthly);
-            parameters.RentalSetupPerKwp = ClampNonNegative(input.RentalSetupPerKwp);
-            parameters.RentalAnnualIncreasePercent = ClampNonNegative(input.RentalAnnualIncreasePercent);
-            parameters.RentalDiscountPercent = ClampNonNegative(input.RentalDiscountPercent);
-            parameters.ConsumptionPerKwp = Math.Max(1m, input.ConsumptionPerKwp);
-            parameters.MinSystemSizeKwp = ClampNonNegative(input.MinSystemSizeKwp);
-            parameters.UpdatedAt = DateTime.UtcNow;
-
+            string? companyId = null;
             try
             {
+                if (input is null)
+                {
+                    return BadRequest(new { message = "Parâmetros inválidos." });
+                }
+
+                var companyUser = await _userManager.GetUserAsync(User);
+                if (companyUser is null)
+                {
+                    _logger.LogWarning("Company user not found while saving parameters.");
+                    return Unauthorized();
+                }
+
+                companyId = companyUser.Id;
+
+                var parameters = await _context.CompanyParameters
+                    .FirstOrDefaultAsync(p => p.CompanyId == companyId);
+
+                if (parameters is null)
+                {
+                    parameters = new CompanyParameters
+                    {
+                        CompanyId = companyId
+                    };
+
+                    _context.CompanyParameters.Add(parameters);
+                }
+
+                parameters.PricePerKwp = ClampNonNegative(input.PricePerKwp);
+                parameters.MaintenancePercent = ClampNonNegative(input.MaintenancePercent);
+                parameters.InstallDiscountPercent = ClampNonNegative(input.InstallDiscountPercent);
+                parameters.RentalFactorPercent = ClampNonNegative(input.RentalFactorPercent);
+                parameters.RentalMinMonthly = ClampNonNegative(input.RentalMinMonthly);
+                parameters.RentalSetupPerKwp = ClampNonNegative(input.RentalSetupPerKwp);
+                parameters.RentalAnnualIncreasePercent = ClampNonNegative(input.RentalAnnualIncreasePercent);
+                parameters.RentalDiscountPercent = ClampNonNegative(input.RentalDiscountPercent);
+                parameters.ConsumptionPerKwp = Math.Max(1m, input.ConsumptionPerKwp);
+                parameters.MinSystemSizeKwp = ClampNonNegative(input.MinSystemSizeKwp);
+                parameters.UpdatedAt = DateTime.UtcNow;
+
                 await _context.SaveChangesAsync();
+
+                var response = MapToDto(parameters);
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao salvar parâmetros da empresa {CompanyId}", companyUser.Id);
+                _logger.LogError(ex, "Erro ao salvar parâmetros da empresa {CompanyId}.", companyId ?? "desconhecida");
                 return StatusCode(500, "Erro ao salvar parâmetros da empresa.");
             }
-
-            var response = MapToDto(parameters);
-            return Ok(response);
         }
 
         private static CompanyParametersInputModel MapToDto(CompanyParameters parameters)
