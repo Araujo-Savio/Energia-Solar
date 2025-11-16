@@ -70,22 +70,14 @@
                 </div>
             </div>
 
-            <div class="col-xxl-5 col-lg-7">
-                <div class="solar-card h-100 d-flex flex-column">
-                    <div class="d-flex flex-wrap justify-content-between align-items-start mb-3">
-                        <div>
-                            <h5 class="solar-card-title mb-1">Projeção comparativa</h5>
-                            <p class="text-muted small mb-0">
-                                Compare o custo total projetado de cada cenário considerando inflação, degradação do sistema e despesas adicionais.
-                            </p>
-                        </div>
-                        <span class="badge bg-status-alert">Resultados dinâmicos</span>
-                    </div>
-                    <div class="chart-wrapper">
-                        <canvas id="costComparisonChart" aria-label="Comparativo de custos dos cenários" role="img"></canvas>
-                    </div>
-
-                    <div class="simulator-summary mt-4">
+            <div class="col-xxl-5 col-lg-7 d-flex flex-column gap-3">
+                <div class="card shadow-sm p-3" id="projectionCard">
+                    <h5 class="mb-2">Projeção comparativa</h5>
+                    <p class="text-muted small mb-3">Gráfico comparando os cenários ao longo do tempo.</p>
+                    <canvas id="projectionChart" height="120"></canvas>
+                </div>
+                <div class="solar-card flex-grow-1 d-flex flex-column">
+                    <div class="simulator-summary mb-4">
                         <div class="simulator-summary-grid">
                             <div>
                                 <div class="summary-label-row">
@@ -312,7 +304,91 @@
                 }
             });
 
-            let chartInstance;
+            let projectionChart;
+            const defaultTimelineLength = 12;
+
+            function generateTimelineLabels(length) {
+                const total = Math.max(1, length);
+                return Array.from({ length: total }, (_, index) => `Ano ${index + 1}`);
+            }
+
+            function initializeProjectionChart() {
+                const canvas = document.getElementById('projectionChart');
+                if (!canvas) return;
+                const context = canvas.getContext('2d');
+                if (!context) return;
+
+                const defaultLabels = generateTimelineLabels(defaultTimelineLength);
+                const defaultData = new Array(defaultLabels.length).fill(0);
+
+                projectionChart = new Chart(context, {
+                    type: 'line',
+                    data: {
+                        labels: defaultLabels,
+                        datasets: [
+                            {
+                                label: 'Economia acumulada - Instalação',
+                                data: defaultData.slice(),
+                                borderColor: '#f97316',
+                                backgroundColor: 'rgba(249, 115, 22, 0.12)',
+                                tension: 0.35,
+                                fill: true,
+                                pointRadius: 0,
+                                borderWidth: 3
+                            },
+                            {
+                                label: 'Economia acumulada - Aluguel',
+                                data: defaultData.slice(),
+                                borderColor: '#2563eb',
+                                backgroundColor: 'rgba(37, 99, 235, 0.12)',
+                                tension: 0.35,
+                                fill: true,
+                                pointRadius: 0,
+                                borderWidth: 3
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            intersect: false,
+                            mode: 'index'
+                        },
+                        plugins: {
+                            legend: {
+                                display: true,
+                                labels: {
+                                    usePointStyle: true
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        const label = context.dataset.label || '';
+                                        return `${label}: ${formatCurrency(context.parsed.y)}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    color: 'rgba(26, 43, 61, 0.08)'
+                                }
+                            },
+                            y: {
+                                ticks: {
+                                    callback: (value) => formatCurrency(value)
+                                },
+                                grid: {
+                                    color: 'rgba(26, 43, 61, 0.05)'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
 
             function parseInput(inputName) {
                 const element = document.querySelector(`[data-sim-input="${inputName}"]`);
@@ -498,8 +574,12 @@
 
                 let paybackYears = null;
                 let cumulativeInstallSavings = -cumulativeInstall;
+                let cumulativeRentalSavings = -cumulativeRental;
                 let firstYearInstallSavings = 0;
                 let firstYearRentalSavings = 0;
+                const timelineLabels = [];
+                const installationSavingsSeries = [];
+                const rentalSavingsSeries = [];
 
                 for (let year = 1; year <= horizonYears; year++) {
                     const tariffWithInflation = monthlyTariffWithoutInflation * Math.pow(1 + inflation, year - 1);
@@ -537,11 +617,16 @@
                     }
 
                     cumulativeInstallSavings += annualSavingsInstall;
+                    cumulativeRentalSavings += annualSavingsRental;
                     if (paybackYears === null && cumulativeInstallSavings >= 0) {
                         const previousSavings = cumulativeInstallSavings - annualSavingsInstall;
                         const fractionOfYear = annualSavingsInstall > 0 ? (installationCost - installationIncentive - previousSavings) / annualSavingsInstall : 0;
                         paybackYears = year - 1 + Math.max(0, Math.min(1, fractionOfYear));
                     }
+
+                    timelineLabels.push(`Ano ${year}`);
+                    installationSavingsSeries.push(cumulativeInstallSavings);
+                    rentalSavingsSeries.push(cumulativeRentalSavings);
                 }
 
                 const totalBaseCost = cumulativeBase;
@@ -587,13 +672,15 @@
                     coverageProgress.setAttribute('aria-valuenow', progressValue.toFixed(0));
                 }
 
-                buildChart({
-                    base: totalBaseCost,
-                    installation: totalInstallCost,
-                    rental: totalRentalCost
-                });
+                if (projectionChart) {
+                    projectionChart.data.labels = timelineLabels.length ? timelineLabels : generateTimelineLabels(defaultTimelineLength);
+                    projectionChart.data.datasets[0].data = installationSavingsSeries.length ? installationSavingsSeries : new Array(defaultTimelineLength).fill(0);
+                    projectionChart.data.datasets[1].data = rentalSavingsSeries.length ? rentalSavingsSeries : new Array(defaultTimelineLength).fill(0);
+                    projectionChart.update();
+                }
             }
 
+            initializeProjectionChart();
             actionButtons.forEach((button) => {
                 button.addEventListener('click', recalculate);
             });
