@@ -6,7 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SolarEnergy.Data;
 using SolarEnergy.Models;
+using SolarEnergy.Services;
 using SolarEnergy.ViewModels;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace SolarEnergy.Controllers
 {
@@ -15,15 +18,18 @@ namespace SolarEnergy.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _context;
+        private readonly ICompanyParametersService _companyParametersService;
 
         public HomeController(
             ILogger<HomeController> logger,
             UserManager<ApplicationUser> userManager,
-            ApplicationDbContext context)
+            ApplicationDbContext context,
+            ICompanyParametersService companyParametersService)
         {
             _logger = logger;
             _userManager = userManager;
             _context = context;
+            _companyParametersService = companyParametersService;
         }
 
         // Páginas públicas
@@ -163,6 +169,22 @@ namespace SolarEnergy.Controllers
         public async Task<IActionResult> Simulation()
         {
             await SetUserTypeInViewData();
+
+            CompanyParameters? companyParameters = null;
+            var user = await _userManager.GetUserAsync(User);
+            if (user != null && user.UserType == UserType.Company)
+            {
+                companyParameters = await _companyParametersService.GetByCompanyId(user.Id);
+            }
+
+            var jsonOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            };
+
+            ViewBag.CompanyParametersJson = JsonSerializer.Serialize(companyParameters, jsonOptions);
+
             return View();
         }
 

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SolarEnergy.Data;
 using SolarEnergy.Models;
+using SolarEnergy.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +35,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.AddScoped<ICompanyParametersService, CompanyParametersService>();
 
 // Cookie configuration
 builder.Services.ConfigureApplicationCookie(options =>
