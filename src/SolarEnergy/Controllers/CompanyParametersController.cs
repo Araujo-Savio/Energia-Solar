@@ -49,7 +49,7 @@ namespace SolarEnergy.Controllers
                 companyId = companyUser.Id;
 
                 var parameters = await _context.CompanyParameters
-                    .FirstOrDefaultAsync(p => p.CompanyId == companyId);
+                    .SingleOrDefaultAsync(p => p.CompanyId == companyId);
 
                 if (parameters is null)
                 {
@@ -61,7 +61,7 @@ namespace SolarEnergy.Controllers
                     _context.CompanyParameters.Add(parameters);
                 }
 
-                parameters.PricePerKwp = ClampNonNegative(input.PricePerKwp);
+                parameters.PricePerKwp = ClampNonNegative(input.SystemPricePerKwp);
                 parameters.MaintenancePercent = ClampNonNegative(input.MaintenancePercent);
                 parameters.InstallDiscountPercent = ClampNonNegative(input.InstallDiscountPercent);
                 parameters.RentalFactorPercent = ClampNonNegative(input.RentalFactorPercent);
@@ -69,7 +69,7 @@ namespace SolarEnergy.Controllers
                 parameters.RentalSetupPerKwp = ClampNonNegative(input.RentalSetupPerKwp);
                 parameters.RentalAnnualIncreasePercent = ClampNonNegative(input.RentalAnnualIncreasePercent);
                 parameters.RentalDiscountPercent = ClampNonNegative(input.RentalDiscountPercent);
-                parameters.ConsumptionPerKwp = Math.Max(1m, input.ConsumptionPerKwp);
+                parameters.ConsumptionPerKwp = ClampNonNegative(input.ConsumptionPerKwp);
                 parameters.MinSystemSizeKwp = ClampNonNegative(input.MinSystemSizeKwp);
                 parameters.UpdatedAt = DateTime.UtcNow;
 
@@ -89,7 +89,7 @@ namespace SolarEnergy.Controllers
         {
             return new CompanyParametersInputModel
             {
-                PricePerKwp = parameters.PricePerKwp,
+                SystemPricePerKwp = parameters.PricePerKwp,
                 MaintenancePercent = parameters.MaintenancePercent,
                 InstallDiscountPercent = parameters.InstallDiscountPercent,
                 RentalFactorPercent = parameters.RentalFactorPercent,

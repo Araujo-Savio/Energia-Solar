@@ -2,15 +2,15 @@ namespace SolarEnergy.ViewModels
 {
     public class CompanyParametersInputModel
     {
-        public decimal PricePerKwp { get; set; } = 4200m;
-        public decimal MaintenancePercent { get; set; } = 1.2m;
-        public decimal InstallDiscountPercent { get; set; } = 4m;
-        public decimal RentalFactorPercent { get; set; } = 68m;
-        public decimal RentalMinMonthly { get; set; } = 250m;
-        public decimal RentalSetupPerKwp { get; set; } = 150m;
-        public decimal RentalAnnualIncreasePercent { get; set; } = 4.5m;
-        public decimal RentalDiscountPercent { get; set; } = 15m;
-        public decimal ConsumptionPerKwp { get; set; } = 120m;
-        public decimal MinSystemSizeKwp { get; set; } = 2.5m;
+        public decimal SystemPricePerKwp { get; set; }
+        public decimal MaintenancePercent { get; set; }
+        public decimal InstallDiscountPercent { get; set; }
+        public decimal RentalFactorPercent { get; set; }
+        public decimal RentalMinMonthly { get; set; }
+        public decimal RentalSetupPerKwp { get; set; }
+        public decimal RentalAnnualIncreasePercent { get; set; }
+        public decimal RentalDiscountPercent { get; set; }
+        public decimal ConsumptionPerKwp { get; set; }
+        public decimal MinSystemSizeKwp { get; set; }
     }
 }
