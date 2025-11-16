@@ -19,12 +19,18 @@
             <div class="col-xxl-4 col-lg-5">
                 <div class="solar-card h-100">
                     <div class="d-flex align-items-center justify-content-between mb-3">
-                        <h5 class="solar-card-title mb-0">Métricas de Economia</h5>
+                        <div class="d-flex align-items-center gap-2">
+                            <h5 class="solar-card-title mb-0">Métricas de Economia</h5>
+                            <button type="button"
+                                    class="btn btn-link p-0 ms-1 text-muted small"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="top"
+                                    title="Nesse campo, insira as métricas básicas para alimentar o simulador: consumo médio da rede, índice de cobertura desejado, horizonte de tempo e inflação anual da tarifa. Você também pode informar o desconto aplicado em contratos de aluguel para refletir o benefício na conta.">
+                                <i class="fas fa-info-circle"></i>
+                            </button>
+                        </div>
                         <span class="badge bg-status-warning text-uppercase small fw-semibold">Base do cálculo</span>
                     </div>
-                    <p class="text-muted small mb-4">
-                        Nesse campo, insira as métricas básicas para alimentar o simulador: consumo médio da rede, índice de cobertura desejado, horizonte de tempo e inflação anual da tarifa. Você também pode informar o desconto aplicado em contratos de aluguel para refletir o benefício na conta.
-                    </p>
                     <div class="simulator-section">
                         <h6 class="simulator-section-title">
                             <i class="fas fa-chart-line me-2 text-solar-orange"></i>Parâmetros básicos
@@ -72,8 +78,16 @@
 
             <div class="col-xxl-5 col-lg-7 d-flex flex-column gap-3">
                 <div class="card shadow-sm p-3" id="projectionCard">
-                    <h5 class="mb-2">Projeção comparativa</h5>
-                    <p class="text-muted small mb-3">Gráfico comparando os cenários ao longo do tempo.</p>
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <h5 class="mb-0">Projeção comparativa</h5>
+                        <button type="button"
+                                class="btn btn-link p-0 ms-1 text-muted small"
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="top"
+                                title="Gráfico comparando os cenários ao longo do tempo.">
+                            <i class="fas fa-info-circle"></i>
+                        </button>
+                    </div>
                     <div style="height: 260px;">
                         <canvas id="projectionChart"></canvas>
                     </div>
@@ -173,9 +187,17 @@
                             <div class="insight-icon bg-solar-blue text-white">
                                 <i class="fas fa-solar-panel"></i>
                             </div>
-                            <div>
-                                <h6 class="mb-1">Instalação própria</h6>
-                                <p class="text-muted small mb-0">Resumo do cenário baseado nos dados informados.</p>
+                            <div class="w-100">
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <h6 class="mb-0">Instalação própria</h6>
+                                    <button type="button"
+                                            class="btn btn-link p-0 ms-1 text-muted small"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-placement="top"
+                                            title="Resumo do cenário baseado nos dados informados.">
+                                        <i class="fas fa-info-circle"></i>
+                                    </button>
+                                </div>
                             </div>
                             <span class="badge bg-status-online" data-sim-output="install-badge">-</span>
                         </div>
@@ -204,9 +226,17 @@
                             <div class="insight-icon bg-solar-orange text-white">
                                 <i class="fas fa-handshake"></i>
                             </div>
-                            <div>
-                                <h6 class="mb-1">Aluguel de energia</h6>
-                                <p class="text-muted small mb-0">Mensalidade fixa e descontos aplicados na conta.</p>
+                            <div class="w-100">
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <h6 class="mb-0">Aluguel de energia</h6>
+                                    <button type="button"
+                                            class="btn btn-link p-0 ms-1 text-muted small"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-placement="top"
+                                            title="Mensalidade fixa e descontos aplicados na conta.">
+                                        <i class="fas fa-info-circle"></i>
+                                    </button>
+                                </div>
                             </div>
                             <span class="badge bg-status-warning" data-sim-output="rental-badge">-</span>
                         </div>
@@ -235,9 +265,17 @@
                             <div class="insight-icon bg-solar-blue text-white">
                                 <i class="fas fa-clipboard-check"></i>
                             </div>
-                            <div>
-                                <h6 class="mb-1">Próximos passos</h6>
-                                <p class="text-muted small mb-0">Utilize estes indicadores para direcionar a proposta ao cliente.</p>
+                            <div class="w-100">
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <h6 class="mb-0">Próximos passos</h6>
+                                    <button type="button"
+                                            class="btn btn-link p-0 ms-1 text-muted small"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-placement="top"
+                                            title="Utilize estes indicadores para direcionar a proposta ao cliente.">
+                                        <i class="fas fa-info-circle"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <ul class="insight-list">
