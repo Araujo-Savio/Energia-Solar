@@ -74,8 +74,11 @@
                 <div class="card shadow-sm p-3" id="projectionCard">
                     <h5 class="mb-2">Projeção comparativa</h5>
                     <p class="text-muted small mb-3">Gráfico comparando os cenários ao longo do tempo.</p>
-                    <canvas id="projectionChart" height="120"></canvas>
+                    <div style="height: 260px;">
+                        <canvas id="projectionChart"></canvas>
+                    </div>
                 </div>
+
                 <div class="solar-card flex-grow-1 d-flex flex-column">
                     <div class="simulator-summary mb-4">
                         <div class="simulator-summary-grid">
@@ -263,7 +266,9 @@
 </div>
 
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" integrity="sha384-MV6cFQhfZc6AtZ1I928PDScdJtba8pI99O2mHaFxN4iAdCKfFsRJg7xvHRvgqBBz" crossorigin="anonymous"></script>
+    <!-- Chart.js (sem integrity para não ser bloqueado) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+
     <script>
         (function () {
             const currencyFormatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -294,6 +299,7 @@
                 fiveYearSavings: document.querySelector('[data-sim-output="five-year-savings"]'),
                 horizonLabel: document.querySelector('[data-sim-output="horizon-label"]')
             };
+
             const coverageProgress = document.querySelector('[data-sim-progress="coverage"]');
             const actionButtons = document.querySelectorAll('[data-sim-action="recalculate"]');
 
@@ -315,6 +321,7 @@
             function initializeProjectionChart() {
                 const canvas = document.getElementById('projectionChart');
                 if (!canvas) return;
+
                 const context = canvas.getContext('2d');
                 if (!context) return;
 
@@ -393,6 +400,7 @@
             function parseInput(inputName) {
                 const element = document.querySelector(`[data-sim-input="${inputName}"]`);
                 if (!element) return 0;
+
                 const value = parseFloat((element.value || '').toString().replace(',', '.'));
                 return Number.isFinite(value) ? value : 0;
             }
@@ -413,20 +421,26 @@
                 if (!Number.isFinite(totalMonths)) {
                     return '-';
                 }
+
                 if (totalMonths < 12) {
                     return `${Math.round(totalMonths)} meses`;
                 }
+
                 const years = Math.floor(totalMonths / 12);
                 const months = Math.round(totalMonths % 12);
+
                 if (months === 0) {
                     return `${years} ${years === 1 ? 'ano' : 'anos'}`;
                 }
+
                 return `${years} ${years === 1 ? 'ano' : 'anos'} e ${months} ${months === 1 ? 'mês' : 'meses'}`;
             }
 
             function updateBadge(element, savings) {
                 if (!element) return;
+
                 element.classList.remove('badge-positive', 'badge-negative');
+
                 if (!Number.isFinite(savings) || Math.abs(savings) < 1) {
                     element.textContent = 'Sem economia';
                     return;
@@ -441,79 +455,13 @@
                 }
             }
 
-            function buildChart(totals) {
-                const canvas = document.getElementById('costComparisonChart');
-                if (!canvas) return;
-                const context = canvas.getContext('2d');
-                if (!context) return;
-
-                const labels = ['Sem energia solar', 'Instalação própria', 'Aluguel de energia'];
-                const dataValues = [totals.base, totals.installation, totals.rental];
-                const backgroundColors = ['#1a2b3d', '#ff6b35', '#2563eb'];
-
-                if (chartInstance) {
-                    chartInstance.data.labels = labels;
-                    chartInstance.data.datasets[0].data = dataValues;
-                    chartInstance.data.datasets[0].backgroundColor = backgroundColors;
-                    chartInstance.update();
-                    return;
-                }
-
-                chartInstance = new Chart(context, {
-                    type: 'bar',
-                    data: {
-                        labels,
-                        datasets: [
-                            {
-                                label: 'Custo total projetado',
-                                data: dataValues,
-                                backgroundColor: backgroundColors,
-                                borderRadius: 12,
-                                maxBarThickness: 64
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        const value = typeof context.parsed.x === 'number' ? context.parsed.x : context.parsed.y;
-                                        return `${context.label}: ${formatCurrency(value)}`;
-                                    }
-                                }
-                            }
-                        },
-                        scales: {
-                            x: {
-                                ticks: {
-                                    callback: (value) => formatCurrency(value)
-                                },
-                                grid: {
-                                    color: 'rgba(26, 43, 61, 0.05)'
-                                }
-                            },
-                            y: {
-                                grid: {
-                                    display: false
-                                }
-                            }
-                        },
-                        indexAxis: 'y'
-                    }
-                });
-            }
-
             function deriveScenarioDefaults(monthlyConsumption, energyTariff) {
                 const safeConsumption = Math.max(monthlyConsumption, 0);
                 const safeTariff = Math.max(energyTariff, 0);
+
                 const monthlyBill = safeConsumption * safeTariff;
                 const systemSizeKw = Math.max(safeConsumption / 120, 2.5);
+
                 const installationCost = systemSizeKw * 4200;
                 const maintenanceAnnual = installationCost * 0.012;
                 const installationIncentive = installationCost * 0.04;
@@ -522,7 +470,7 @@
                 const rentalMonthly = Math.max(monthlyBill * 0.68, 250);
                 const rentalSetup = Math.max(systemSizeKw * 150, 0);
                 const rentalIncreaseRate = 0.045;
-                const rentalDiscountRate = Math.min(0.18, 0.1 + (systemSizeKw / 100));
+                const rentalDiscountRate = Math.min(0.18, 0.1 + systemSizeKw / 100);
 
                 return {
                     installationCost,
@@ -577,6 +525,7 @@
                 let cumulativeRentalSavings = -cumulativeRental;
                 let firstYearInstallSavings = 0;
                 let firstYearRentalSavings = 0;
+
                 const timelineLabels = [];
                 const installationSavingsSeries = [];
                 const rentalSavingsSeries = [];
@@ -597,7 +546,7 @@
                     cumulativeInstall += installCostYear;
 
                     const rentalMonthlyYear = rentalMonthly * Math.pow(1 + rentalIncrease, year - 1);
-                    const rentalDiscountYear = (remainingConsumptionAnnual * tariffWithInflation) * (1 - rentalDiscount);
+                    const rentalDiscountYear = remainingConsumptionAnnual * tariffWithInflation * (1 - rentalDiscount);
                     const rentalCostYear = rentalMonthlyYear * 12 + rentalDiscountYear;
                     cumulativeRental += rentalCostYear;
 
@@ -618,9 +567,14 @@
 
                     cumulativeInstallSavings += annualSavingsInstall;
                     cumulativeRentalSavings += annualSavingsRental;
+
                     if (paybackYears === null && cumulativeInstallSavings >= 0) {
                         const previousSavings = cumulativeInstallSavings - annualSavingsInstall;
-                        const fractionOfYear = annualSavingsInstall > 0 ? (installationCost - installationIncentive - previousSavings) / annualSavingsInstall : 0;
+                        const fractionOfYear =
+                            annualSavingsInstall > 0
+                                ? (installationCost - installationIncentive - previousSavings) / annualSavingsInstall
+                                : 0;
+
                         paybackYears = year - 1 + Math.max(0, Math.min(1, fractionOfYear));
                     }
 
@@ -652,16 +606,29 @@
                 if (outputs.installInvestment) outputs.installInvestment.textContent = formatCurrency(installationCost - installationIncentive);
                 if (outputs.installSavingsTotal) outputs.installSavingsTotal.textContent = formatCurrency(totalInstallSavings);
                 if (outputs.rentalSavingsTotal) outputs.rentalSavingsTotal.textContent = formatCurrency(totalRentalSavings);
-                if (outputs.annualGeneration) outputs.annualGeneration.textContent = Number.isFinite(annualGeneration) ? `${formatNumber(annualGeneration, ' kWh')}` : '-';
+                if (outputs.annualGeneration) {
+                    outputs.annualGeneration.textContent = Number.isFinite(annualGeneration)
+                        ? formatNumber(annualGeneration, ' kWh')
+                        : '-';
+                }
                 if (outputs.coverageLabel) outputs.coverageLabel.textContent = formatPercent(Math.min(coverage, 1));
                 if (outputs.installTime) outputs.installTime.textContent = formatMonths(installationTimeMonths);
-                if (outputs.installPayback) outputs.installPayback.textContent = paybackYears !== null ? formatMonths(paybackYears * 12) : 'Não alcançado';
+                if (outputs.installPayback) {
+                    outputs.installPayback.textContent =
+                        paybackYears !== null ? formatMonths(paybackYears * 12) : 'Não alcançado';
+                }
                 if (outputs.rentalMonthly) outputs.rentalMonthly.textContent = formatCurrency(rentalMonthly);
                 if (outputs.rentalDiscountLabel) outputs.rentalDiscountLabel.textContent = formatPercent(rentalDiscount);
                 if (outputs.annualSavingsAverage) outputs.annualSavingsAverage.textContent = formatCurrency(averageAnnualSavings);
-                if (outputs.paybackResume) outputs.paybackResume.textContent = paybackYears !== null ? formatMonths(paybackYears * 12) : 'Não recupera investimento';
+                if (outputs.paybackResume) {
+                    outputs.paybackResume.textContent =
+                        paybackYears !== null ? formatMonths(paybackYears * 12) : 'Não recupera investimento';
+                }
                 if (outputs.fiveYearSavings) outputs.fiveYearSavings.textContent = formatCurrency(fiveYearSavings);
-                if (outputs.horizonLabel) outputs.horizonLabel.textContent = `${horizonYears} ${horizonYears === 1 ? 'ano' : 'anos'}`;
+                if (outputs.horizonLabel) {
+                    outputs.horizonLabel.textContent =
+                        `${horizonYears} ${horizonYears === 1 ? 'ano' : 'anos'}`;
+                }
 
                 updateBadge(outputs.installBadge, totalInstallSavings);
                 updateBadge(outputs.rentalBadge, totalRentalSavings);
@@ -673,18 +640,28 @@
                 }
 
                 if (projectionChart) {
-                    projectionChart.data.labels = timelineLabels.length ? timelineLabels : generateTimelineLabels(defaultTimelineLength);
-                    projectionChart.data.datasets[0].data = installationSavingsSeries.length ? installationSavingsSeries : new Array(defaultTimelineLength).fill(0);
-                    projectionChart.data.datasets[1].data = rentalSavingsSeries.length ? rentalSavingsSeries : new Array(defaultTimelineLength).fill(0);
+                    const labels = timelineLabels.length ? timelineLabels : generateTimelineLabels(defaultTimelineLength);
+                    const installSeries = installationSavingsSeries.length
+                        ? installationSavingsSeries
+                        : new Array(defaultTimelineLength).fill(0);
+                    const rentalSeries = rentalSavingsSeries.length
+                        ? rentalSavingsSeries
+                        : new Array(defaultTimelineLength).fill(0);
+
+                    projectionChart.data.labels = labels;
+                    projectionChart.data.datasets[0].data = installSeries;
+                    projectionChart.data.datasets[1].data = rentalSeries;
                     projectionChart.update();
                 }
             }
 
             initializeProjectionChart();
+
             actionButtons.forEach((button) => {
                 button.addEventListener('click', recalculate);
             });
 
+            // Estado inicial: gráfico e cards com projeção baseada nos valores default (ou zerados)
             recalculate();
         })();
     </script>
