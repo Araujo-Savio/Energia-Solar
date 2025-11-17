@@ -86,7 +86,7 @@ namespace SolarEnergy.ViewModels
         public string? CompanyWebsite { get; set; }
         public string? CompanyDescription { get; set; }
         public string? Location { get; set; }
-        public SolarServiceType? ServiceType { get; set; }
+        public string ServiceType { get; set; } = "";
         public AdminCompanyStatsViewModel? CompanyStats { get; set; }
         public AdminClientStatsViewModel? ClientStats { get; set; }
     }

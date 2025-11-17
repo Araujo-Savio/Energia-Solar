@@ -136,14 +136,8 @@ namespace SolarEnergy.Controllers
 
             var responseModel = MapToInputModel(existing);
 
-            return new JsonResult(responseModel)
-            {
-                SerializerOptions = new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                }
-            };
-        }
+            return Json(model);}
+            
 
         private static void UpdateEntityFromInputModel(CompanyParameters entity, CompanyParametersInputModel model)
         {

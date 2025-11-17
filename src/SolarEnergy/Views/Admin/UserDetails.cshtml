@@ -141,24 +141,30 @@
                                     <div class="mb-3">
                                         <label class="form-label font-weight-bold text-success">Tipo de Serviço</label>
                                         <p class="mb-0">
-                                            @if (Model.ServiceType.HasValue)
+                                            @if (!string.IsNullOrEmpty(Model.ServiceType))
                                             {
-                                                switch (Model.ServiceType.Value)
+                                                switch (Model.ServiceType)
                                                 {
-                                                    case SolarServiceType.PanelSales:
+                                                    case "PanelSales":
                                                         <span class="badge bg-info">Venda de Painéis</span>
                                                         break;
-                                                    case SolarServiceType.EnergyRental:
+
+                                                    case "EnergyRental":
                                                         <span class="badge bg-warning">Aluguel de Energia</span>
                                                         break;
-                                                    case SolarServiceType.Both:
+
+                                                    case "Both":
                                                         <span class="badge bg-success">Venda e Aluguel</span>
+                                                        break;
+
+                                                    default:
+                                                        <span class="text-muted">Não informado</span>
                                                         break;
                                                 }
                                             }
                                             else
                                             {
-                                                <span>Não informado</span>
+                                                <span class="text-muted">Não informado</span>
                                             }
                                         </p>
                                     </div>

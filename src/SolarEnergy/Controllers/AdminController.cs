@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +19,10 @@ namespace SolarEnergy.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<AdminController> _logger;
 
-        public AdminController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, ILogger<AdminController> logger)
+        public AdminController(
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager,
+            ILogger<AdminController> logger)
         {
             _context = context;
             _userManager = userManager;
@@ -47,6 +54,7 @@ namespace SolarEnergy.Controllers
 
             // Estatísticas mensais dos últimos 6 meses
             var monthlyStats = new List<AdminMonthlyStatViewModel>();
+
             for (int i = 5; i >= 0; i--)
             {
                 var date = DateTime.Now.AddMonths(-i);
@@ -59,8 +67,9 @@ namespace SolarEnergy.Controllers
                     NewUsers = await _context.Users.CountAsync(u => u.CreatedAt >= startDate && u.CreatedAt <= endDate),
                     NewQuotes = await _context.Quotes.CountAsync(q => q.RequestDate >= startDate && q.RequestDate <= endDate),
                     Revenue = await _context.LeadPurchases
-                        .Where(p => p.PurchaseDate >= startDate && p.PurchaseDate <= endDate && 
-                                   (p.PaymentStatus == "Completed" || p.PaymentStatus == "Paid"))
+                        .Where(p => p.PurchaseDate >= startDate &&
+                                    p.PurchaseDate <= endDate &&
+                                    (p.PaymentStatus == "Completed" || p.PaymentStatus == "Paid"))
                         .SumAsync(p => p.TotalAmount)
                 });
             }
@@ -83,6 +92,7 @@ namespace SolarEnergy.Controllers
                     UserId = u.Id
                 })
                 .ToListAsync();
+
             recentActivities.AddRange(newUsers);
 
             // Novos orçamentos
@@ -100,6 +110,7 @@ namespace SolarEnergy.Controllers
                     UserId = q.ClientId
                 })
                 .ToListAsync();
+
             recentActivities.AddRange(newQuotes);
 
             // Novas avaliações
@@ -117,6 +128,7 @@ namespace SolarEnergy.Controllers
                     UserId = r.ReviewerId
                 })
                 .ToListAsync();
+
             recentActivities.AddRange(newReviews);
 
             adminStats.RecentActivities = recentActivities
@@ -135,9 +147,10 @@ namespace SolarEnergy.Controllers
             // Filtros
             if (!string.IsNullOrEmpty(search))
             {
-                query = query.Where(u => u.FullName.Contains(search) || 
-                                        u.Email.Contains(search) || 
-                                        (u.CompanyTradeName != null && u.CompanyTradeName.Contains(search)));
+                query = query.Where(u =>
+                    (u.FullName != null && u.FullName.Contains(search)) ||
+                    (u.Email != null && u.Email.Contains(search)) ||
+                    (u.CompanyTradeName != null && u.CompanyTradeName.Contains(search)));
             }
 
             if (!string.IsNullOrEmpty(userType) && Enum.TryParse<UserType>(userType, out var userTypeEnum))
@@ -190,6 +203,7 @@ namespace SolarEnergy.Controllers
         public async Task<IActionResult> UserDetails(string id)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+
             if (user == null)
             {
                 return NotFound();
@@ -197,23 +211,26 @@ namespace SolarEnergy.Controllers
 
             var model = new AdminUserDetailsViewModel
             {
-                Id = user.Id,
-                FullName = user.FullName,
-                Email = user.Email,
-                Phone = user.Phone,
+                Id = user.Id!,
+                FullName = user.FullName ?? "",
+                Email = user.Email ?? "",
+                Phone = user.Phone ?? "",
                 UserType = user.UserType,
                 IsActive = user.IsActive,
                 CreatedAt = user.CreatedAt,
-                CPF = user.CPF,
-                CNPJ = user.CNPJ,
-                CompanyLegalName = user.CompanyLegalName,
-                CompanyTradeName = user.CompanyTradeName,
-                CompanyPhone = user.CompanyPhone,
-                CompanyWebsite = user.CompanyWebsite,
-                CompanyDescription = user.CompanyDescription,
-                Location = user.Location,
-                ServiceType = user.ServiceType
+                CPF = user.CPF ?? "",
+                CNPJ = user.CNPJ ?? "",
+                CompanyLegalName = user.CompanyLegalName ?? "",
+                CompanyTradeName = user.CompanyTradeName ?? "",
+                CompanyPhone = user.CompanyPhone ?? "",
+                CompanyWebsite = user.CompanyWebsite ?? "",
+                CompanyDescription = user.CompanyDescription ?? "",
+                Location = user.Location ?? "",
+                ServiceType = user.ServiceType?.ToString() ?? ""
+
             };
+
+
 
             // Estatísticas específicas por tipo de usuário
             if (user.UserType == UserType.Company)
@@ -245,6 +262,7 @@ namespace SolarEnergy.Controllers
         public async Task<IActionResult> ToggleUserStatus(string id)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+
             if (user == null)
             {
                 return Json(new { success = false, message = "Usuário não encontrado" });
@@ -253,13 +271,18 @@ namespace SolarEnergy.Controllers
             user.IsActive = !user.IsActive;
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation("Admin {AdminId} {Action} user {UserId}", 
-                (await _userManager.GetUserAsync(User))?.Id, 
-                user.IsActive ? "activated" : "deactivated", 
-                user.Id);
+            var admin = await _userManager.GetUserAsync(User);
 
-            return Json(new { 
-                success = true, 
+            _logger.LogInformation(
+                "Admin {AdminId} {Action} user {UserId}",
+                admin?.Id,
+                user.IsActive ? "activated" : "deactivated",
+                user.Id
+            );
+
+            return Json(new
+            {
+                success = true,
                 message = $"Usuário {(user.IsActive ? "ativado" : "desativado")} com sucesso",
                 isActive = user.IsActive
             });
@@ -274,9 +297,10 @@ namespace SolarEnergy.Controllers
 
             if (!string.IsNullOrEmpty(search))
             {
-                query = query.Where(u => (u.CompanyTradeName != null && u.CompanyTradeName.Contains(search)) ||
-                                        (u.CompanyLegalName != null && u.CompanyLegalName.Contains(search)) ||
-                                        u.Email.Contains(search));
+                query = query.Where(u =>
+                    (u.CompanyTradeName != null && u.CompanyTradeName.Contains(search)) ||
+                    (u.CompanyLegalName != null && u.CompanyLegalName.Contains(search)) ||
+                    (u.Email != null && u.Email.Contains(search)));
             }
 
             if (!string.IsNullOrEmpty(status))
@@ -305,21 +329,23 @@ namespace SolarEnergy.Controllers
                 .Take(pageSize)
                 .ToListAsync();
 
-            var companyViewModels = companies.Select(u => new CompanyViewModel
-            {
-                Id = u.Id,
-                CompanyName = u.CompanyTradeName ?? u.CompanyLegalName ?? u.FullName,
-                Email = u.Email,
-                Phone = u.CompanyPhone,
-                CNPJ = u.CNPJ,
-                City = u.Location?.Split(',').FirstOrDefault()?.Trim() ?? "N/A",
-                State = u.Location?.Split(',').LastOrDefault()?.Trim() ?? "N/A",
-                IsVerified = u.IsActive,
-                IsRejected = false,
-                CreatedAt = u.CreatedAt,
-                AverageRating = null,
-                ReviewCount = 0
-            }).ToList();
+            var companyViewModels = companies
+                .Select(u => new CompanyViewModel
+                {
+                    Id = u.Id,
+                    CompanyName = u.CompanyTradeName ?? u.CompanyLegalName ?? u.FullName,
+                    Email = u.Email,
+                    Phone = u.CompanyPhone,
+                    CNPJ = u.CNPJ,
+                    City = u.Location?.Split(',').FirstOrDefault()?.Trim() ?? "N/A",
+                    State = u.Location?.Split(',').LastOrDefault()?.Trim() ?? "N/A",
+                    IsVerified = u.IsActive,
+                    IsRejected = false,
+                    CreatedAt = u.CreatedAt,
+                    AverageRating = null,
+                    ReviewCount = 0
+                })
+                .ToList();
 
             var model = new AdminCompaniesViewModel
             {
@@ -348,7 +374,9 @@ namespace SolarEnergy.Controllers
         [HttpPost]
         public async Task<IActionResult> VerifyCompany(string id)
         {
-            var company = await _context.Users.FirstOrDefaultAsync(u => u.Id == id && u.UserType == UserType.Company);
+            var company = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == id && u.UserType == UserType.Company);
+
             if (company == null)
             {
                 return Json(new { success = false, message = "Empresa não encontrada" });
@@ -357,13 +385,15 @@ namespace SolarEnergy.Controllers
             company.IsActive = true;
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation("Admin {AdminId} verified company {CompanyId}", 
-                (await _userManager.GetUserAsync(User))?.Id, company.Id);
+            var admin = await _userManager.GetUserAsync(User);
 
-            return Json(new { 
-                success = true, 
-                message = "Empresa verificada com sucesso"
-            });
+            _logger.LogInformation(
+                "Admin {AdminId} verified company {CompanyId}",
+                admin?.Id,
+                company.Id
+            );
+
+            return Json(new { success = true, message = "Empresa verificada com sucesso" });
         }
 
         // Moderação de avaliações
@@ -376,10 +406,11 @@ namespace SolarEnergy.Controllers
 
             if (!string.IsNullOrEmpty(search))
             {
-                query = query.Where(r => r.Comment.Contains(search) ||
-                                        r.Reviewer.FullName.Contains(search) ||
-                                        r.Company.CompanyTradeName.Contains(search) ||
-                                        r.Company.CompanyLegalName.Contains(search));
+                query = query.Where(u =>
+                    (u.Comment != null && u.Comment.Contains(search)) ||
+                    (u.Reviewer.FullName != null && u.Reviewer.FullName.Contains(search)) ||
+                    (u.Company.CompanyTradeName != null && u.Company.CompanyTradeName.Contains(search)) ||
+                    (u.Company.CompanyLegalName != null && u.Company.CompanyLegalName.Contains(search)));
             }
 
             if (rating.HasValue)
@@ -426,6 +457,7 @@ namespace SolarEnergy.Controllers
         public async Task<IActionResult> DeleteReview(int id)
         {
             var review = await _context.CompanyReviews.FirstOrDefaultAsync(r => r.Id == id);
+
             if (review == null)
             {
                 return Json(new { success = false, message = "Avaliação não encontrada" });
@@ -434,13 +466,15 @@ namespace SolarEnergy.Controllers
             _context.CompanyReviews.Remove(review);
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation("Admin {AdminId} deleted review {ReviewId}", 
-                (await _userManager.GetUserAsync(User))?.Id, review.Id);
+            var admin = await _userManager.GetUserAsync(User);
 
-            return Json(new { 
-                success = true, 
-                message = "Avaliação removida com sucesso"
-            });
+            _logger.LogInformation(
+                "Admin {AdminId} deleted review {ReviewId}",
+                admin?.Id,
+                review.Id
+            );
+
+            return Json(new { success = true, message = "Avaliação removida com sucesso" });
         }
 
         // Relatórios melhorados com dados reais
@@ -461,12 +495,13 @@ namespace SolarEnergy.Controllers
 
             // Receita de hoje
             var revenueToday = await _context.LeadPurchases
-                .Where(p => p.PurchaseDate.Date == DateTime.Today && 
-                           (p.PaymentStatus == "Completed" || p.PaymentStatus == "Paid"))
+                .Where(p => p.PurchaseDate.Date == DateTime.Today &&
+                            (p.PaymentStatus == "Completed" || p.PaymentStatus == "Paid"))
                 .SumAsync(p => p.TotalAmount);
 
             // Dados mensais dos últimos 6 meses
             var monthlyData = new List<MonthlyReportData>();
+
             for (int i = 5; i >= 0; i--)
             {
                 var date = DateTime.Now.AddMonths(-i);
@@ -477,8 +512,9 @@ namespace SolarEnergy.Controllers
                     .CountAsync(u => u.CreatedAt >= startDate && u.CreatedAt <= endDate);
 
                 var revenue = await _context.LeadPurchases
-                    .Where(p => p.PurchaseDate >= startDate && p.PurchaseDate <= endDate && 
-                               (p.PaymentStatus == "Completed" || p.PaymentStatus == "Paid"))
+                    .Where(p => p.PurchaseDate >= startDate &&
+                                p.PurchaseDate <= endDate &&
+                                (p.PaymentStatus == "Completed" || p.PaymentStatus == "Paid"))
                     .SumAsync(p => p.TotalAmount);
 
                 monthlyData.Add(new MonthlyReportData
@@ -495,15 +531,16 @@ namespace SolarEnergy.Controllers
                 .ToListAsync();
 
             var topCompanies = new List<TopCompanyData>();
-            
+
             foreach (var company in companyData)
             {
                 var totalSpent = await _context.LeadPurchases
-                    .Where(p => p.CompanyId == company.Id && 
-                               (p.PaymentStatus == "Completed" || p.PaymentStatus == "Paid"))
+                    .Where(p => p.CompanyId == company.Id &&
+                                (p.PaymentStatus == "Completed" || p.PaymentStatus == "Paid"))
                     .SumAsync(p => p.TotalAmount);
-                
-                var quoteCount = await _context.Quotes.CountAsync(q => q.CompanyId == company.Id);
+
+                var quoteCount = await _context.Quotes
+                    .CountAsync(q => q.CompanyId == company.Id);
 
                 if (totalSpent > 0 || quoteCount > 0)
                 {
@@ -536,18 +573,20 @@ namespace SolarEnergy.Controllers
             {
                 var state = group.Key;
                 var companyCount = group.Count();
+
                 var userCount = await _context.Users
-                    .CountAsync(u => u.UserType == UserType.Client && 
-                               !string.IsNullOrEmpty(u.Location) &&
-                               u.Location.Contains(state));
+                    .CountAsync(u => u.UserType == UserType.Client &&
+                                     !string.IsNullOrEmpty(u.Location) &&
+                                     u.Location.Contains(state));
 
                 regionMetricData.Add(new RegionMetricData
                 {
                     State = state,
                     UserCount = userCount,
                     CompanyCount = companyCount,
-                    ConversionRate = userCount > 0 && companyCount > 0 ? 
-                        Math.Round((double)companyCount / userCount * 100, 1) : 0
+                    ConversionRate = userCount > 0 && companyCount > 0
+                        ? Math.Round((double)companyCount / userCount * 100, 1)
+                        : 0
                 });
             }
 
@@ -559,7 +598,7 @@ namespace SolarEnergy.Controllers
                 TotalQuotes = await _context.Quotes.CountAsync(),
                 ClientCount = await _context.Users.CountAsync(u => u.UserType == UserType.Client),
                 CompanyCount = await _context.Users.CountAsync(u => u.UserType == UserType.Company),
-                ActiveUsers = 0, // Placeholder - seria necessário rastreamento de sessão
+                ActiveUsers = 0,    // Placeholder - seria necessário rastreamento de sessão
                 ActiveSessions = 0, // Placeholder - seria necessário rastreamento de sessão
                 QuotesToday = await _context.Quotes.CountAsync(q => q.RequestDate.Date == DateTime.Today),
                 RevenueToday = revenueToday,
@@ -572,7 +611,7 @@ namespace SolarEnergy.Controllers
         }
 
         // Configurações do sistema
-        public async Task<IActionResult> Settings()
+        public IActionResult Settings()
         {
             var model = new AdminSettingsViewModel
             {
