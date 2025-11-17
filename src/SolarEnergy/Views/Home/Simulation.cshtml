@@ -559,7 +559,8 @@
 
             const simulatorRoot = document.querySelector('[data-simulator-root]');
             const isCompanyUser = simulatorRoot?.dataset.companyUser === 'true';
-            const saveCompanyParametersUrl = '@Url.Action("SaveForCurrentCompany", "CompanyParameters")';
+            const saveCompanyParametersUrl = '@Url.Action("Save", "CompanyParameters")';
+
 
             const companyParametersFields = [
                 { id: 'companyPricePerKwp', dataKey: 'system-price-per-kwp', pascalKey: 'SystemPricePerKwp', camelKey: 'systemPricePerKwp', legacyKeys: ['PricePerKwp', 'pricePerKwp'] },
