@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SolarEnergy.Data;
 using SolarEnergy.Models;
+using SolarEnergy.ViewModels;
 using System;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace SolarEnergy.Controllers
@@ -94,6 +96,85 @@ namespace SolarEnergy.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Index");
+        }
+
+        // ===============================
+        // POST: /CompanyParameters/SaveForCurrentCompany
+        // ===============================
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveForCurrentCompany([FromBody] CompanyParametersInputModel model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+                return Unauthorized();
+
+            if (model == null)
+                return BadRequest("Parâmetros inválidos.");
+
+            var existing = await _context.CompanyParameters
+                .FirstOrDefaultAsync(x => x.CompanyId == user.Id);
+
+            if (existing == null)
+            {
+                existing = new CompanyParameters
+                {
+                    CompanyId = user.Id
+                };
+
+                UpdateEntityFromInputModel(existing, model);
+                _context.CompanyParameters.Add(existing);
+            }
+            else
+            {
+                UpdateEntityFromInputModel(existing, model);
+                _context.CompanyParameters.Update(existing);
+            }
+
+            await _context.SaveChangesAsync();
+
+            var responseModel = MapToInputModel(existing);
+
+            return new JsonResult(responseModel)
+            {
+                SerializerOptions = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                }
+            };
+        }
+
+        private static void UpdateEntityFromInputModel(CompanyParameters entity, CompanyParametersInputModel model)
+        {
+            entity.SystemPricePerKwp = model.SystemPricePerKwp;
+            entity.MaintenancePercent = model.MaintenancePercent;
+            entity.InstallDiscountPercent = model.InstallDiscountPercent;
+            entity.RentalFactorPercent = model.RentalFactorPercent;
+            entity.RentalMinMonthly = model.RentalMinMonthly;
+            entity.RentalSetupPerKwp = model.RentalSetupPerKwp;
+            entity.RentalAnnualIncreasePercent = model.RentalAnnualIncreasePercent;
+            entity.RentalDiscountPercent = model.RentalDiscountPercent;
+            entity.ConsumptionPerKwp = model.ConsumptionPerKwp;
+            entity.MinSystemSizeKwp = model.MinSystemSizeKwp;
+            entity.UpdatedAt = DateTime.UtcNow;
+        }
+
+        private static CompanyParametersInputModel MapToInputModel(CompanyParameters parameters)
+        {
+            return new CompanyParametersInputModel
+            {
+                SystemPricePerKwp = parameters.SystemPricePerKwp,
+                MaintenancePercent = parameters.MaintenancePercent,
+                InstallDiscountPercent = parameters.InstallDiscountPercent,
+                RentalFactorPercent = parameters.RentalFactorPercent,
+                RentalMinMonthly = parameters.RentalMinMonthly,
+                RentalSetupPerKwp = parameters.RentalSetupPerKwp,
+                RentalAnnualIncreasePercent = parameters.RentalAnnualIncreasePercent,
+                RentalDiscountPercent = parameters.RentalDiscountPercent,
+                ConsumptionPerKwp = parameters.ConsumptionPerKwp,
+                MinSystemSizeKwp = parameters.MinSystemSizeKwp
+            };
         }
     }
 }
