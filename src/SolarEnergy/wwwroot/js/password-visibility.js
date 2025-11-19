@@ -1,43 +1,70 @@
 (function () {
-    function togglePasswordVisibility(inputId, iconId) {
-        const input = document.getElementById(inputId);
-        const icon = iconId ? document.getElementById(iconId) : null;
+    /**
+     * Resolve an element either via explicit selector stored in the
+     * data attribute or by looking inside the password field wrapper.
+     */
+    function resolveTarget(source, attributeName, fallbackSelector) {
+        const selector = source.getAttribute(attributeName);
+        if (selector) {
+            if (selector.startsWith('#') || selector.startsWith('.') || selector.startsWith('[')) {
+                return document.querySelector(selector);
+            }
+            return document.getElementById(selector);
+        }
 
+        const field = source.closest('[data-password-field]');
+        if (field && fallbackSelector) {
+            return field.querySelector(fallbackSelector);
+        }
+
+        return null;
+    }
+
+    function applyLabel(toggleButton, isHidden) {
+        const label = isHidden ? 'Mostrar senha' : 'Ocultar senha';
+        toggleButton.setAttribute('aria-label', label);
+        toggleButton.setAttribute('title', label);
+        toggleButton.setAttribute('aria-pressed', isHidden ? 'false' : 'true');
+    }
+
+    function togglePasswordVisibility(input, icon, toggleButton) {
         if (!input) {
             return;
         }
 
-        const isHidden = input.type === 'password';
-        input.type = isHidden ? 'text' : 'password';
+        const isHidden = input.getAttribute('type') === 'password';
+        input.setAttribute('type', isHidden ? 'text' : 'password');
 
         if (icon) {
             icon.classList.toggle('fa-eye', !isHidden);
             icon.classList.toggle('fa-eye-slash', isHidden);
         }
 
-        const toggleButton = document.querySelector(
-            `[data-password-toggle][data-password-input="${inputId}"]`
-        );
-
         if (toggleButton) {
-            const label = isHidden ? 'Ocultar senha' : 'Mostrar senha';
-            toggleButton.setAttribute('aria-label', label);
-            toggleButton.setAttribute('title', label);
-            toggleButton.setAttribute('aria-pressed', isHidden ? 'true' : 'false');
+            applyLabel(toggleButton, !isHidden);
         }
     }
 
-    function wireUpPasswordToggles() {
-        document.querySelectorAll('[data-password-toggle]').forEach(button => {
-            const inputId = button.getAttribute('data-password-input');
-            const iconId = button.getAttribute('data-password-icon');
+    function initializeToggle(toggleButton) {
+        const input = resolveTarget(toggleButton, 'data-password-input', '[data-password-input]');
+        const icon = resolveTarget(toggleButton, 'data-password-icon', '[data-password-icon]')
+            || toggleButton.querySelector('[data-password-icon]');
 
-            if (!inputId) {
-                return;
-            }
+        if (!input) {
+            toggleButton.disabled = true;
+            return;
+        }
 
-            button.addEventListener('click', () => togglePasswordVisibility(inputId, iconId));
+        applyLabel(toggleButton, input.getAttribute('type') === 'password');
+
+        toggleButton.addEventListener('click', function (event) {
+            event.preventDefault();
+            togglePasswordVisibility(input, icon, toggleButton);
         });
+    }
+
+    function wireUpPasswordToggles() {
+        document.querySelectorAll('[data-password-toggle]').forEach(initializeToggle);
     }
 
     if (document.readyState === 'loading') {
@@ -46,5 +73,10 @@
         wireUpPasswordToggles();
     }
 
-    window.togglePasswordVisibility = togglePasswordVisibility;
+    // Preserve backwards compatibility in case other scripts call it.
+    window.togglePasswordVisibility = function legacyToggle(inputId, iconSelector) {
+        const input = document.getElementById(inputId);
+        const icon = iconSelector ? document.querySelector(iconSelector) : null;
+        togglePasswordVisibility(input, icon, null);
+    };
 })();

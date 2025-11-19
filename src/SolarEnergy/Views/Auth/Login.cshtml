@@ -12,6 +12,7 @@
     <title>Login - Solar Energy</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/password-fields.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/validation.css" asp-append-version="true" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
@@ -102,31 +103,31 @@
                         <span asp-validation-for="Email" class="text-danger small"></span>
                     </div>
                     
-                    <div class="form-group">
-                        <label asp-for="Password" class="form-label">
+                    <div class="form-group password-field" data-password-field>
+                        <label asp-for="Password" class="form-label password-field-label">
                             <i class="fas fa-lock me-2"></i>Senha
                         </label>
 
-                        <div class="input-wrapper password-wrapper">
+                        <div class="input-wrapper password-wrapper password-field-wrapper">
                             <input asp-for="Password"
                                    class="form-control"
                                    placeholder="Digite sua senha"
                                    type="password"
-                                   required />
+                                   required
+                                   data-password-input />
 
                             <button type="button"
-                                    class="password-toggle"
-                                    data-password-toggle="true"
-                                    data-password-input="Password"
-                                    data-password-icon="loginPasswordIcon"
+                                    class="password-toggle password-field-toggle"
+                                    data-password-toggle
+                                    aria-controls="Password"
                                     aria-label="Mostrar senha"
                                     aria-pressed="false"
                                     title="Mostrar senha">
-                                <i class="fas fa-eye" id="loginPasswordIcon" aria-hidden="true"></i>
+                                <i class="fas fa-eye" id="loginPasswordIcon" aria-hidden="true" data-password-icon></i>
                             </button>
                         </div>
 
-                        <span asp-validation-for="Password" class="text-danger small"></span>
+                        <span asp-validation-for="Password" class="text-danger small password-field-validation"></span>
                     </div>
                     <div class="form-options">
                         <div class="remember-me">
