@@ -240,7 +240,7 @@ namespace SolarEnergy.Controllers
                     _ => error.Description
                 };
                 
-                ModelState.AddModelError(string.Empty, friendlyMessage);
+                ModelState.AddModelError(nameof(RegisterViewModel.Password), friendlyMessage);
             }
 
             return View(model);

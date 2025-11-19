@@ -516,7 +516,8 @@
 .password-field-validation {
     display: block;
     margin-top: 4px;
-    line-height: 1.2;
+    line-height: 1.25;
+    position: static;
 }
 
     /* se por algum motivo vierem duas mensagens seguidas, separa elas */
