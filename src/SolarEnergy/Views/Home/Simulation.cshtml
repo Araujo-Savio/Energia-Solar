@@ -9,35 +9,41 @@
     .simulator-container {
         max-width: 1200px;
         margin: 0 auto;
-        display: flex;
-        flex-direction: column;
+        padding: 0 1rem;
+    }
+
+    .simulator-layout-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
         gap: 1.5rem;
+        align-items: flex-start;
     }
 
     .sim-section {
         width: 100%;
     }
 
-    .sim-inputs .solar-card,
-    .sim-company-params .solar-card,
-    .sim-indicators .solar-card,
-    .sim-next .solar-card {
-        width: 100%;
+    .sim-column-left,
+    .sim-column-right {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
     }
 
     .sim-inputs .solar-card,
     .sim-company-params .solar-card,
     .sim-indicators .solar-card,
-    .sim-results,
     .sim-next .solar-card {
-        max-width: 1100px;
-        margin: 0 auto;
+        width: 100%;
     }
 
     .sim-chart-wrapper {
-        max-width: 900px;
-        margin: 0 auto;
         width: 100%;
+    }
+
+    .sim-chart .chart-wrapper {
+        min-height: 260px;
+        max-height: 380px;
     }
 
     .sim-chart-card {
@@ -46,12 +52,18 @@
 
     .result-cards {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1.25rem;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1rem;
     }
 
     .sim-company-params .company-parameters-card {
         margin-top: 0.75rem;
+    }
+
+    @media (max-width: 992px) {
+        .simulator-layout-grid {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 
@@ -454,355 +466,364 @@
         else
         {
             <div class="simulator-container" data-simulator-root data-company-user="false">
-                <section class="sim-inputs sim-section">
-                    <div class="solar-card">
-                        <div class="d-flex align-items-center justify-content-between mb-3">
-                            <div class="d-flex align-items-center gap-2">
-                                <h5 class="solar-card-title mb-0">Métricas de Economia</h5>
-                                <button type="button"
-                                        class="btn btn-link p-0 ms-1 text-muted small"
-                                        data-bs-toggle="tooltip"
-                                        data-bs-placement="top"
-                                        title="Nesse campo, insira as métricas básicas para alimentar o simulador: consumo médio da rede, índice de cobertura desejado, horizonte de tempo e inflação anual da tarifa. Você também pode informar o desconto aplicado em contratos de aluguel para refletir o benefício na conta.">
-                                    <i class="fas fa-info-circle"></i>
-                                </button>
-                            </div>
-                            <span class="badge bg-status-warning text-uppercase small fw-semibold">Base do cálculo</span>
-                        </div>
-                        <div class="simulator-section">
-                            <h6 class="simulator-section-title">
-                                <i class="fas fa-chart-line me-2 text-solar-orange"></i>Parâmetros básicos
-                            </h6>
-                            <div class="metrics-grid">
-                                <div>
-                                    <label class="form-label" for="monthlyConsumption">Consumo médio mensal (kWh)</label>
-                                    <input id="monthlyConsumption" type="number" min="0" step="1" class="form-control" value="0" data-sim-input="monthly-consumption" />
-                                </div>
-                                <div>
-                                    <label class="form-label" for="energyTariff">Tarifa da energia (R$/kWh)</label>
-                                    <input id="energyTariff" type="number" min="0" step="0.01" class="form-control" value="0.92" data-sim-input="energy-tariff" />
-                                </div>
-                                <div>
-                                    <label class="form-label" for="coverage">Cobertura do sistema (%)</label>
-                                    <input id="coverage" type="number" min="0" max="120" step="1" class="form-control" value="0" data-sim-input="coverage" />
-                                </div>
-                                <div>
-                                    <label class="form-label" for="degradation">Degradação anual do sistema (%)</label>
-                                    <input id="degradation" type="number" min="0" max="5" step="0.1" class="form-control" value="0.7" data-sim-input="degradation" />
-                                </div>
-                                <div>
-                                    <label class="form-label" for="horizon">Horizonte de análise (anos)</label>
-                                    <input id="horizon" type="number" min="0" max="30" step="1" class="form-control" value="0" data-sim-input="horizon" />
-                                </div>
-                                <div>
-                                    <label class="form-label" for="inflation">Inflação anual da tarifa (%)</label>
-                                    <input id="inflation" type="number" min="0" max="25" step="0.1" class="form-control" value="7.5" data-sim-input="inflation" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="alert alert-info mt-4 mb-0 small" role="status">
-                            <i class="fas fa-robot me-2 text-solar-blue"></i>Os custos de instalação e aluguel são estimados automaticamente a partir do consumo informado, considerando padrões médios de mercado.
-                        </div>
-
-                        <button type="button" class="btn btn-solar-orange w-100 mt-4" data-sim-action="recalculate">
-                            <i class="fas fa-rotate me-2"></i>Calcular projeção
-                        </button>
-                        <p class="text-muted small text-center mt-3 mb-0">
-                            Os resultados só são atualizados quando você solicitar o cálculo pelo botão acima.
-                        </p>
-                    </div>
-                </section>
-
-                @if (Model.CompanyParameters is not null && !string.IsNullOrWhiteSpace(Model.SelectedCompanyId))
-                {
-                    <section class="sim-company-params sim-section">
-                        <div class="solar-card company-parameters-card">
-                            <div class="d-flex align-items-center gap-2 mb-3">
-                                <div class="insight-icon bg-solar-blue text-white">
-                                    <i class="fas fa-building"></i>
-                                </div>
-                                <div>
-                                    <h6 class="mb-0">Parâmetros da empresa selecionada</h6>
-                                    <p class="text-muted small mb-0">Valores usados para alimentar os cálculos do simulador.</p>
-                                </div>
-                            </div>
-                            <div class="metrics-grid">
-                                <div>
-                                    <label class="form-label" for="displayPricePerKwp">Preço do sistema por kWp (R$/kWp)</label>
-                                    <input id="displayPricePerKwp" type="number" class="form-control" value="@(Model.CompanyParameters?.SystemPricePerKwp ?? 0)" data-company-param="system-price-per-kwp" readonly />
-                                </div>
-                                <div>
-                                    <label class="form-label" for="displayMaintenance">Manutenção anual (% do investimento)</label>
-                                    <input id="displayMaintenance" type="number" class="form-control" value="@(Model.CompanyParameters?.MaintenancePercent ?? 0)" data-company-param="maintenance-percent" readonly />
-                                </div>
-                                <div>
-                                    <label class="form-label" for="displayInstallDiscount">Desconto na instalação (%)</label>
-                                    <input id="displayInstallDiscount" type="number" class="form-control" value="@(Model.CompanyParameters?.InstallDiscountPercent ?? 0)" data-company-param="install-discount-percent" readonly />
-                                </div>
-                                <div>
-                                    <label class="form-label" for="displayRentalFactor">Fator da mensalidade (% da conta)</label>
-                                    <input id="displayRentalFactor" type="number" class="form-control" value="@(Model.CompanyParameters?.RentalFactorPercent ?? 0)" data-company-param="rental-factor-percent" readonly />
-                                </div>
-                                <div>
-                                    <label class="form-label" for="displayRentalMinMonthly">Mensalidade mínima (R$)</label>
-                                    <input id="displayRentalMinMonthly" type="number" class="form-control" value="@(Model.CompanyParameters?.RentalMinMonthly ?? 0)" data-company-param="rental-min-monthly" readonly />
-                                </div>
-                                <div>
-                                    <label class="form-label" for="displayRentalSetup">Taxa de setup por kWp (R$)</label>
-                                    <input id="displayRentalSetup" type="number" class="form-control" value="@(Model.CompanyParameters?.RentalSetupPerKwp ?? 0)" data-company-param="rental-setup-per-kwp" readonly />
-                                </div>
-                                <div>
-                                    <label class="form-label" for="displayRentalIncrease">Reajuste anual do aluguel (%)</label>
-                                    <input id="displayRentalIncrease" type="number" class="form-control" value="@(Model.CompanyParameters?.RentalAnnualIncreasePercent ?? 0)" data-company-param="rental-annual-increase-percent" readonly />
-                                </div>
-                                <div>
-                                    <label class="form-label" for="displayRentalDiscount">Desconto na conta (%)</label>
-                                    <input id="displayRentalDiscount" type="number" class="form-control" value="@(Model.CompanyParameters?.RentalDiscountPercent ?? 0)" data-company-param="rental-discount-percent" readonly />
-                                </div>
-                                <div>
-                                    <label class="form-label" for="displayConsumption">Consumo mensal por 1 kWp (kWh)</label>
-                                    <input id="displayConsumption" type="number" class="form-control" value="@(Model.CompanyParameters?.ConsumptionPerKwp ?? 0)" data-company-param="consumption-per-kwp" readonly />
-                                </div>
-                                <div>
-                                    <label class="form-label" for="displayMinSystem">Potência mínima do sistema (kWp)</label>
-                                    <input id="displayMinSystem" type="number" class="form-control" value="@(Model.CompanyParameters?.MinSystemSizeKwp ?? 0)" data-company-param="min-system-size-kwp" readonly />
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                }
-
-                <section class="sim-chart sim-section">
-                    <div class="sim-chart-wrapper">
-                        <div class="card shadow-sm p-3 sim-chart-card" id="projectionCard">
-                            <div class="d-flex align-items-center gap-2 mb-3">
-                                <h5 class="mb-0">Projeção comparativa</h5>
-                                <button type="button"
-                                        class="btn btn-link p-0 ms-1 text-muted small"
-                                        data-bs-toggle="tooltip"
-                                        data-bs-placement="top"
-                                        title="Gráfico comparando os cenários ao longo do tempo.">
-                                    <i class="fas fa-info-circle"></i>
-                                </button>
-                            </div>
-                            <div style="height: 260px;">
-                                <canvas id="projectionChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="sim-indicators sim-section">
-                    <div class="solar-card d-flex flex-column">
-                        <div class="simulator-summary mb-4">
-                            <div class="simulator-summary-grid">
-                                <div>
-                                    <div class="summary-label-row">
-                                        <span class="label">Custo sem energia solar</span>
-                                        <button type="button" class="summary-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Conta projetada para o horizonte escolhido" aria-label="Conta projetada para o horizonte escolhido">
-                                            <i class="fas fa-info"></i>
-                                        </button>
-                                    </div>
-                                    <strong class="value text-solar-blue" data-sim-output="base-total">-</strong>
-                                </div>
-                                <div>
-                                    <div class="summary-label-row">
-                                        <span class="label">Investimento com instalação</span>
-                                        <button type="button" class="summary-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Inclui obra, manutenção e incentivos" aria-label="Inclui obra, manutenção e incentivos">
-                                            <i class="fas fa-info"></i>
-                                        </button>
-                                    </div>
-                                    <strong class="value text-solar-orange" data-sim-output="install-total">-</strong>
-                                </div>
-                                <div>
-                                    <div class="summary-label-row">
-                                        <span class="label">Custo com aluguel</span>
-                                        <button type="button" class="summary-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Mensalidade e energia residual consideradas" aria-label="Mensalidade e energia residual consideradas">
-                                            <i class="fas fa-info"></i>
-                                        </button>
-                                    </div>
-                                    <strong class="value text-solar-orange" data-sim-output="rental-total">-</strong>
-                                </div>
-                                <div>
-                                    <div class="summary-label-row">
-                                        <span class="label">Economia com instalação</span>
-                                        <button type="button" class="summary-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Diferença em relação à conta sem solar" aria-label="Diferença em relação à conta sem solar">
-                                            <i class="fas fa-info"></i>
-                                        </button>
-                                    </div>
-                                    <strong class="value text-success" data-sim-output="install-savings">-</strong>
-                                </div>
-                                <div>
-                                    <div class="summary-label-row">
-                                        <span class="label">Economia com aluguel</span>
-                                        <button type="button" class="summary-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Inclui descontos informados" aria-label="Inclui descontos informados">
-                                            <i class="fas fa-info"></i>
-                                        </button>
-                                    </div>
-                                    <strong class="value text-success" data-sim-output="rental-savings">-</strong>
-                                </div>
-                                <div>
-                                    <div class="summary-label-row">
-                                        <span class="label">Energia gerada anualmente</span>
-                                        <button type="button" class="summary-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Considerando a cobertura informada" aria-label="Considerando a cobertura informada">
-                                            <i class="fas fa-info"></i>
-                                        </button>
-                                    </div>
-                                    <strong class="value" data-sim-output="annual-generation">-</strong>
-                                </div>
-                            </div>
-
-                            <div class="simulator-coverage mt-4">
-                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <span class="label">Cobertura estimada da conta</span>
-                                    <strong class="value" data-sim-output="coverage-label">-</strong>
-                                </div>
-                                <div class="progress simulator-progress">
-                                    <div class="progress-bar" role="progressbar" style="width: 0%;" data-sim-progress="coverage" aria-valuemin="0" aria-valuemax="120"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="simulator-hints mt-auto pt-4">
-                            <div class="hint-item">
-                                <i class="fas fa-info-circle text-solar-orange me-2"></i>
-                                <span class="text-muted small">
-                                    Tempo total que será gasto com a instalação: <strong data-sim-output="install-time">-</strong>. Esse período é considerado antes do início da economia projetada.
-                                </span>
-                            </div>
-                            <div class="hint-item">
-                                <i class="fas fa-leaf text-success me-2"></i>
-                                <span class="text-muted small">
-                                    Utilize as métricas acima para testar cenários diferentes. Os resultados podem ser exportados pela equipe comercial através do painel de relatórios.
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="sim-results sim-section">
-                    <div class="result-cards">
-                        <div class="solar-card insight-card">
-                            <div class="insight-header">
-                                <div class="insight-icon bg-solar-blue text-white">
-                                    <i class="fas fa-solar-panel"></i>
-                                </div>
-                                <div class="w-100">
-                                    <div class="d-flex align-items-center gap-2 mb-1">
-                                        <h6 class="mb-0">Instalação própria</h6>
+                <div class="simulator-layout-grid">
+                    <div class="sim-column-left">
+                        <section class="sim-inputs sim-section">
+                            <div class="solar-card">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <h5 class="solar-card-title mb-0">Métricas de Economia</h5>
                                         <button type="button"
                                                 class="btn btn-link p-0 ms-1 text-muted small"
                                                 data-bs-toggle="tooltip"
                                                 data-bs-placement="top"
-                                                title="Resumo do cenário baseado nos dados informados.">
+                                                title="Nesse campo, insira as métricas básicas para alimentar o simulador: consumo médio da rede, índice de cobertura desejado, horizonte de tempo e inflação anual da tarifa. Você também pode informar o desconto aplicado em contratos de aluguel para refletir o benefício na conta.">
                                             <i class="fas fa-info-circle"></i>
                                         </button>
                                     </div>
+                                    <span class="badge bg-status-warning text-uppercase small fw-semibold">Base do cálculo</span>
                                 </div>
-                                <span class="badge bg-status-online" data-sim-output="install-badge">-</span>
-                            </div>
-                            <ul class="insight-list">
-                                <li>
-                                    <span>Investimento inicial</span>
-                                    <strong data-sim-output="install-investment">-</strong>
-                                </li>
-                                <li>
-                                    <span>Economia mensal estimada</span>
-                                    <strong data-sim-output="install-monthly-savings">-</strong>
-                                </li>
-                                <li>
-                                    <span>Economia total no horizonte</span>
-                                    <strong data-sim-output="install-savings-total">-</strong>
-                                </li>
-                                <li>
-                                    <span>Payback estimado</span>
-                                    <strong data-sim-output="install-payback">-</strong>
-                                </li>
-                            </ul>
-                        </div>
+                                <div class="simulator-section">
+                                    <h6 class="simulator-section-title">
+                                        <i class="fas fa-chart-line me-2 text-solar-orange"></i>Parâmetros básicos
+                                    </h6>
+                                    <div class="metrics-grid">
+                                        <div>
+                                            <label class="form-label" for="monthlyConsumption">Consumo médio mensal (kWh)</label>
+                                            <input id="monthlyConsumption" type="number" min="0" step="1" class="form-control" value="0" data-sim-input="monthly-consumption" />
+                                        </div>
+                                        <div>
+                                            <label class="form-label" for="energyTariff">Tarifa da energia (R$/kWh)</label>
+                                            <input id="energyTariff" type="number" min="0" step="0.01" class="form-control" value="0.92" data-sim-input="energy-tariff" />
+                                        </div>
+                                        <div>
+                                            <label class="form-label" for="coverage">Cobertura do sistema (%)</label>
+                                            <input id="coverage" type="number" min="0" max="120" step="1" class="form-control" value="0" data-sim-input="coverage" />
+                                        </div>
+                                        <div>
+                                            <label class="form-label" for="degradation">Degradação anual do sistema (%)</label>
+                                            <input id="degradation" type="number" min="0" max="5" step="0.1" class="form-control" value="0.7" data-sim-input="degradation" />
+                                        </div>
+                                        <div>
+                                            <label class="form-label" for="horizon">Horizonte de análise (anos)</label>
+                                            <input id="horizon" type="number" min="0" max="30" step="1" class="form-control" value="0" data-sim-input="horizon" />
+                                        </div>
+                                        <div>
+                                            <label class="form-label" for="inflation">Inflação anual da tarifa (%)</label>
+                                            <input id="inflation" type="number" min="0" max="25" step="0.1" class="form-control" value="7.5" data-sim-input="inflation" />
+                                        </div>
+                                    </div>
+                                </div>
 
-                        <div class="solar-card insight-card">
-                            <div class="insight-header">
-                                <div class="insight-icon bg-solar-orange text-white">
-                                    <i class="fas fa-handshake"></i>
+                                <div class="alert alert-info mt-4 mb-0 small" role="status">
+                                    <i class="fas fa-robot me-2 text-solar-blue"></i>Os custos de instalação e aluguel são estimados automaticamente a partir do consumo informado, considerando padrões médios de mercado.
                                 </div>
-                                <div class="w-100">
-                                    <div class="d-flex align-items-center gap-2 mb-1">
-                                        <h6 class="mb-0">Aluguel de energia</h6>
+
+                                <button type="button" class="btn btn-solar-orange w-100 mt-4" data-sim-action="recalculate">
+                                    <i class="fas fa-rotate me-2"></i>Calcular projeção
+                                </button>
+                                <p class="text-muted small text-center mt-3 mb-0">
+                                    Os resultados só são atualizados quando você solicitar o cálculo pelo botão acima.
+                                </p>
+                            </div>
+                        </section>
+
+                        @if (Model.CompanyParameters is not null && !string.IsNullOrWhiteSpace(Model.SelectedCompanyId))
+                        {
+                            <section class="sim-company-params sim-section">
+                                <div class="solar-card company-parameters-card">
+                                    <div class="d-flex align-items-center gap-2 mb-3">
+                                        <div class="insight-icon bg-solar-blue text-white">
+                                            <i class="fas fa-building"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0">Parâmetros da empresa selecionada</h6>
+                                            <p class="text-muted small mb-0">Valores usados para alimentar os cálculos do simulador.</p>
+                                        </div>
+                                    </div>
+                                    <div class="metrics-grid">
+                                        <div>
+                                            <label class="form-label" for="displayPricePerKwp">Preço do sistema por kWp (R$/kWp)</label>
+                                            <input id="displayPricePerKwp" type="number" class="form-control" value="@(Model.CompanyParameters?.SystemPricePerKwp ?? 0)" data-company-param="system-price-per-kwp" readonly />
+                                        </div>
+                                        <div>
+                                            <label class="form-label" for="displayMaintenance">Manutenção anual (% do investimento)</label>
+                                            <input id="displayMaintenance" type="number" class="form-control" value="@(Model.CompanyParameters?.MaintenancePercent ?? 0)" data-company-param="maintenance-percent" readonly />
+                                        </div>
+                                        <div>
+                                            <label class="form-label" for="displayInstallDiscount">Desconto na instalação (%)</label>
+                                            <input id="displayInstallDiscount" type="number" class="form-control" value="@(Model.CompanyParameters?.InstallDiscountPercent ?? 0)" data-company-param="install-discount-percent" readonly />
+                                        </div>
+                                        <div>
+                                            <label class="form-label" for="displayRentalFactor">Fator da mensalidade (% da conta)</label>
+                                            <input id="displayRentalFactor" type="number" class="form-control" value="@(Model.CompanyParameters?.RentalFactorPercent ?? 0)" data-company-param="rental-factor-percent" readonly />
+                                        </div>
+                                        <div>
+                                            <label class="form-label" for="displayRentalMinMonthly">Mensalidade mínima (R$)</label>
+                                            <input id="displayRentalMinMonthly" type="number" class="form-control" value="@(Model.CompanyParameters?.RentalMinMonthly ?? 0)" data-company-param="rental-min-monthly" readonly />
+                                        </div>
+                                        <div>
+                                            <label class="form-label" for="displayRentalSetup">Taxa de setup por kWp (R$)</label>
+                                            <input id="displayRentalSetup" type="number" class="form-control" value="@(Model.CompanyParameters?.RentalSetupPerKwp ?? 0)" data-company-param="rental-setup-per-kwp" readonly />
+                                        </div>
+                                        <div>
+                                            <label class="form-label" for="displayRentalIncrease">Reajuste anual do aluguel (%)</label>
+                                            <input id="displayRentalIncrease" type="number" class="form-control" value="@(Model.CompanyParameters?.RentalAnnualIncreasePercent ?? 0)" data-company-param="rental-annual-increase-percent" readonly />
+                                        </div>
+                                        <div>
+                                            <label class="form-label" for="displayRentalDiscount">Desconto na conta (%)</label>
+                                            <input id="displayRentalDiscount" type="number" class="form-control" value="@(Model.CompanyParameters?.RentalDiscountPercent ?? 0)" data-company-param="rental-discount-percent" readonly />
+                                        </div>
+                                        <div>
+                                            <label class="form-label" for="displayConsumption">Consumo mensal por 1 kWp (kWh)</label>
+                                            <input id="displayConsumption" type="number" class="form-control" value="@(Model.CompanyParameters?.ConsumptionPerKwp ?? 0)" data-company-param="consumption-per-kwp" readonly />
+                                        </div>
+                                        <div>
+                                            <label class="form-label" for="displayMinSystem">Potência mínima do sistema (kWp)</label>
+                                            <input id="displayMinSystem" type="number" class="form-control" value="@(Model.CompanyParameters?.MinSystemSizeKwp ?? 0)" data-company-param="min-system-size-kwp" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        }
+                    </div>
+
+                    <div class="sim-column-right">
+                        <section class="sim-chart sim-section">
+                            <div class="sim-chart-wrapper">
+                                <div class="card shadow-sm p-3 sim-chart-card" id="projectionCard">
+                                    <div class="d-flex align-items-center gap-2 mb-3">
+                                        <h5 class="mb-0">Projeção comparativa</h5>
                                         <button type="button"
                                                 class="btn btn-link p-0 ms-1 text-muted small"
                                                 data-bs-toggle="tooltip"
                                                 data-bs-placement="top"
-                                                title="Mensalidade fixa e descontos aplicados na conta.">
+                                                title="Gráfico comparando os cenários ao longo do tempo.">
                                             <i class="fas fa-info-circle"></i>
                                         </button>
                                     </div>
+                                    <div class="chart-container" style="height: 300px;">
+                                        <div class="chart-wrapper">
+                                            <canvas id="projectionChart"></canvas>
+                                        </div>
+                                    </div>
                                 </div>
-                                <span class="badge bg-status-warning" data-sim-output="rental-badge">-</span>
                             </div>
-                            <ul class="insight-list">
-                                <li>
-                                    <span>Mensalidade inicial</span>
-                                    <strong data-sim-output="rental-monthly">-</strong>
-                                </li>
-                                <li>
-                                    <span>Economia mensal estimada</span>
-                                    <strong data-sim-output="rental-monthly-savings">-</strong>
-                                </li>
-                                <li>
-                                    <span>Economia total no horizonte</span>
-                                    <strong data-sim-output="rental-savings-total">-</strong>
-                                </li>
-                                <li>
-                                    <span>Desconto aplicado na conta</span>
-                                    <strong data-sim-output="rental-discount-label">-</strong>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </section>
+                        </section>
 
-                <section class="sim-next sim-section">
-                    <div class="solar-card insight-card">
-                        <div class="insight-header">
-                            <div class="insight-icon bg-solar-blue text-white">
-                                <i class="fas fa-clipboard-check"></i>
-                            </div>
-                            <div class="w-100">
-                                <div class="d-flex align-items-center gap-2 mb-1">
-                                    <h6 class="mb-0">Próximos passos</h6>
-                                    <button type="button"
-                                            class="btn btn-link p-0 ms-1 text-muted small"
-                                            data-bs-toggle="tooltip"
-                                            data-bs-placement="top"
-                                            title="Utilize estes indicadores para direcionar a proposta ao cliente.">
-                                        <i class="fas fa-info-circle"></i>
-                                    </button>
+                        <section class="sim-indicators sim-section">
+                            <div class="solar-card d-flex flex-column">
+                                <div class="simulator-summary mb-4">
+                                    <div class="simulator-summary-grid">
+                                        <div>
+                                            <div class="summary-label-row">
+                                                <span class="label">Custo sem energia solar</span>
+                                                <button type="button" class="summary-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Conta projetada para o horizonte escolhido" aria-label="Conta projetada para o horizonte escolhido">
+                                                    <i class="fas fa-info"></i>
+                                                </button>
+                                            </div>
+                                            <strong class="value text-solar-blue" data-sim-output="base-total">-</strong>
+                                        </div>
+                                        <div>
+                                            <div class="summary-label-row">
+                                                <span class="label">Investimento com instalação</span>
+                                                <button type="button" class="summary-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Inclui obra, manutenção e incentivos" aria-label="Inclui obra, manutenção e incentivos">
+                                                    <i class="fas fa-info"></i>
+                                                </button>
+                                            </div>
+                                            <strong class="value text-solar-orange" data-sim-output="install-total">-</strong>
+                                        </div>
+                                        <div>
+                                            <div class="summary-label-row">
+                                                <span class="label">Custo com aluguel</span>
+                                                <button type="button" class="summary-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Mensalidade e energia residual consideradas" aria-label="Mensalidade e energia residual consideradas">
+                                                    <i class="fas fa-info"></i>
+                                                </button>
+                                            </div>
+                                            <strong class="value text-solar-orange" data-sim-output="rental-total">-</strong>
+                                        </div>
+                                        <div>
+                                            <div class="summary-label-row">
+                                                <span class="label">Economia com instalação</span>
+                                                <button type="button" class="summary-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Diferença em relação à conta sem solar" aria-label="Diferença em relação à conta sem solar">
+                                                    <i class="fas fa-info"></i>
+                                                </button>
+                                            </div>
+                                            <strong class="value text-success" data-sim-output="install-savings">-</strong>
+                                        </div>
+                                        <div>
+                                            <div class="summary-label-row">
+                                                <span class="label">Economia com aluguel</span>
+                                                <button type="button" class="summary-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Inclui descontos informados" aria-label="Inclui descontos informados">
+                                                    <i class="fas fa-info"></i>
+                                                </button>
+                                            </div>
+                                            <strong class="value text-success" data-sim-output="rental-savings">-</strong>
+                                        </div>
+                                        <div>
+                                            <div class="summary-label-row">
+                                                <span class="label">Energia gerada anualmente</span>
+                                                <button type="button" class="summary-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Considerando a cobertura informada" aria-label="Considerando a cobertura informada">
+                                                    <i class="fas fa-info"></i>
+                                                </button>
+                                            </div>
+                                            <strong class="value" data-sim-output="annual-generation">-</strong>
+                                        </div>
+                                    </div>
+
+                                    <div class="simulator-coverage mt-4">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <span class="label">Cobertura estimada da conta</span>
+                                            <strong class="value" data-sim-output="coverage-label">-</strong>
+                                        </div>
+                                        <div class="progress simulator-progress">
+                                            <div class="progress-bar" role="progressbar" style="width: 0%;" data-sim-progress="coverage" aria-valuemin="0" aria-valuemax="120"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="simulator-hints mt-auto pt-4">
+                                    <div class="hint-item">
+                                        <i class="fas fa-info-circle text-solar-orange me-2"></i>
+                                        <span class="text-muted small">
+                                            Tempo total que será gasto com a instalação: <strong data-sim-output="install-time">-</strong>. Esse período é considerado antes do início da economia projetada.
+                                        </span>
+                                    </div>
+                                    <div class="hint-item">
+                                        <i class="fas fa-leaf text-success me-2"></i>
+                                        <span class="text-muted small">
+                                            Utilize as métricas acima para testar cenários diferentes. Os resultados podem ser exportados pela equipe comercial através do painel de relatórios.
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <ul class="insight-list">
-                            <li>
-                                <span>Economia média anual</span>
-                                <strong data-sim-output="annual-savings-average">-</strong>
-                            </li>
-                            <li>
-                                <span>Investimento recuperado em</span>
-                                <strong data-sim-output="payback-resume">-</strong>
-                            </li>
-                            <li>
-                                <span>Economia acumulada em 5 anos</span>
-                                <strong data-sim-output="five-year-savings">-</strong>
-                            </li>
-                            <li>
-                                <span>Horizonte analisado</span>
-                                <strong data-sim-output="horizon-label">-</strong>
-                            </li>
-                        </ul>
+                        </section>
+
+                        <section class="sim-results sim-section">
+                            <div class="result-cards">
+                                <div class="solar-card insight-card">
+                                    <div class="insight-header">
+                                        <div class="insight-icon bg-solar-blue text-white">
+                                            <i class="fas fa-solar-panel"></i>
+                                        </div>
+                                        <div class="w-100">
+                                            <div class="d-flex align-items-center gap-2 mb-1">
+                                                <h6 class="mb-0">Instalação própria</h6>
+                                                <button type="button"
+                                                        class="btn btn-link p-0 ms-1 text-muted small"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-placement="top"
+                                                        title="Resumo do cenário baseado nos dados informados.">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <span class="badge bg-status-online" data-sim-output="install-badge">-</span>
+                                    </div>
+                                    <ul class="insight-list">
+                                        <li>
+                                            <span>Investimento inicial</span>
+                                            <strong data-sim-output="install-investment">-</strong>
+                                        </li>
+                                        <li>
+                                            <span>Economia mensal estimada</span>
+                                            <strong data-sim-output="install-monthly-savings">-</strong>
+                                        </li>
+                                        <li>
+                                            <span>Economia total no horizonte</span>
+                                            <strong data-sim-output="install-savings-total">-</strong>
+                                        </li>
+                                        <li>
+                                            <span>Payback estimado</span>
+                                            <strong data-sim-output="install-payback">-</strong>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="solar-card insight-card">
+                                    <div class="insight-header">
+                                        <div class="insight-icon bg-solar-orange text-white">
+                                            <i class="fas fa-handshake"></i>
+                                        </div>
+                                        <div class="w-100">
+                                            <div class="d-flex align-items-center gap-2 mb-1">
+                                                <h6 class="mb-0">Aluguel de energia</h6>
+                                                <button type="button"
+                                                        class="btn btn-link p-0 ms-1 text-muted small"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-placement="top"
+                                                        title="Mensalidade fixa e descontos aplicados na conta.">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <span class="badge bg-status-warning" data-sim-output="rental-badge">-</span>
+                                    </div>
+                                    <ul class="insight-list">
+                                        <li>
+                                            <span>Mensalidade inicial</span>
+                                            <strong data-sim-output="rental-monthly">-</strong>
+                                        </li>
+                                        <li>
+                                            <span>Economia mensal estimada</span>
+                                            <strong data-sim-output="rental-monthly-savings">-</strong>
+                                        </li>
+                                        <li>
+                                            <span>Economia total no horizonte</span>
+                                            <strong data-sim-output="rental-savings-total">-</strong>
+                                        </li>
+                                        <li>
+                                            <span>Desconto aplicado na conta</span>
+                                            <strong data-sim-output="rental-discount-label">-</strong>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="sim-next sim-section">
+                            <div class="solar-card insight-card">
+                                <div class="insight-header">
+                                    <div class="insight-icon bg-solar-blue text-white">
+                                        <i class="fas fa-clipboard-check"></i>
+                                    </div>
+                                    <div class="w-100">
+                                        <div class="d-flex align-items-center gap-2 mb-1">
+                                            <h6 class="mb-0">Próximos passos</h6>
+                                            <button type="button"
+                                                    class="btn btn-link p-0 ms-1 text-muted small"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="top"
+                                                    title="Utilize estes indicadores para direcionar a proposta ao cliente.">
+                                                <i class="fas fa-info-circle"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ul class="insight-list">
+                                    <li>
+                                        <span>Economia média anual</span>
+                                        <strong data-sim-output="annual-savings-average">-</strong>
+                                    </li>
+                                    <li>
+                                        <span>Investimento recuperado em</span>
+                                        <strong data-sim-output="payback-resume">-</strong>
+                                    </li>
+                                    <li>
+                                        <span>Economia acumulada em 5 anos</span>
+                                        <strong data-sim-output="five-year-savings">-</strong>
+                                    </li>
+                                    <li>
+                                        <span>Horizonte analisado</span>
+                                        <strong data-sim-output="horizon-label">-</strong>
+                                    </li>
+                                </ul>
+                            </div>
+                        </section>
                     </div>
-                </section>
+                </div>
             </div>
+
         }
         </div>
     </div>
