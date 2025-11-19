@@ -1635,6 +1635,37 @@ footer .footer-links a:hover {
   align-items: stretch;
 }
 
+.economy-simulator .simulator-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.economy-simulator .simulator-container section {
+  width: 100%;
+}
+
+.economy-simulator .sim-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.economy-simulator .sim-input-card {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.economy-simulator .simulator-actions {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
 .economy-simulator .simulator-panel {
   padding: 1.75rem;
   display: flex;
@@ -1683,6 +1714,20 @@ footer .footer-links a:hover {
   padding: 0.75rem 1.25rem;
 }
 
+.economy-simulator .sim-chart .chart-container {
+  max-width: 100%;
+}
+
+.economy-simulator .sim-chart-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.economy-simulator .sim-chart-wrapper .chart-wrapper {
+  max-width: 650px;
+  width: 100%;
+}
+
 .economy-simulator .chart-wrapper canvas {
   width: 100% !important;
   height: 100% !important;
@@ -1698,6 +1743,10 @@ footer .footer-links a:hover {
   display: grid;
   gap: 1rem 1.5rem;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.economy-simulator .sim-indicators .simulator-summary-grid {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
 .economy-simulator .simulator-summary-grid .summary-label-row {
@@ -1854,6 +1903,21 @@ footer .footer-links a:hover {
   display: flex;
 }
 
+.economy-simulator .sim-results .result-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  width: 100%;
+}
+
+.economy-simulator .sim-company-params .company-params-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.economy-simulator .sim-next .insight-card {
+  width: 100%;
+}
+
 .economy-simulator .company-parameters-card {
   padding: 1.35rem;
 }
@@ -1873,6 +1937,18 @@ footer .footer-links a:hover {
 
   .economy-simulator .simulator-summary {
     padding: 1.35rem;
+  }
+
+  .economy-simulator .sim-indicators .simulator-summary-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .economy-simulator .sim-results .result-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .economy-simulator .sim-company-params .company-params-grid {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 }
 
