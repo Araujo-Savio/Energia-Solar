@@ -55,6 +55,61 @@
                     </div>
                 </form>
             </div>
+
+            <div class="solar-card mb-4">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <div class="insight-icon bg-solar-blue text-white">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0">Parâmetros da empresa selecionada</h6>
+                        <p class="text-muted small mb-0">Valores usados para alimentar os cálculos do simulador.</p>
+                    </div>
+                </div>
+
+                <div class="metrics-grid">
+                    <div>
+                        <label class="form-label" for="company_pricePerKwp">Preço do sistema por kWp (R$/kWp)</label>
+                        <input id="company_pricePerKwp" type="text" class="form-control" value="0" readonly />
+                    </div>
+                    <div>
+                        <label class="form-label" for="company_annualMaintenancePercent">Manutenção anual (% do investimento)</label>
+                        <input id="company_annualMaintenancePercent" type="text" class="form-control" value="0" readonly />
+                    </div>
+                    <div>
+                        <label class="form-label" for="company_installationDiscountPercent">Desconto na instalação (%)</label>
+                        <input id="company_installationDiscountPercent" type="text" class="form-control" value="0" readonly />
+                    </div>
+                    <div>
+                        <label class="form-label" for="company_monthlyFeeFactorPercent">Fator da mensalidade (% da conta)</label>
+                        <input id="company_monthlyFeeFactorPercent" type="text" class="form-control" value="0" readonly />
+                    </div>
+                    <div>
+                        <label class="form-label" for="company_minimumMonthlyFee">Mensalidade mínima (R$)</label>
+                        <input id="company_minimumMonthlyFee" type="text" class="form-control" value="0" readonly />
+                    </div>
+                    <div>
+                        <label class="form-label" for="company_setupFeePerKwp">Taxa de setup por kWp (R$)</label>
+                        <input id="company_setupFeePerKwp" type="text" class="form-control" value="0" readonly />
+                    </div>
+                    <div>
+                        <label class="form-label" for="company_annualRentAdjustmentPercent">Reajuste anual do aluguel (%)</label>
+                        <input id="company_annualRentAdjustmentPercent" type="text" class="form-control" value="0" readonly />
+                    </div>
+                    <div>
+                        <label class="form-label" for="company_billDiscountPercent">Desconto na conta (%)</label>
+                        <input id="company_billDiscountPercent" type="text" class="form-control" value="0" readonly />
+                    </div>
+                    <div>
+                        <label class="form-label" for="company_monthlyConsumptionPerKwp">Consumo mensal por 1 kWp (kWh)</label>
+                        <input id="company_monthlyConsumptionPerKwp" type="text" class="form-control" value="0" readonly />
+                    </div>
+                    <div>
+                        <label class="form-label" for="company_minimumSystemPowerKwp">Potência mínima do sistema (kWp)</label>
+                        <input id="company_minimumSystemPowerKwp" type="text" class="form-control" value="0" readonly />
+                    </div>
+                </div>
+            </div>
         }
 
         @if (isCompanyUser)
@@ -1616,5 +1671,77 @@
                 button.addEventListener('click', recalculate);
             });
         })();
+
+        @if (!isCompanyUser)
+        {
+            <text>
+        $(function () {
+            const companySelect = $('#SelectedCompanyId');
+            const parameterFields = [
+                { id: 'company_pricePerKwp', keys: ['pricePerKwp', 'PricePerKwp'] },
+                { id: 'company_annualMaintenancePercent', keys: ['annualMaintenancePercent', 'AnnualMaintenancePercent'] },
+                { id: 'company_installationDiscountPercent', keys: ['installationDiscountPercent', 'InstallationDiscountPercent'] },
+                { id: 'company_monthlyFeeFactorPercent', keys: ['monthlyFeeFactorPercent', 'MonthlyFeeFactorPercent'] },
+                { id: 'company_minimumMonthlyFee', keys: ['minimumMonthlyFee', 'MinimumMonthlyFee'] },
+                { id: 'company_setupFeePerKwp', keys: ['setupFeePerKwp', 'SetupFeePerKwp'] },
+                { id: 'company_annualRentAdjustmentPercent', keys: ['annualRentAdjustmentPercent', 'AnnualRentAdjustmentPercent'] },
+                { id: 'company_billDiscountPercent', keys: ['billDiscountPercent', 'BillDiscountPercent'] },
+                { id: 'company_monthlyConsumptionPerKwp', keys: ['monthlyConsumptionPerKwp', 'MonthlyConsumptionPerKwp'] },
+                { id: 'company_minimumSystemPowerKwp', keys: ['minimumSystemPowerKwp', 'MinimumSystemPowerKwp'] }
+            ];
+
+            function formatDecimal(value) {
+                const numericValue = Number(value) || 0;
+                return numericValue.toLocaleString('pt-BR', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            }
+
+            function resetCompanyParametersCard() {
+                parameterFields.forEach(field => {
+                    $(`#${field.id}`).val('0');
+                });
+            }
+
+            function fillCompanyParametersCard(payload) {
+                if (!payload) {
+                    resetCompanyParametersCard();
+                    return;
+                }
+
+                parameterFields.forEach(field => {
+                    const rawValue = field.keys
+                        .map(key => payload[key])
+                        .find(value => value !== undefined && value !== null);
+
+                    $(`#${field.id}`).val(formatDecimal(rawValue ?? 0));
+                });
+            }
+
+            function fetchCompanyParameters(companyId) {
+                if (!companyId) {
+                    resetCompanyParametersCard();
+                    return;
+                }
+
+                $.getJSON(`/Simulation/GetCompanyParameters?companyId=${encodeURIComponent(companyId)}`)
+                    .done(fillCompanyParametersCard)
+                    .fail(resetCompanyParametersCard);
+            }
+
+            companySelect.on('change', function () {
+                fetchCompanyParameters($(this).val());
+            });
+
+            const initialCompanyId = companySelect.val();
+            if (initialCompanyId) {
+                fetchCompanyParameters(initialCompanyId);
+            } else {
+                resetCompanyParametersCard();
+            }
+        });
+            </text>
+        }
     </script>
 }
