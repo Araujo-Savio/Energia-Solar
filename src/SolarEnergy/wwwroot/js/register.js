@@ -225,6 +225,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     const passwordInput = document.getElementById('Password');
+    const passwordStrengthContainer = document.getElementById('passwordStrength');
     if (passwordInput) {
         passwordInput.addEventListener('input', function(e) {
             const password = e.target.value;
@@ -261,15 +262,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 suggestions.push('um caractere especial (!@#$%&*)');
             }
 
-            const existingIndicator = document.querySelector('.password-strength');
-            if (existingIndicator) {
-                existingIndicator.remove();
+            if (!passwordStrengthContainer) {
+                return;
             }
 
-            if (password.length > 0) {
-                const indicator = document.createElement('div');
-                indicator.className = 'password-strength mt-1';
+            passwordStrengthContainer.innerHTML = '';
 
+            if (password.length > 0) {
                 let strengthText = '';
                 let strengthClass = '';
                 let strengthIcon = '';
@@ -308,34 +307,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     suggestionText = `<br><small class="text-muted">Adicione: ${suggestions.join(', ')}</small>`;
                 }
 
-                indicator.innerHTML = `<small class="${strengthClass}"><i class="${strengthIcon} me-1"></i>Força da senha: ${strengthText}${suggestionText}</small>`;
-                passwordInput.parentNode.appendChild(indicator);
-            }
-        });
-    }
-
-    const confirmPasswordInput = document.getElementById('ConfirmPassword');
-    if (confirmPasswordInput && passwordInput) {
-        confirmPasswordInput.addEventListener('input', function(e) {
-            const password = passwordInput.value;
-            const confirmPassword = e.target.value;
-
-            const existingIndicator = document.querySelector('.password-match');
-            if (existingIndicator) {
-                existingIndicator.remove();
-            }
-
-            if (confirmPassword.length > 0) {
-                const indicator = document.createElement('div');
-                indicator.className = 'password-match mt-1';
-
-                if (password === confirmPassword) {
-                    indicator.innerHTML = '<small class="text-success"><i class="fas fa-check me-1"></i>Senhas conferem perfeitamente!</small>';
-                } else {
-                    indicator.innerHTML = '<small class="text-danger"><i class="fas fa-times me-1"></i>As senhas não coincidem</small>';
-                }
-
-                confirmPasswordInput.parentNode.appendChild(indicator);
+                passwordStrengthContainer.innerHTML = `<small class="password-strength ${strengthClass}"><i class="${strengthIcon} me-1"></i>Força da senha: ${strengthText}${suggestionText}</small>`;
             }
         });
     }
