@@ -108,18 +108,19 @@
                             <i class="fas fa-lock me-2"></i>Senha
                         </label>
 
-                        <div class="input-wrapper password-wrapper password-field-wrapper">
+                        <div class="password-wrapper">
                             <input asp-for="Password"
                                    class="form-control"
                                    placeholder="Digite sua senha"
                                    type="password"
-                                   required
-                                   data-password-input />
+                                   autocomplete="current-password"
+                                   required />
 
                             <button type="button"
-                                    class="password-toggle password-field-toggle"
-                                    data-password-toggle
-                                    aria-controls="Password"
+                                    class="password-toggle"
+                                    data-password-toggle="true"
+                                    data-password-input="Password"
+                                    data-password-icon="loginPasswordIcon"
                                     aria-label="Mostrar senha"
                                     aria-pressed="false"
                                     title="Mostrar senha">
@@ -159,6 +160,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/password-visibility.js" asp-append-version="true"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

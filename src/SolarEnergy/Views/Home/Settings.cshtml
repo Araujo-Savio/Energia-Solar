@@ -60,22 +60,22 @@
                             <form asp-action="ChangePassword" method="post" class="settings-form">
                                 <div class="form-group password-field" data-password-field>
                                     <label for="CurrentPassword" class="form-label password-field-label">Senha Atual</label>
-                                    <div class="input-wrapper password-wrapper password-field-wrapper">
+                                    <div class="password-wrapper">
                                         <input name="CurrentPassword"
                                                id="CurrentPassword"
                                                type="password"
                                                class="form-control"
                                                autocomplete="current-password"
-                                               required
-                                               data-password-input />
+                                               required />
                                         <button type="button"
-                                                class="password-toggle password-field-toggle"
-                                                data-password-toggle
-                                                aria-controls="CurrentPassword"
+                                                class="password-toggle"
+                                                data-password-toggle="true"
+                                                data-password-input="CurrentPassword"
+                                                data-password-icon="settingsCurrentPasswordIcon"
                                                 aria-label="Mostrar senha"
                                                 aria-pressed="false"
                                                 title="Mostrar senha">
-                                            <i class="fas fa-eye" aria-hidden="true" data-password-icon></i>
+                                            <i class="fas fa-eye" id="settingsCurrentPasswordIcon" aria-hidden="true" data-password-icon></i>
                                         </button>
                                     </div>
                                     <span class="text-danger small password-field-validation" data-valmsg-for="CurrentPassword"></span>
@@ -84,23 +84,23 @@
                                 <div class="row g-3 password-fields-row">
                                     <div class="col-12 col-md-6 form-group password-field" data-password-field>
                                         <label for="NewPassword" class="form-label password-field-label">Nova Senha</label>
-                                        <div class="input-wrapper password-wrapper password-field-wrapper">
+                                        <div class="password-wrapper">
                                             <input name="NewPassword"
                                                    id="NewPassword"
                                                    type="password"
                                                    class="form-control"
                                                    minlength="6"
                                                    autocomplete="new-password"
-                                                   required
-                                                   data-password-input />
+                                                   required />
                                             <button type="button"
-                                                    class="password-toggle password-field-toggle"
-                                                    data-password-toggle
-                                                    aria-controls="NewPassword"
+                                                    class="password-toggle"
+                                                    data-password-toggle="true"
+                                                    data-password-input="NewPassword"
+                                                    data-password-icon="settingsNewPasswordIcon"
                                                     aria-label="Mostrar senha"
                                                     aria-pressed="false"
                                                     title="Mostrar senha">
-                                                <i class="fas fa-eye" aria-hidden="true" data-password-icon></i>
+                                                <i class="fas fa-eye" id="settingsNewPasswordIcon" aria-hidden="true" data-password-icon></i>
                                             </button>
                                         </div>
                                         <span class="text-danger small password-field-validation" data-valmsg-for="NewPassword"></span>
@@ -109,22 +109,22 @@
 
                                     <div class="col-12 col-md-6 form-group password-field" data-password-field>
                                         <label for="ConfirmPassword" class="form-label password-field-label">Confirmar Nova Senha</label>
-                                        <div class="input-wrapper password-wrapper password-field-wrapper">
+                                        <div class="password-wrapper">
                                             <input name="ConfirmPassword"
                                                    id="ConfirmPassword"
                                                    type="password"
                                                    class="form-control"
                                                    autocomplete="new-password"
-                                                   required
-                                                   data-password-input />
+                                                   required />
                                             <button type="button"
-                                                    class="password-toggle password-field-toggle"
-                                                    data-password-toggle
-                                                    aria-controls="ConfirmPassword"
+                                                    class="password-toggle"
+                                                    data-password-toggle="true"
+                                                    data-password-input="ConfirmPassword"
+                                                    data-password-icon="settingsConfirmPasswordIcon"
                                                     aria-label="Mostrar senha"
                                                     aria-pressed="false"
                                                     title="Mostrar senha">
-                                                <i class="fas fa-eye" aria-hidden="true" data-password-icon></i>
+                                                <i class="fas fa-eye" id="settingsConfirmPasswordIcon" aria-hidden="true" data-password-icon></i>
                                             </button>
                                         </div>
                                         <span class="text-danger small password-field-validation" data-valmsg-for="ConfirmPassword"></span>
