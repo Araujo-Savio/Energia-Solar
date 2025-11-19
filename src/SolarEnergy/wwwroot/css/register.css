@@ -16,7 +16,7 @@
     width: 100vw;
 }
 
-/* Left Side - Light Theme Premium (Informações do Site) */
+/* Left Side - Light Theme Premium (InformaÃ§Ãµes do Site) */
 .register-left-side {
     flex: 1;
     background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
@@ -501,6 +501,17 @@
 .password-input-group .password-toggle:focus {
     outline: none;
     box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.3);
+}
+
+/* Keep validation messages below password inputs */
+.password-input-group + .text-danger {
+    display: block;
+    width: 100%;
+    min-height: 1rem;
+}
+
+.password-input-group + .text-danger:not(:empty) {
+    margin-top: 0.35rem;
 }
 
 /* User Type Sections - No Animation Issues */
