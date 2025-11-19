@@ -1625,6 +1625,47 @@ footer .footer-links a:hover {
    Economy simulator styles
    ======================================== */
 
+.economy-simulator .simulator-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem 1.5rem;
+}
+
+.economy-simulator .simulator-layout-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.economy-simulator .sim-column-left,
+.economy-simulator .sim-column-right {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.economy-simulator .result-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.economy-simulator .sim-chart .chart-container {
+  width: 100%;
+}
+
+.economy-simulator .sim-chart .chart-wrapper {
+  min-height: 260px;
+  max-height: 380px;
+}
+
+@media (max-width: 991.98px) {
+  .economy-simulator .simulator-layout-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .economy-simulator .solar-card {
   border-radius: 16px;
   border: 1px solid rgba(26, 43, 61, 0.08);
