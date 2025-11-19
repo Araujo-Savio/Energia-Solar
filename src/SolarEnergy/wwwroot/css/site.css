@@ -473,6 +473,14 @@ input[type="search"].form-control:focus {
     position: relative;
 }
 
+.password-wrapper .form-control {
+    padding-right: 4.5rem;
+}
+
+.password-wrapper .input-icon {
+    right: 3rem;
+}
+
 .login-form .form-control {
     background: rgba(255, 255, 255, 0.95) !important;
     border: 2px solid rgba(255, 255, 255, 0.3);
@@ -507,6 +515,10 @@ input[type="search"].form-control:focus {
 
 .input-wrapper.focused .input-icon {
     color: var(--solar-orange);
+}
+
+.password-wrapper .password-toggle {
+    right: 0.75rem;
 }
 
 .password-toggle {

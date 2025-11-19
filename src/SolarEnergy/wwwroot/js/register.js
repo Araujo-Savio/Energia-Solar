@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const emailLabel = document.getElementById('emailLabel');
     const fullNameInput = document.getElementById('FullName');
     const emailInput = document.getElementById('Email');
-    const passwordToggles = document.querySelectorAll('.password-toggle');
     const registerForm = document.getElementById('registerForm');
 
     const clientRequiredFields = clientSection ? Array.from(clientSection.querySelectorAll('[data-required-client]')) : [];
