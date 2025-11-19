@@ -272,7 +272,7 @@
 
                             <!-- Password Fields - identical structure to the login form -->
                             <div class="row g-3 password-fields-row">
-                                <div class="col-12 col-md-6 password-field" data-password-field>
+                                <div class="col-12 col-md-6 form-group password-field" data-password-field>
                                     <label asp-for="Password" class="form-label password-field-label">
                                         <i class="fas fa-lock text-solar-orange me-1"></i>Senha
                                     </label>
@@ -297,7 +297,7 @@
                                     </div>
                                     <span asp-validation-for="Password" class="text-danger small password-field-validation"></span>
                                 </div>
-                                <div class="col-12 col-md-6 password-field" data-password-field>
+                                <div class="col-12 col-md-6 form-group password-field" data-password-field>
                                     <label asp-for="ConfirmPassword" class="form-label password-field-label">
                                         <i class="fas fa-lock text-solar-orange me-1"></i>Confirmar Senha
                                     </label>
@@ -364,7 +364,6 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-    <script src="~/js/password-visibility.js" asp-append-version="true"></script>
     <script src="~/js/register.js"></script>
     
     <script>
