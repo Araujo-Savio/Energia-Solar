@@ -258,8 +258,10 @@
 .field-validation-error {
     color: var(--admin-accent);
     font-size: 0.8rem;
-    margin-top: 0.25rem;
+    margin-top: 4px;
     font-weight: 500;
+    display: block;
+    line-height: 1.2;
 }
 
 .field-validation-valid {
