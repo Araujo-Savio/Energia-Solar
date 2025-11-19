@@ -1658,6 +1658,48 @@ footer .footer-links a:hover {
   }
 }
 
+.economy-simulator .simulator-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.economy-simulator .simulator-layout-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 992px) {
+  .economy-simulator .simulator-layout-grid {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
+  }
+}
+
+.economy-simulator .sim-column-left,
+.economy-simulator .sim-column-right {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.economy-simulator .sim-results .result-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.economy-simulator .sim-chart .chart-wrapper {
+  width: 100%;
+  min-height: 260px;
+  max-height: 380px;
+}
+
+.economy-simulator .sim-chart .chart-wrapper canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
 .economy-simulator .chart-wrapper {
   position: relative;
   flex: 1 1 auto;
