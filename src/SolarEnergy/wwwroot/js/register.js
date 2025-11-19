@@ -481,27 +481,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    passwordToggles.forEach(button => {
-        button.addEventListener('click', function() {
-            const target = document.getElementById(button.dataset.target);
-            if (!target) return;
-            const icon = button.querySelector('i');
-            if (target.type === 'password') {
-                target.type = 'text';
-                if (icon) {
-                    icon.classList.remove('fa-eye');
-                    icon.classList.add('fa-eye-slash');
-                }
-            } else {
-                target.type = 'password';
-                if (icon) {
-                    icon.classList.remove('fa-eye-slash');
-                    icon.classList.add('fa-eye');
-                }
-            }
-        });
-    });
-
     if (responsibleNameInput && fullNameInput) {
         responsibleNameInput.addEventListener('blur', function() {
             if (userTypeHidden && userTypeHidden.value === companyValue && !fullNameInput.value.trim()) {
