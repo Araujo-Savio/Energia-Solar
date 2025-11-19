@@ -67,10 +67,10 @@ namespace SolarEnergy.Models
         [Display(Name = "Senha")]
         public string Password { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "A confirmação de senha é obrigatória")]
+        [Required(ErrorMessage = "A confirmação de senha é obrigatória.")]
         [DataType(DataType.Password)]
         [Display(Name = "Confirmar Senha")]
-        [Compare("Password", ErrorMessage = "As senhas não conferem")]
+        [Compare("Password", ErrorMessage = "As senhas não coincidem")]
         public string ConfirmPassword { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Você deve aceitar os termos de uso")]
