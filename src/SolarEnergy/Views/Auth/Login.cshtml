@@ -106,9 +106,22 @@
                         <label asp-for="Password" class="form-label">
                             <i class="fas fa-lock me-2"></i>Senha
                         </label>
-                        <div class="input-wrapper">
-                            <input asp-for="Password" class="form-control" placeholder="Digite sua senha" type="password" required />
-                            <i class="fas fa-lock input-icon"></i>
+                        <div class="input-wrapper has-password-toggle">
+                            <input asp-for="Password" class="form-control" placeholder="Digite sua senha" type="password" required aria-describedby="togglePasswordButton" />
+                            <i class="fas fa-lock input-icon" aria-hidden="true"></i>
+                            <!-- Botão acessível para alternar a visibilidade da senha -->
+                            <button
+                                type="button"
+                                id="togglePasswordButton"
+                                class="password-toggle"
+                                data-password-toggle="true"
+                                data-input-id="Password"
+                                data-icon-id="loginPasswordToggleIcon"
+                                aria-label="Mostrar senha"
+                                aria-pressed="false">
+                                <i id="loginPasswordToggleIcon" class="fas fa-eye" aria-hidden="true"></i>
+                                <span class="visually-hidden">Mostrar senha</span>
+                            </button>
                         </div>
                         <span asp-validation-for="Password" class="text-danger small"></span>
                     </div>
@@ -143,28 +156,10 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/site.js"></script>
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Toggle password visibility
-            const togglePassword = document.getElementById('togglePassword');
-            const passwordField = document.getElementById('Password');
-            const eyeIcon = document.getElementById('eyeIcon');
-            
-            if (togglePassword && passwordField && eyeIcon) {
-                togglePassword.addEventListener('click', function() {
-                    if (passwordField.type === 'password') {
-                        passwordField.type = 'text';
-                        eyeIcon.classList.remove('fa-eye');
-                        eyeIcon.classList.add('fa-eye-slash');
-                    } else {
-                        passwordField.type = 'password';
-                        eyeIcon.classList.remove('fa-eye-slash');
-                        eyeIcon.classList.add('fa-eye');
-                    }
-                });
-            }
-            
             // Loading state on form submit
             const loginForm = document.getElementById('loginForm');
             if (loginForm) {

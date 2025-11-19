@@ -473,6 +473,14 @@ input[type="search"].form-control:focus {
     position: relative;
 }
 
+.input-wrapper.has-password-toggle .form-control {
+    padding-right: 4.5rem;
+}
+
+.input-wrapper.has-password-toggle .input-icon {
+    right: 3.25rem;
+}
+
 .login-form .form-control {
     background: rgba(255, 255, 255, 0.95) !important;
     border: 2px solid rgba(255, 255, 255, 0.3);

@@ -224,6 +224,57 @@ class CitySearchManager {
     }
 }
 
+// Utilitário compartilhado para alternar visibilidade de senhas
+(function() {
+    function updateToggleButtonState(button, isVisible) {
+        if (!button) {
+            return;
+        }
+
+        button.setAttribute('aria-pressed', String(isVisible));
+        button.setAttribute('aria-label', isVisible ? 'Ocultar senha' : 'Mostrar senha');
+
+        const srText = button.querySelector('.visually-hidden');
+        if (srText) {
+            srText.textContent = isVisible ? 'Ocultar senha' : 'Mostrar senha';
+        }
+    }
+
+    window.togglePasswordVisibility = function(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        if (!input) {
+            return;
+        }
+
+        const shouldShow = input.type === 'password';
+        input.type = shouldShow ? 'text' : 'password';
+
+        const icon = document.getElementById(iconId);
+        if (icon) {
+            icon.classList.toggle('fa-eye', !shouldShow);
+            icon.classList.toggle('fa-eye-slash', shouldShow);
+        }
+
+        const button = icon ? icon.closest('button') : document.querySelector(`[data-password-toggle="true"][data-input-id="${inputId}"]`);
+        updateToggleButtonState(button, shouldShow);
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('[data-password-toggle="true"]').forEach(button => {
+            button.addEventListener('click', function(event) {
+                const targetInputId = button.getAttribute('data-input-id');
+                const targetIconId = button.getAttribute('data-icon-id');
+                if (!targetInputId || !targetIconId) {
+                    return;
+                }
+
+                event.preventDefault();
+                togglePasswordVisibility(targetInputId, targetIconId);
+            });
+        });
+    });
+})();
+
 // Inicializar o gerenciador de cidades quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', function() {
     const cityManager = new CitySearchManager();
