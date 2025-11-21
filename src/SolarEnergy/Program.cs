@@ -88,7 +88,7 @@ using (var scope = app.Services.CreateScope())
         await context.Database.MigrateAsync();
         
         // Create roles with English names
-        string[] roleNames = { "Administrator", "Company", "Client" };
+        string[] roleNames = { "Admin", "Administrator", "Company", "Client" };
         foreach (var roleName in roleNames)
         {
             var roleExist = await roleManager.RoleExistsAsync(roleName);
@@ -114,10 +114,21 @@ using (var scope = app.Services.CreateScope())
                 CreatedAt = DateTime.Now
             };
 
-            var result = await userManager.CreateAsync(adminUser, "Admin123!@#");
+            var result = await userManager.CreateAsync(adminUser, "Admin123!");
             if (result.Succeeded)
             {
-                await userManager.AddToRoleAsync(adminUser, "Administrator");
+                await userManager.AddToRolesAsync(adminUser, new[] { "Admin", "Administrator" });
+            }
+        }
+        else
+        {
+            var existingRoles = await userManager.GetRolesAsync(adminUser);
+
+            var requiredRoles = new[] { "Admin", "Administrator" };
+            var missingRoles = requiredRoles.Except(existingRoles);
+            if (missingRoles.Any())
+            {
+                await userManager.AddToRolesAsync(adminUser, missingRoles);
             }
         }
     }
