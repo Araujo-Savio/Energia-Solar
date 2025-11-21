@@ -101,10 +101,16 @@
                     <i class="fas fa-list me-2"></i>
                     Lista de Usuários
                 </h5>
-                <a href="@Url.Action("CreateUser", "Admin")" class="add-user-btn">
-                    <i class="fas fa-plus me-1"></i>
-                    Novo Usuário
-                </a>
+                <div class="d-flex gap-2">
+                    <a asp-action="Deleted" asp-controller="Users" class="btn btn-outline-secondary">
+                        <i class="fas fa-trash-restore"></i>
+                        Usuários Excluídos
+                    </a>
+                    <a href="@Url.Action("CreateUser", "Admin")" class="add-user-btn">
+                        <i class="fas fa-plus me-1"></i>
+                        Novo Usuário
+                    </a>
+                </div>
             </div>
 
             @if (Model.Users != null && Model.Users.Any())
@@ -180,7 +186,7 @@
                                         @if (user.UserType != SolarEnergy.Models.UserType.Administrator)
                                         {
                                             <a asp-controller="Users" asp-action="Delete" asp-route-id="@user.Id"
-                                               class="action-btn delete" title="Excluir">
+                                               class="action-btn delete js-confirm-delete" title="Excluir" data-username="@user.Email">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         }
@@ -270,7 +276,7 @@
             document.querySelector('.bulk-action-btn.approve')?.addEventListener('click', function() {
                 const selectedUsers = Array.from(document.querySelectorAll('.item-checkbox:checked')).map(cb => cb.value);
                 if (selectedUsers.length === 0) return;
-                
+
                 if (confirm(`Deseja ativar ${selectedUsers.length} usuário(s) selecionado(s)?`)) {
                     bulkUpdateUsers(selectedUsers, 'activate');
                 }
@@ -280,10 +286,22 @@
             document.querySelector('.bulk-action-btn.reject')?.addEventListener('click', function() {
                 const selectedUsers = Array.from(document.querySelectorAll('.item-checkbox:checked')).map(cb => cb.value);
                 if (selectedUsers.length === 0) return;
-                
+
                 if (confirm(`Deseja desativar ${selectedUsers.length} usuário(s) selecionado(s)?`)) {
                     bulkUpdateUsers(selectedUsers, 'deactivate');
                 }
+            });
+
+            const deleteButtons = document.querySelectorAll('.js-confirm-delete');
+            deleteButtons.forEach(btn => {
+                btn.addEventListener('click', function (e) {
+                    const userName = this.getAttribute('data-username');
+                    const message = `Tem certeza que deseja excluir o usuário "${userName}"? Esta ação poderá ser revertida na tela de Usuários Excluídos.`;
+
+                    if (!confirm(message)) {
+                        e.preventDefault();
+                    }
+                });
             });
         });
 

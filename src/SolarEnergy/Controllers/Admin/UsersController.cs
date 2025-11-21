@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SolarEnergy.Models;
 using SolarEnergy.ViewModels;
+using System;
 
 namespace SolarEnergy.Controllers.Admin
 {
@@ -149,17 +150,16 @@ namespace SolarEnergy.Controllers.Admin
                 return NotFound();
             }
 
-            var currentUserId = _userManager.GetUserId(User);
-            if (id == currentUserId)
-            {
-                TempData["Error"] = "Você não pode excluir seu próprio usuário.";
-                return RedirectToAction("Users", "Admin", new { area = string.Empty });
-            }
-
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
                 return NotFound();
+            }
+
+            if (user.Email == User.Identity?.Name)
+            {
+                TempData["Error"] = "Você não pode excluir seu próprio usuário.";
+                return RedirectToAction("Users", "Admin", new { area = string.Empty });
             }
 
             var model = new UserDeleteViewModel
@@ -181,41 +181,57 @@ namespace SolarEnergy.Controllers.Admin
                 return NotFound();
             }
 
-            var currentUserId = _userManager.GetUserId(User);
-            if (id == currentUserId)
-            {
-                TempData["Error"] = "Você não pode excluir seu próprio usuário.";
-                return RedirectToAction("Users", "Admin", new { area = string.Empty });
-            }
-
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
                 return NotFound();
             }
 
-            var result = await _userManager.DeleteAsync(user);
-            if (!result.Succeeded)
+            if (user.Email == User.Identity?.Name)
             {
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-
-                var model = new UserDeleteViewModel
-                {
-                    Id = user.Id!,
-                    FullName = user.FullName,
-                    Email = user.Email ?? string.Empty
-                };
-
-                return View("Delete", model);
+                TempData["Error"] = "Você não pode excluir seu próprio usuário.";
+                return RedirectToAction("Users", "Admin", new { area = string.Empty });
             }
 
-            TempData["Success"] = "Usuário excluído com sucesso.";
-            _logger.LogInformation("User {UserId} deleted by {AdminId}", user.Id, currentUserId);
+            user.IsDeleted = true;
+            user.DeletedAt = DateTime.UtcNow;
+
+            await _userManager.UpdateAsync(user);
+
+            TempData["Success"] = $"Usuário {user.Email} foi marcado como excluído.";
+            _logger.LogInformation("User {UserId} soft deleted by {AdminId}", user.Id, _userManager.GetUserId(User));
 
             return RedirectToAction("Users", "Admin", new { area = string.Empty });
+        }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult Deleted()
+        {
+            var deletedUsers = _userManager.Users
+                .Where(u => u.IsDeleted)
+                .OrderByDescending(u => u.DeletedAt)
+                .ToList();
+
+            return View(deletedUsers);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Restore(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null || !user.IsDeleted)
+            {
+                return NotFound();
+            }
+
+            user.IsDeleted = false;
+            user.DeletedAt = null;
+            await _userManager.UpdateAsync(user);
+
+            TempData["Success"] = $"Usuário {user.Email} foi restaurado com sucesso.";
+            return RedirectToAction(nameof(Deleted));
         }
     }
 }

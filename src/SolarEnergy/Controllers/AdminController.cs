@@ -142,7 +142,11 @@ namespace SolarEnergy.Controllers
         // Gerenciamento de usu�rios
         public async Task<IActionResult> Users(string? search, string? userType, string? status, int page = 1, int pageSize = 20)
         {
-            var query = _context.Users.AsQueryable();
+            var baseQuery = _context.Users
+                .Where(u => !u.IsDeleted)
+                .AsQueryable();
+
+            var query = baseQuery;
 
             // Filtros
             if (!string.IsNullOrEmpty(search))
@@ -177,10 +181,10 @@ namespace SolarEnergy.Controllers
             {
                 Users = users,
                 TotalUsers = totalUsers,
-                TotalClients = await _context.Users.CountAsync(u => u.UserType == UserType.Client),
-                TotalCompanies = await _context.Users.CountAsync(u => u.UserType == UserType.Company),
-                TotalAdmins = await _context.Users.CountAsync(u => u.UserType == UserType.Administrator),
-                PendingUsers = await _context.Users.CountAsync(u => !u.IsActive),
+                TotalClients = await baseQuery.CountAsync(u => u.UserType == UserType.Client),
+                TotalCompanies = await baseQuery.CountAsync(u => u.UserType == UserType.Company),
+                TotalAdmins = await baseQuery.CountAsync(u => u.UserType == UserType.Administrator),
+                PendingUsers = await baseQuery.CountAsync(u => !u.IsActive),
                 CurrentPage = page,
                 TotalPages = totalPages,
                 SearchTerm = search,

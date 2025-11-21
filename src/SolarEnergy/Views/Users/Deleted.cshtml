@@ -1,0 +1,103 @@
+@model IEnumerable<SolarEnergy.Models.ApplicationUser>
+@{
+    ViewData["Title"] = "Usuários Excluídos";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["BreadcrumbItems"] = new List<dynamic>
+    {
+        new { Title = "Usuários", Url = Url.Action("Users", "Admin"), IsActive = false },
+        new { Title = "Usuários Excluídos", Url = "", IsActive = true }
+    };
+}
+
+<div class="admin-users-page admin-fade-in">
+    <div class="container-fluid px-4">
+        <div class="admin-users-header d-flex justify-content-between align-items-center">
+            <div>
+                <div class="users-title">
+                    <i class="fas fa-user-slash me-3 text-admin-danger"></i>
+                    Usuários Excluídos
+                </div>
+                <p class="users-subtitle">
+                    Restaure usuários removidos logicamente.
+                </p>
+            </div>
+            <a href="@Url.Action("Users", "Admin")" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i>
+                Voltar para Usuários
+            </a>
+        </div>
+
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            Usuários excluídos antes desta funcionalidade, removidos com <code>UserManager.DeleteAsync</code>, não podem ser restaurados.
+        </div>
+        <!-- Usuários excluídos permanentemente antes desta mudança não podem ser restaurados. -->
+
+        @if (Model != null && Model.Any())
+        {
+            <div class="admin-users-table-container">
+                <div class="users-table-header">
+                    <h5 class="table-title">
+                        <i class="fas fa-trash-restore me-2"></i>
+                        Lista de Usuários Excluídos
+                    </h5>
+                </div>
+
+                <table class="table users-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th>Tipo</th>
+                            <th>Data de exclusão</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model)
+                        {
+                            <tr>
+                                <td>@user.FullName</td>
+                                <td>@user.Email</td>
+                                <td>
+                                    @(user.UserType switch
+                                    {
+                                        SolarEnergy.Models.UserType.Client => "Cliente",
+                                        SolarEnergy.Models.UserType.Company => "Empresa",
+                                        SolarEnergy.Models.UserType.Administrator => "Admin",
+                                        _ => "N/A"
+                                    })
+                                </td>
+                                <td>@(user.DeletedAt?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") ?? "-")</td>
+                                <td>
+                                    <form asp-action="Restore" asp-controller="Users" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@user.Id" />
+                                        <button type="submit" class="btn btn-outline-success btn-sm" title="Restaurar">
+                                            <i class="fas fa-undo"></i>
+                                            Restaurar
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="users-empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-trash-restore"></i>
+                </div>
+                <h4 class="empty-title">Nenhum usuário excluído</h4>
+                <p class="empty-message">Não há usuários na lixeira no momento.</p>
+                <a href="@Url.Action("Users", "Admin")" class="btn btn-admin-primary">
+                    <i class="fas fa-users me-1"></i>
+                    Voltar para Gerenciar Usuários
+                </a>
+            </div>
+        }
+    </div>
+</div>
