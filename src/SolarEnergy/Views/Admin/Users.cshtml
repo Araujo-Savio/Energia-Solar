@@ -186,7 +186,7 @@
                                         @if (user.UserType != SolarEnergy.Models.UserType.Administrator)
                                         {
                                             <a asp-controller="Users" asp-action="Delete" asp-route-id="@user.Id"
-                                               class="action-btn delete js-confirm-delete" title="Excluir" data-username="@user.Email">
+                                               class="btn btn-icon btn-sm btn-outline-danger js-confirm-delete" title="Excluir" data-username="@user.Email">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         }
