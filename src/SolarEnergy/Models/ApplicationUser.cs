@@ -77,6 +77,10 @@ namespace SolarEnergy.Models
 
         public bool IsActive { get; set; } = true;
 
+        public bool IsDeleted { get; set; } = false;
+
+        public DateTime? DeletedAt { get; set; }
+
         public CompanyParameters? Parameters { get; set; }
     }
 
