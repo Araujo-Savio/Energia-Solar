@@ -1,4 +1,3 @@
-using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -6,79 +5,160 @@ using Microsoft.EntityFrameworkCore;
 using SolarEnergy.Data;
 using SolarEnergy.Models;
 using SolarEnergy.ViewModels;
+using System;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace SolarEnergy.Controllers
 {
     [Authorize(Roles = "Company")]
-    [AutoValidateAntiforgeryToken]
     public class CompanyParametersController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ILogger<CompanyParametersController> _logger;
 
-        public CompanyParametersController(
-            ApplicationDbContext context,
-            UserManager<ApplicationUser> userManager,
-            ILogger<CompanyParametersController> logger)
+        public CompanyParametersController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _userManager = userManager;
-            _logger = logger;
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SaveForCurrentCompany([FromBody] CompanyParametersInputModel? input)
+        // ===============================
+        // GET: /CompanyParameters
+        // ===============================
+        public async Task<IActionResult> Index()
         {
-            if (input is null)
-            {
-                return BadRequest(new { message = "Parâmetros inválidos." });
-            }
+            var user = await _userManager.GetUserAsync(User);
 
-            var companyUser = await _userManager.GetUserAsync(User);
-            if (companyUser is null)
-            {
-                _logger.LogWarning("Company user not found while saving parameters.");
+            if (user == null)
                 return Unauthorized();
-            }
 
             var parameters = await _context.CompanyParameters
-                .FirstOrDefaultAsync(p => p.CompanyId == companyUser.Id);
+                .FirstOrDefaultAsync(x => x.CompanyId == user.Id);
 
-            if (parameters is null)
+            if (parameters == null)
             {
                 parameters = new CompanyParameters
                 {
-                    CompanyId = companyUser.Id
+                    CompanyId = user.Id,
+                    SystemPricePerKwp = 0,
+                    MaintenancePercent = 0,
+                    InstallDiscountPercent = 0,
+                    RentalFactorPercent = 0,
+                    RentalMinMonthly = 0,
+                    RentalSetupPerKwp = 0,
+                    RentalAnnualIncreasePercent = 0,
+                    RentalDiscountPercent = 0,
+                    ConsumptionPerKwp = 0,
+                    MinSystemSizeKwp = 0
                 };
 
                 _context.CompanyParameters.Add(parameters);
+                await _context.SaveChangesAsync();
             }
 
-            parameters.PricePerKwp = ClampNonNegative(input.PricePerKwp);
-            parameters.MaintenancePercent = ClampNonNegative(input.MaintenancePercent);
-            parameters.InstallDiscountPercent = ClampNonNegative(input.InstallDiscountPercent);
-            parameters.RentalFactorPercent = ClampNonNegative(input.RentalFactorPercent);
-            parameters.RentalMinMonthly = ClampNonNegative(input.RentalMinMonthly);
-            parameters.RentalSetupPerKwp = ClampNonNegative(input.RentalSetupPerKwp);
-            parameters.RentalAnnualIncreasePercent = ClampNonNegative(input.RentalAnnualIncreasePercent);
-            parameters.RentalDiscountPercent = ClampNonNegative(input.RentalDiscountPercent);
-            parameters.ConsumptionPerKwp = Math.Max(1m, input.ConsumptionPerKwp);
-            parameters.MinSystemSizeKwp = ClampNonNegative(input.MinSystemSizeKwp);
-            parameters.UpdatedAt = DateTime.UtcNow;
+            return View(parameters);
+        }
+
+
+        // ===============================
+        // POST: /CompanyParameters/Save
+        // ===============================
+        [HttpPost]
+        public async Task<IActionResult> Save(CompanyParameters updated)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+                return Unauthorized();
+
+            var existing = await _context.CompanyParameters
+                .FirstOrDefaultAsync(x => x.CompanyId == user.Id);
+
+            if (existing == null)
+                return NotFound();
+
+            // Atualização dos campos
+            existing.SystemPricePerKwp = updated.SystemPricePerKwp;
+            existing.MaintenancePercent = updated.MaintenancePercent;
+            existing.InstallDiscountPercent = updated.InstallDiscountPercent;
+            existing.RentalFactorPercent = updated.RentalFactorPercent;
+            existing.RentalMinMonthly = updated.RentalMinMonthly;
+            existing.RentalSetupPerKwp = updated.RentalSetupPerKwp;
+            existing.RentalAnnualIncreasePercent = updated.RentalAnnualIncreasePercent;
+            existing.RentalDiscountPercent = updated.RentalDiscountPercent;
+            existing.ConsumptionPerKwp = updated.ConsumptionPerKwp;
+            existing.MinSystemSizeKwp = updated.MinSystemSizeKwp;
+
+            existing.UpdatedAt = DateTime.UtcNow;
+
+            _context.CompanyParameters.Update(existing);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
+
+        // ===============================
+        // POST: /CompanyParameters/SaveForCurrentCompany
+        // ===============================
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveForCurrentCompany([FromBody] CompanyParametersInputModel model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+                return Unauthorized();
+
+            if (model == null)
+                return BadRequest("Parâmetros inválidos.");
+
+            var existing = await _context.CompanyParameters
+                .FirstOrDefaultAsync(x => x.CompanyId == user.Id);
+
+            if (existing == null)
+            {
+                existing = new CompanyParameters
+                {
+                    CompanyId = user.Id
+                };
+
+                UpdateEntityFromInputModel(existing, model);
+                _context.CompanyParameters.Add(existing);
+            }
+            else
+            {
+                UpdateEntityFromInputModel(existing, model);
+                _context.CompanyParameters.Update(existing);
+            }
 
             await _context.SaveChangesAsync();
 
-            var response = MapToDto(parameters);
-            return Json(response);
+            var responseModel = MapToInputModel(existing);
+
+            return Json(model);}
+            
+
+        private static void UpdateEntityFromInputModel(CompanyParameters entity, CompanyParametersInputModel model)
+        {
+            entity.SystemPricePerKwp = model.SystemPricePerKwp;
+            entity.MaintenancePercent = model.MaintenancePercent;
+            entity.InstallDiscountPercent = model.InstallDiscountPercent;
+            entity.RentalFactorPercent = model.RentalFactorPercent;
+            entity.RentalMinMonthly = model.RentalMinMonthly;
+            entity.RentalSetupPerKwp = model.RentalSetupPerKwp;
+            entity.RentalAnnualIncreasePercent = model.RentalAnnualIncreasePercent;
+            entity.RentalDiscountPercent = model.RentalDiscountPercent;
+            entity.ConsumptionPerKwp = model.ConsumptionPerKwp;
+            entity.MinSystemSizeKwp = model.MinSystemSizeKwp;
+            entity.UpdatedAt = DateTime.UtcNow;
         }
 
-        private static CompanyParametersInputModel MapToDto(CompanyParameters parameters)
+        private static CompanyParametersInputModel MapToInputModel(CompanyParameters parameters)
         {
             return new CompanyParametersInputModel
             {
-                PricePerKwp = parameters.PricePerKwp,
+                SystemPricePerKwp = parameters.SystemPricePerKwp,
                 MaintenancePercent = parameters.MaintenancePercent,
                 InstallDiscountPercent = parameters.InstallDiscountPercent,
                 RentalFactorPercent = parameters.RentalFactorPercent,
@@ -90,7 +170,5 @@ namespace SolarEnergy.Controllers
                 MinSystemSizeKwp = parameters.MinSystemSizeKwp
             };
         }
-
-        private static decimal ClampNonNegative(decimal value) => value < 0 ? 0 : value;
     }
 }

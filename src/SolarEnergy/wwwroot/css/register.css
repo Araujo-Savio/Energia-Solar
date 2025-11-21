@@ -16,7 +16,7 @@
     width: 100vw;
 }
 
-/* Left Side - Light Theme Premium (Informa��es do Site) */
+/* Left Side - Light Theme Premium (Informações do Site) */
 .register-left-side {
     flex: 1;
     background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
@@ -460,47 +460,82 @@
 }
 
 /* Modern Password Toggle */
-.password-input-group {
+/* Modern Password Toggle - USAR .password-wrapper para login e cadastro */
+
+.password-field {
+    position: static;
+}
+
+/* Wrapper: apenas input + botão */
+.password-wrapper {
     position: relative;
-    display: flex;
-    align-items: center;
+    display: block;
+    height: 48px; /* altura travada */
 }
 
-.password-input-group .form-control {
-    padding-right: 3.5rem !important;
-    border-radius: 10px !important;
-    border: 2px solid rgba(255, 255, 255, 0.2) !important;
+    /* Input ocupa a altura do wrapper */
+    .password-wrapper .form-control {
+        height: 100%;
+        padding-right: 3rem; /* espaço pro olhinho */
+        padding-left: 12px;
+        box-sizing: border-box;
+    }
+
+    /* Botão (olhinho) fixo dentro do campo */
+    .password-wrapper .password-toggle {
+        position: absolute;
+        right: 0.75rem;
+        top: 8px; /* fixa no topo, não depende de 50% da altura */
+        transform: none;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        box-sizing: border-box;
+        border: none;
+        border-radius: 999px;
+        background: #f8f9ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--solar-orange, #ff6b35);
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06);
+        transition: background 0.2s ease, color 0.2s ease;
+    }
+
+        .password-wrapper .password-toggle:hover {
+            background: rgba(255, 107, 53, 0.12);
+            color: var(--solar-orange, #ff6b35);
+        }
+
+        .password-wrapper .password-toggle i {
+            font-size: 0.9rem;
+        }
+
+/* mensagens de validação: sempre em bloco e com espaçamento */
+.password-field-validation {
+    display: block;
+    margin-top: 4px;
+    line-height: 1.2;
+    position: static;
 }
 
-.password-input-group .password-toggle {
-    position: absolute;
-    right: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none !important;
-    border: none !important;
-    color: rgba(255, 255, 255, 0.7) !important;
-    cursor: pointer;
-    padding: 0.375rem !important;
-    z-index: 10;
-    border-radius: 6px !important;
-    transition: all 0.3s ease;
-    width: 2rem;
-    height: 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.875rem;
+    /* se por algum motivo vierem duas mensagens seguidas, separa elas */
+    .password-field-validation + .password-field-validation {
+        margin-top: 2px;
+    }
+
+
+
+/* Keep validation messages below password inputs */
+.password-input-group + .text-danger {
+    display: block;
+    width: 100%;
+    min-height: 1rem;
 }
 
-.password-input-group .password-toggle:hover {
-    background: rgba(255, 107, 53, 0.2) !important;
-    color: var(--solar-orange) !important;
-}
-
-.password-input-group .password-toggle:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.3);
+.password-input-group + .text-danger:not(:empty) {
+    margin-top: 0.35rem;
 }
 
 /* User Type Sections - No Animation Issues */
@@ -643,12 +678,13 @@
     color: #ff6b6b !important;
     padding: 0.3rem 0;
     border-radius: 0;
-    margin-top: 0.4rem;
+    margin-top: 4px;
     font-size: 0.85rem;
     font-weight: 500;
     border: none !important;
     display: block !important;
     position: relative;
+    line-height: 1.2;
     z-index: 5;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }

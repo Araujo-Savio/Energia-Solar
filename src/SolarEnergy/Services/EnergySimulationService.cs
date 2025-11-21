@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using SolarEnergy.ViewModels;
+using SolarEnergy.Models.Simulation;
 
 namespace SolarEnergy.Services
 {

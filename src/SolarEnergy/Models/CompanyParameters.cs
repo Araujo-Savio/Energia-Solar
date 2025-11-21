@@ -13,38 +13,41 @@ namespace SolarEnergy.Models
         [StringLength(450)]
         public string CompanyId { get; set; } = string.Empty;
 
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal PricePerKwp { get; set; } = 4200m;
-
-        [Column(TypeName = "decimal(5,2)")]
-        public decimal MaintenancePercent { get; set; } = 1.2m;
-
-        [Column(TypeName = "decimal(5,2)")]
-        public decimal InstallDiscountPercent { get; set; } = 4m;
-
-        [Column(TypeName = "decimal(5,2)")]
-        public decimal RentalFactorPercent { get; set; } = 68m;
+        // ===== CAMPOS ATUAIS (existem no banco) =====
 
         [Column(TypeName = "decimal(18,2)")]
-        public decimal RentalMinMonthly { get; set; } = 250m;
-
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal RentalSetupPerKwp { get; set; } = 150m;
+        public decimal SystemPricePerKwp { get; set; }
 
         [Column(TypeName = "decimal(5,2)")]
-        public decimal RentalAnnualIncreasePercent { get; set; } = 4.5m;
+        public decimal MaintenancePercent { get; set; }
 
         [Column(TypeName = "decimal(5,2)")]
-        public decimal RentalDiscountPercent { get; set; } = 15m;
+        public decimal InstallDiscountPercent { get; set; }
+
+        [Column(TypeName = "decimal(5,2)")]
+        public decimal RentalFactorPercent { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
-        public decimal ConsumptionPerKwp { get; set; } = 120m;
+        public decimal RentalMinMonthly { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
-        public decimal MinSystemSizeKwp { get; set; } = 2.5m;
+        public decimal RentalSetupPerKwp { get; set; }
+
+        [Column(TypeName = "decimal(5,2)")]
+        public decimal RentalAnnualIncreasePercent { get; set; }
+
+        [Column(TypeName = "decimal(5,2)")]
+        public decimal RentalDiscountPercent { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal ConsumptionPerKwp { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal MinSystemSizeKwp { get; set; }
 
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
+        // ===== Relação com ApplicationUser =====
         [ForeignKey(nameof(CompanyId))]
         public ApplicationUser Company { get; set; } = null!;
     }

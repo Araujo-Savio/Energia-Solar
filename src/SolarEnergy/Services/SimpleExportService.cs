@@ -92,7 +92,7 @@ namespace SolarEnergy.Services
 
                 return Task.FromResult(result);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Return basic CSV as fallback
                 var fallbackCsv = $"Empresa;{report.CompanyName}\nPeriodo;{report.ReportMonth:yyyy-MM}\nLeads;{report.LeadMetrics.TotalLeadsReceived}\nReceita;{report.FinancialMetrics.TotalRevenue}";

@@ -55,20 +55,21 @@ namespace SolarEnergy.Controllers
                     return BadRequest("Dados de requisição inválidos");
                 }
 
-                byte[] reportData = null;
-                
+                byte[]? reportData = null;
+
+
                 try
                 {
                     reportData = await _reportService.ExportReportAsync(user.Id, request);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     // Try to generate a simple fallback report
                     try
                     {
                         var report = await _reportService.GenerateMonthlyReportAsync(user.Id, request.Month);
                         var simpleExportService = new SimpleExportService();
-                        
+
                         if (request.Format.ToLower() == "pdf")
                         {
                             reportData = await simpleExportService.ExportToPdfAsync(report);
@@ -83,7 +84,8 @@ namespace SolarEnergy.Controllers
                         return BadRequest($"Falha na geração do relatório: {fallbackEx.Message}");
                     }
                 }
-                
+
+
                 if (reportData == null || reportData.Length == 0)
                 {
                     return BadRequest("Falha na geração do relatório - dados vazios");
@@ -104,7 +106,8 @@ namespace SolarEnergy.Controllers
                     fileName = fileName.Replace(".pdf", ".html");
                 }
 
-                Response.Headers.Add("Content-Disposition", $"attachment; filename=\"{fileName}\"");
+                Response.Headers.Append("Content-Disposition", $"attachment; filename=\"{fileName}\"");
+
                 return File(reportData, contentType, fileName);
             }
             catch (Exception ex)

@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SolarEnergy.Models;
+using System.Collections.Generic;
 
 namespace SolarEnergy.Controllers
 {
@@ -205,17 +207,20 @@ namespace SolarEnergy.Controllers
                 _logger.LogInformation("User {Email} created successfully.", model.Email);
                 
                 // Add role based on user type
-                string roleName = model.UserType switch
+                var rolesToAdd = model.UserType switch
                 {
-                    UserType.Company => "Company",
-                    UserType.Administrator => "Administrator",
-                    _ => "Client"
+                    UserType.Company => new List<string> { "Company" },
+                    UserType.Administrator => new List<string> { "Admin" },
+                    _ => new List<string> { "Client" }
                 };
 
                 // Check if role exists before adding
-                if (await _roleManager.RoleExistsAsync(roleName))
+                foreach (var roleName in rolesToAdd)
                 {
-                    await _userManager.AddToRoleAsync(user, roleName);
+                    if (await _roleManager.RoleExistsAsync(roleName))
+                    {
+                        await _userManager.AddToRoleAsync(user, roleName);
+                    }
                 }
 
                 // Show success message
@@ -240,7 +245,7 @@ namespace SolarEnergy.Controllers
                     _ => error.Description
                 };
                 
-                ModelState.AddModelError(string.Empty, friendlyMessage);
+                ModelState.AddModelError(nameof(RegisterViewModel.Password), friendlyMessage);
             }
 
             return View(model);
@@ -254,6 +259,13 @@ namespace SolarEnergy.Controllers
             _logger.LogInformation("User logged out.");
             TempData["InfoMessage"] = "Você foi desconectado com sucesso.";
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
 
         private Task<IActionResult> RedirectAfterLoginAsync(string? returnUrl, ApplicationUser? user)

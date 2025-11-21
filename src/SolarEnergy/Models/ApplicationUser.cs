@@ -76,6 +76,8 @@ namespace SolarEnergy.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         public bool IsActive { get; set; } = true;
+
+        public CompanyParameters? Parameters { get; set; }
     }
 
     public enum UserType
