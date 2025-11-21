@@ -158,7 +158,7 @@ namespace SolarEnergy.Controllers.Admin
 
             if (user.Email == User.Identity?.Name)
             {
-                TempData["Error"] = "Você não pode excluir seu próprio usuário.";
+                TempData["ErrorMessage"] = "Você não pode excluir seu próprio usuário.";
                 return RedirectToAction("Users", "Admin", new { area = string.Empty });
             }
 
@@ -174,13 +174,9 @@ namespace SolarEnergy.Controllers.Admin
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return NotFound();
-            }
-
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
@@ -189,16 +185,15 @@ namespace SolarEnergy.Controllers.Admin
 
             if (user.Email == User.Identity?.Name)
             {
-                TempData["Error"] = "Você não pode excluir seu próprio usuário.";
+                TempData["ErrorMessage"] = "Você não pode excluir o próprio usuário logado.";
                 return RedirectToAction("Users", "Admin", new { area = string.Empty });
             }
 
             user.IsDeleted = true;
             user.DeletedAt = DateTime.UtcNow;
-
             await _userManager.UpdateAsync(user);
 
-            TempData["Success"] = $"Usuário {user.Email} foi marcado como excluído.";
+            TempData["SuccessMessage"] = $"Usuário {user.Email} foi marcado como excluído.";
             _logger.LogInformation("User {UserId} soft deleted by {AdminId}", user.Id, _userManager.GetUserId(User));
 
             return RedirectToAction("Users", "Admin", new { area = string.Empty });
