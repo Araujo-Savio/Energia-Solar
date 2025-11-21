@@ -80,57 +80,7 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     try
     {
-        var context = services.GetRequiredService<ApplicationDbContext>();
-        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-        
-        // Apply pending migrations and ensure database schema is up-to-date
-        await context.Database.MigrateAsync();
-        
-        // Create roles with English names
-        string[] roleNames = { "Admin", "Administrator", "Company", "Client" };
-        foreach (var roleName in roleNames)
-        {
-            var roleExist = await roleManager.RoleExistsAsync(roleName);
-            if (!roleExist)
-            {
-                await roleManager.CreateAsync(new IdentityRole(roleName));
-            }
-        }
-
-        // Criar usuário administrador padrão se não existir
-        var adminEmail = "admin@solarenergy.com";
-        var adminUser = await userManager.FindByEmailAsync(adminEmail);
-        if (adminUser == null)
-        {
-            adminUser = new ApplicationUser
-            {
-                UserName = adminEmail,
-                Email = adminEmail,
-                FullName = "Administrador do Sistema",
-                UserType = UserType.Administrator,
-                EmailConfirmed = true,
-                IsActive = true,
-                CreatedAt = DateTime.Now
-            };
-
-            var result = await userManager.CreateAsync(adminUser, "Admin123!");
-            if (result.Succeeded)
-            {
-                await userManager.AddToRolesAsync(adminUser, new[] { "Admin", "Administrator" });
-            }
-        }
-        else
-        {
-            var existingRoles = await userManager.GetRolesAsync(adminUser);
-
-            var requiredRoles = new[] { "Admin", "Administrator" };
-            var missingRoles = requiredRoles.Except(existingRoles);
-            if (missingRoles.Any())
-            {
-                await userManager.AddToRolesAsync(adminUser, missingRoles);
-            }
-        }
+        await SeedDataAsync(services);
     }
     catch (Exception ex)
     {
@@ -140,6 +90,57 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
+
+static async Task SeedDataAsync(IServiceProvider services)
+{
+    var context = services.GetRequiredService<ApplicationDbContext>();
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+
+    // Apply pending migrations and ensure database schema is up-to-date
+    await context.Database.MigrateAsync();
+
+    // Ensure required roles exist
+    string[] roleNames = { "Admin", "Company", "Client" };
+    foreach (var roleName in roleNames)
+    {
+        if (!await roleManager.RoleExistsAsync(roleName))
+        {
+            await roleManager.CreateAsync(new IdentityRole(roleName));
+        }
+    }
+
+    // Ensure admin user exists and is in the Admin role
+    const string adminEmail = "admin@solarenergy.com";
+    const string adminPassword = "Admin123!";
+    const string adminRoleName = "Admin";
+
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+    if (adminUser == null)
+    {
+        adminUser = new ApplicationUser
+        {
+            UserName = adminEmail,
+            Email = adminEmail,
+            FullName = "Administrador do Sistema",
+            UserType = UserType.Administrator,
+            EmailConfirmed = true,
+            IsActive = true,
+            CreatedAt = DateTime.Now
+        };
+
+        var result = await userManager.CreateAsync(adminUser, adminPassword);
+        if (!result.Succeeded)
+        {
+            throw new InvalidOperationException($"Não foi possível criar o usuário admin: {string.Join(",", result.Errors.Select(e => e.Description))}");
+        }
+    }
+
+    if (!await userManager.IsInRoleAsync(adminUser, adminRoleName))
+    {
+        await userManager.AddToRoleAsync(adminUser, adminRoleName);
+    }
+}
 
 // # Comandos que você precisa rodar manualmente:
 // dotnet ef migrations add AddCompanyParametersBusinessFields

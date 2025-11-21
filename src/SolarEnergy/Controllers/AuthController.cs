@@ -210,7 +210,7 @@ namespace SolarEnergy.Controllers
                 var rolesToAdd = model.UserType switch
                 {
                     UserType.Company => new List<string> { "Company" },
-                    UserType.Administrator => new List<string> { "Admin", "Administrator" },
+                    UserType.Administrator => new List<string> { "Admin" },
                     _ => new List<string> { "Client" }
                 };
 
