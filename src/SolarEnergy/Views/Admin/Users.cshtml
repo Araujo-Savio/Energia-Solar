@@ -268,6 +268,27 @@
     </div>
 </div>
 
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title w-100 text-center" id="confirmDeleteModalLabel">
+                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                    Confirmar exclusão de usuário
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-0" id="confirmDeleteMessage"></p>
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteAction">Confirmar exclusão</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
     // Ações em massa
@@ -293,15 +314,32 @@
             });
 
             const deleteButtons = document.querySelectorAll('.js-confirm-delete');
+            const deleteModalElement = document.getElementById('confirmDeleteModal');
+            const deleteModal = new bootstrap.Modal(deleteModalElement);
+            const confirmDeleteMessage = document.getElementById('confirmDeleteMessage');
+            const confirmDeleteAction = document.getElementById('confirmDeleteAction');
+            let deleteUrl = '';
+
             deleteButtons.forEach(btn => {
                 btn.addEventListener('click', function (e) {
-                    const userName = this.getAttribute('data-username');
-                    const message = `Tem certeza que deseja excluir o usuário "${userName}"? Esta ação poderá ser revertida na tela de Usuários Excluídos.`;
+                    e.preventDefault();
 
-                    if (!confirm(message)) {
-                        e.preventDefault();
-                    }
+                    deleteUrl = this.getAttribute('href');
+                    const userName = this.getAttribute('data-username');
+                    const message = `Tem certeza que deseja excluir o usuário ${userName}? Esta ação poderá ser revertida na tela de Usuários Excluídos.`;
+
+                    confirmDeleteMessage.textContent = message;
+                    deleteModalElement.dataset.deleteUrl = deleteUrl;
+
+                    deleteModal.show();
                 });
+            });
+
+            confirmDeleteAction.addEventListener('click', function () {
+                const targetUrl = deleteModalElement.dataset.deleteUrl;
+                if (targetUrl) {
+                    window.location.href = targetUrl;
+                }
             });
         });
 
