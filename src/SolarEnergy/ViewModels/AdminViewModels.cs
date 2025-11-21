@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using SolarEnergy.Models;
 
 namespace SolarEnergy.ViewModels
@@ -277,6 +278,38 @@ namespace SolarEnergy.ViewModels
         public string? SearchTerm { get; set; }
         public string? UserTypeFilter { get; set; }
         public string? StatusFilter { get; set; }
+    }
+
+    public class UserEditViewModel
+    {
+        [Required]
+        public string Id { get; set; } = string.Empty;
+
+        [Required]
+        [Display(Name = "Nome")]
+        [StringLength(100)]
+        public string FullName { get; set; } = string.Empty;
+
+        [Required]
+        [EmailAddress]
+        [Display(Name = "Email")]
+        public string Email { get; set; } = string.Empty;
+
+        [Display(Name = "Perfil")]
+        public string? SelectedRole { get; set; }
+
+        public List<string> AvailableRoles { get; set; } = new();
+    }
+
+    public class UserDeleteViewModel
+    {
+        public string Id { get; set; } = string.Empty;
+
+        [Display(Name = "Nome")]
+        public string FullName { get; set; } = string.Empty;
+
+        [Display(Name = "Email")]
+        public string Email { get; set; } = string.Empty;
     }
 
     public class AdminCompaniesViewModel
