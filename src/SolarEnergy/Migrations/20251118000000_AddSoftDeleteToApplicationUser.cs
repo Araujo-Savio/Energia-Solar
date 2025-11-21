@@ -6,35 +6,39 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SolarEnergy.Migrations
 {
     /// <inheritdoc />
-    public partial class AddUserSoftDelete : Migration
+    public partial class AddSoftDeleteToApplicationUser : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<DateTime>(
-                name: "DeletedAt",
-                table: "AspNetUsers",
-                type: "datetime2",
-                nullable: true);
-
             migrationBuilder.AddColumn<bool>(
                 name: "IsDeleted",
                 table: "AspNetUsers",
                 type: "bit",
                 nullable: false,
                 defaultValue: false);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "DeletedAt",
+                table: "AspNetUsers",
+                type: "datetime2",
+                nullable: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "DeletedAt",
+                name: "IsDeleted",
                 table: "AspNetUsers");
 
             migrationBuilder.DropColumn(
-                name: "IsDeleted",
+                name: "DeletedAt",
                 table: "AspNetUsers");
         }
+
+        // Comandos para aplicar esta migration:
+        // dotnet ef migrations add AddSoftDeleteToApplicationUser
+        // dotnet ef database update
     }
 }

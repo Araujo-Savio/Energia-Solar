@@ -43,6 +43,8 @@ namespace SolarEnergy.Data
                 entity.Property(e => e.ResponsibleCPF).HasMaxLength(14);
                 entity.Property(e => e.Location).HasMaxLength(120);
                 entity.Property(e => e.ProfileImagePath).HasMaxLength(260);
+                entity.Property(e => e.IsDeleted).HasDefaultValue(false);
+                entity.Property(e => e.DeletedAt).IsRequired(false);
 
                 entity.Property(e => e.ServiceType)
                     .HasConversion<int>()
