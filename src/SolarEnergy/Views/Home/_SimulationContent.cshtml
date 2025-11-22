@@ -212,49 +212,71 @@
                             <p class="text-muted small mb-0">Valores usados para alimentar os cálculos do simulador.</p>
                         </div>
                     </div>
-                    <div class="d-flex flex-column gap-3">
-                        <!-- Grid reorganizado para alinhar os campos e reduzir a altura do card principal -->
-                        <div class="border rounded-3 p-3">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="text-uppercase text-muted small fw-semibold">Investimento e descontos</span>
-                                <span class="badge bg-light text-solar-blue border rounded-pill">Instalação</span>
-                            </div>
+                    <div class="d-flex flex-column gap-4">
+                        <div>
+                            <h6 class="text-muted mb-2">Investimento / instalação</h6>
                             <div class="row g-3">
                                 <div class="col-12 col-md-6">
-                                    <label class="form-label" for="displayPricePerKwp">Preço do sistema por kWp (R$/kWp)</label>
-                                    <input id="displayPricePerKwp" type="number" class="form-control" value="@((Model.CompanyParameters?.SystemPricePerKwp ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="system-price-per-kwp" readonly />
+                                    <label asp-for="CompanyParameters.SystemPricePerKwp" class="form-label"></label>
+                                    <input asp-for="CompanyParameters.SystemPricePerKwp" type="number" min="0" step="50" class="form-control" data-company-param="system-price-per-kwp" readonly />
                                 </div>
                                 <div class="col-12 col-md-6">
-                                    <label class="form-label" for="displayMaintenance">Manutenção anual (% do investimento)</label>
-                                    <input id="displayMaintenance" type="number" class="form-control" value="@((Model.CompanyParameters?.MaintenancePercent ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="maintenance-percent" readonly />
+                                    <label asp-for="CompanyParameters.MaintenancePercent" class="form-label"></label>
+                                    <input asp-for="CompanyParameters.MaintenancePercent" type="number" min="0" max="50" step="0.1" class="form-control" data-company-param="maintenance-percent" readonly />
                                 </div>
-                                <div class="col-12">
-                                    <label class="form-label" for="displayInstallDiscount">Desconto na instalação (%)</label>
-                                    <input id="displayInstallDiscount" type="number" class="form-control" value="@((Model.CompanyParameters?.InstallDiscountPercent ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="install-discount-percent" readonly />
+                            </div>
+                            <div class="row g-3 mt-3">
+                                <div class="col-12 col-md-6">
+                                    <label asp-for="CompanyParameters.InstallDiscountPercent" class="form-label"></label>
+                                    <input asp-for="CompanyParameters.InstallDiscountPercent" type="number" min="0" max="100" step="0.1" class="form-control" data-company-param="install-discount-percent" readonly />
                                 </div>
                             </div>
                         </div>
-                        <div class="border rounded-3 p-3">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="text-uppercase text-muted small fw-semibold">Mensalidade e setup</span>
-                                <span class="badge bg-light text-solar-orange border rounded-pill">Aluguel</span>
-                            </div>
+
+                        <hr class="my-0" />
+
+                        <div>
+                            <h6 class="text-muted mb-2">Mensalidade / aluguel</h6>
                             <div class="row g-3">
                                 <div class="col-12 col-md-6">
-                                    <label class="form-label" for="displayRentalFactor">Fator da mensalidade (% da conta)</label>
-                                    <input id="displayRentalFactor" type="number" class="form-control" value="@((Model.CompanyParameters?.RentalFactorPercent ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="rental-factor-percent" readonly />
+                                    <label asp-for="CompanyParameters.RentalFactorPercent" class="form-label"></label>
+                                    <input asp-for="CompanyParameters.RentalFactorPercent" type="number" min="0" max="100" step="1" class="form-control" data-company-param="rental-factor-percent" readonly />
                                 </div>
                                 <div class="col-12 col-md-6">
-                                    <label class="form-label" for="displayRentalSetup">Taxa de setup por kWp (R$)</label>
-                                    <input id="displayRentalSetup" type="number" class="form-control" value="@((Model.CompanyParameters?.RentalSetupPerKwp ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="rental-setup-per-kwp" readonly />
+                                    <label asp-for="CompanyParameters.RentalSetupPerKwp" class="form-label"></label>
+                                    <input asp-for="CompanyParameters.RentalSetupPerKwp" type="number" min="0" step="10" class="form-control" data-company-param="rental-setup-per-kwp" readonly />
+                                </div>
+                            </div>
+                            <div class="row g-3 mt-3">
+                                <div class="col-12 col-md-6">
+                                    <label asp-for="CompanyParameters.RentalMinMonthly" class="form-label"></label>
+                                    <input asp-for="CompanyParameters.RentalMinMonthly" type="number" min="0" step="10" class="form-control" data-company-param="rental-min-monthly" readonly />
                                 </div>
                                 <div class="col-12 col-md-6">
-                                    <label class="form-label" for="displayRentalMinMonthly">Mensalidade mínima (R$)</label>
-                                    <input id="displayRentalMinMonthly" type="number" class="form-control" value="@((Model.CompanyParameters?.RentalMinMonthly ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="rental-min-monthly" readonly />
+                                    <label asp-for="CompanyParameters.RentalAnnualIncreasePercent" class="form-label"></label>
+                                    <input asp-for="CompanyParameters.RentalAnnualIncreasePercent" type="number" min="0" max="50" step="0.1" class="form-control" data-company-param="rental-annual-increase-percent" readonly />
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-0" />
+
+                        <div>
+                            <h6 class="text-muted mb-2">Consumo mínimo da empresa</h6>
+                            <div class="row g-3">
+                                <div class="col-12 col-md-6">
+                                    <label asp-for="CompanyParameters.RentalDiscountPercent" class="form-label"></label>
+                                    <input asp-for="CompanyParameters.RentalDiscountPercent" type="number" min="0" max="100" step="0.1" class="form-control" data-company-param="rental-discount-percent" readonly />
                                 </div>
                                 <div class="col-12 col-md-6">
-                                    <label class="form-label" for="displayRentalIncrease">Reajuste anual do aluguel (%)</label>
-                                    <input id="displayRentalIncrease" type="number" class="form-control" value="@((Model.CompanyParameters?.RentalAnnualIncreasePercent ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="rental-annual-increase-percent" readonly />
+                                    <label asp-for="CompanyParameters.ConsumptionPerKwp" class="form-label"></label>
+                                    <input asp-for="CompanyParameters.ConsumptionPerKwp" type="number" min="0" step="1" class="form-control" data-company-param="consumption-per-kwp" readonly />
+                                </div>
+                            </div>
+                            <div class="row g-3 mt-3">
+                                <div class="col-12 col-md-6">
+                                    <label asp-for="CompanyParameters.MinSystemSizeKwp" class="form-label"></label>
+                                    <input asp-for="CompanyParameters.MinSystemSizeKwp" type="number" min="0" step="0.1" class="form-control" data-company-param="min-system-size-kwp" readonly />
                                 </div>
                             </div>
                         </div>
