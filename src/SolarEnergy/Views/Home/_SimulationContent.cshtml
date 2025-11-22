@@ -201,83 +201,68 @@
 
             @if (!Model.IsCompanyUser && Model.CompanyParameters is not null && !string.IsNullOrWhiteSpace(Model.SelectedCompanyId))
             {
-                <!-- Classe dedicada para compactar o card de parâmetros da empresa -->
-                <div class="solar-card rounded-4 shadow-sm p-4 company-parameters-card">
-                    <div class="d-flex align-items-center gap-3 mb-3">
-                        <div class="insight-icon bg-solar-blue text-white">
-                            <i class="fas fa-building"></i>
-                        </div>
-                        <div>
-                            <h6 class="mb-1">Parâmetros da empresa selecionada</h6>
-                            <p class="text-muted small mb-0">Valores usados para alimentar os cálculos do simulador.</p>
-                        </div>
-                    </div>
-                    <div class="d-flex flex-column gap-4">
-                        <div>
-                            <h6 class="text-muted mb-2">Investimento / instalação</h6>
-                            <div class="row g-3">
-                                <div class="col-12 col-md-6">
-                                    <label asp-for="CompanyParameters.SystemPricePerKwp" class="form-label"></label>
-                                    <input asp-for="CompanyParameters.SystemPricePerKwp" type="number" min="0" step="50" class="form-control" data-company-param="system-price-per-kwp" readonly />
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <label asp-for="CompanyParameters.MaintenancePercent" class="form-label"></label>
-                                    <input asp-for="CompanyParameters.MaintenancePercent" type="number" min="0" max="50" step="0.1" class="form-control" data-company-param="maintenance-percent" readonly />
-                                </div>
-                            </div>
-                            <div class="row g-3 mt-3">
-                                <div class="col-12 col-md-6">
-                                    <label asp-for="CompanyParameters.InstallDiscountPercent" class="form-label"></label>
-                                    <input asp-for="CompanyParameters.InstallDiscountPercent" type="number" min="0" max="100" step="0.1" class="form-control" data-company-param="install-discount-percent" readonly />
-                                </div>
+                <div class="card solar-card rounded-4 shadow-sm company-parameters-card company-parameters-compact mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <h6 class="mb-0">Parâmetros da empresa selecionada</h6>
+                                <small class="text-muted">Valores usados para alimentar os cálculos do simulador.</small>
                             </div>
                         </div>
 
-                        <hr class="my-0" />
-
-                        <div>
-                            <h6 class="text-muted mb-2">Mensalidade / aluguel</h6>
-                            <div class="row g-3">
-                                <div class="col-12 col-md-6">
-                                    <label asp-for="CompanyParameters.RentalFactorPercent" class="form-label"></label>
-                                    <input asp-for="CompanyParameters.RentalFactorPercent" type="number" min="0" max="100" step="1" class="form-control" data-company-param="rental-factor-percent" readonly />
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <label asp-for="CompanyParameters.RentalSetupPerKwp" class="form-label"></label>
-                                    <input asp-for="CompanyParameters.RentalSetupPerKwp" type="number" min="0" step="10" class="form-control" data-company-param="rental-setup-per-kwp" readonly />
-                                </div>
+                        <small class="text-muted d-block mb-1">Investimento / instalação</small>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <label asp-for="CompanyParameters.SystemPricePerKwp" class="form-label small"></label>
+                                <input asp-for="CompanyParameters.SystemPricePerKwp" type="number" min="0" step="50" class="form-control form-control-sm" data-company-param="system-price-per-kwp" readonly />
                             </div>
-                            <div class="row g-3 mt-3">
-                                <div class="col-12 col-md-6">
-                                    <label asp-for="CompanyParameters.RentalMinMonthly" class="form-label"></label>
-                                    <input asp-for="CompanyParameters.RentalMinMonthly" type="number" min="0" step="10" class="form-control" data-company-param="rental-min-monthly" readonly />
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <label asp-for="CompanyParameters.RentalAnnualIncreasePercent" class="form-label"></label>
-                                    <input asp-for="CompanyParameters.RentalAnnualIncreasePercent" type="number" min="0" max="50" step="0.1" class="form-control" data-company-param="rental-annual-increase-percent" readonly />
-                                </div>
+                            <div class="col-md-6">
+                                <label asp-for="CompanyParameters.MaintenancePercent" class="form-label small"></label>
+                                <input asp-for="CompanyParameters.MaintenancePercent" type="number" min="0" max="50" step="0.1" class="form-control form-control-sm" data-company-param="maintenance-percent" readonly />
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="CompanyParameters.InstallDiscountPercent" class="form-label small"></label>
+                                <input asp-for="CompanyParameters.InstallDiscountPercent" type="number" min="0" max="100" step="0.1" class="form-control form-control-sm" data-company-param="install-discount-percent" readonly />
                             </div>
                         </div>
 
-                        <hr class="my-0" />
+                        <hr class="my-2" />
 
-                        <div>
-                            <h6 class="text-muted mb-2">Consumo mínimo da empresa</h6>
-                            <div class="row g-3">
-                                <div class="col-12 col-md-6">
-                                    <label asp-for="CompanyParameters.RentalDiscountPercent" class="form-label"></label>
-                                    <input asp-for="CompanyParameters.RentalDiscountPercent" type="number" min="0" max="100" step="0.1" class="form-control" data-company-param="rental-discount-percent" readonly />
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <label asp-for="CompanyParameters.ConsumptionPerKwp" class="form-label"></label>
-                                    <input asp-for="CompanyParameters.ConsumptionPerKwp" type="number" min="0" step="1" class="form-control" data-company-param="consumption-per-kwp" readonly />
-                                </div>
+                        <small class="text-muted d-block mb-1">Mensalidade / aluguel</small>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <label asp-for="CompanyParameters.RentalFactorPercent" class="form-label small"></label>
+                                <input asp-for="CompanyParameters.RentalFactorPercent" type="number" min="0" max="100" step="1" class="form-control form-control-sm" data-company-param="rental-factor-percent" readonly />
                             </div>
-                            <div class="row g-3 mt-3">
-                                <div class="col-12 col-md-6">
-                                    <label asp-for="CompanyParameters.MinSystemSizeKwp" class="form-label"></label>
-                                    <input asp-for="CompanyParameters.MinSystemSizeKwp" type="number" min="0" step="0.1" class="form-control" data-company-param="min-system-size-kwp" readonly />
-                                </div>
+                            <div class="col-md-6">
+                                <label asp-for="CompanyParameters.RentalSetupPerKwp" class="form-label small"></label>
+                                <input asp-for="CompanyParameters.RentalSetupPerKwp" type="number" min="0" step="10" class="form-control form-control-sm" data-company-param="rental-setup-per-kwp" readonly />
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="CompanyParameters.RentalMinMonthly" class="form-label small"></label>
+                                <input asp-for="CompanyParameters.RentalMinMonthly" type="number" min="0" step="10" class="form-control form-control-sm" data-company-param="rental-min-monthly" readonly />
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="CompanyParameters.RentalAnnualIncreasePercent" class="form-label small"></label>
+                                <input asp-for="CompanyParameters.RentalAnnualIncreasePercent" type="number" min="0" max="50" step="0.1" class="form-control form-control-sm" data-company-param="rental-annual-increase-percent" readonly />
+                            </div>
+                        </div>
+
+                        <hr class="my-2" />
+
+                        <small class="text-muted d-block mb-1">Consumo mínimo da empresa</small>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <label asp-for="CompanyParameters.RentalDiscountPercent" class="form-label small"></label>
+                                <input asp-for="CompanyParameters.RentalDiscountPercent" type="number" min="0" max="100" step="0.1" class="form-control form-control-sm" data-company-param="rental-discount-percent" readonly />
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="CompanyParameters.ConsumptionPerKwp" class="form-label small"></label>
+                                <input asp-for="CompanyParameters.ConsumptionPerKwp" type="number" min="0" step="1" class="form-control form-control-sm" data-company-param="consumption-per-kwp" readonly />
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="CompanyParameters.MinSystemSizeKwp" class="form-label small"></label>
+                                <input asp-for="CompanyParameters.MinSystemSizeKwp" type="number" min="0" step="0.1" class="form-control form-control-sm" data-company-param="min-system-size-kwp" readonly />
                             </div>
                         </div>
                     </div>
