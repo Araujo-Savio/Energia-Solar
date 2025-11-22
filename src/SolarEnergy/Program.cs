@@ -49,6 +49,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddScoped<SolarEnergy.Services.ILeadService, SolarEnergy.Services.LeadService>();
 builder.Services.AddScoped<SolarEnergy.Services.IReportService, SolarEnergy.Services.ReportService>();
 builder.Services.AddScoped<SolarEnergy.Services.IUserSimulationService, SolarEnergy.Services.UserSimulationService>();
+builder.Services.AddScoped<SolarEnergy.Services.IUserSimulationMapper, SolarEnergy.Services.UserSimulationMapper>();
 builder.Services.AddScoped<SolarEnergy.Services.ISimulationExportService, SolarEnergy.Services.SimulationExportService>();
 
 // Register export services

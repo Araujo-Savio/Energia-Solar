@@ -5,17 +5,16 @@ namespace SolarEnergy.Services
 {
     public class UserSimulationService : IUserSimulationService
     {
-        public UserSimulationResultViewModel CalculateUserSimulation(SimulationViewModel model)
+        public UserSimulationResult Calculate(UserSimulationInput input)
         {
-            var input = model.UserInput ?? new SimulationInputModel();
-            var companyParameters = model.CompanyParameters;
+            var companyParameters = input.CompanyParameters;
 
-            var monthlyConsumption = Math.Max((decimal)input.MonthlyConsumption, 0m);
-            var energyTariff = Math.Max((decimal)input.EnergyTariff, 0m);
-            var coveragePercent = (decimal)input.Coverage;
-            var degradationPercent = (decimal)input.Degradation;
+            var monthlyConsumption = Math.Max((decimal)input.AverageMonthlyConsumptionKwh, 0m);
+            var energyTariff = Math.Max((decimal)input.TariffPerKwh, 0m);
+            var coveragePercent = (decimal)input.CoveragePercent;
+            var degradationPercent = (decimal)input.DegradationPercent;
             var horizonYears = Math.Max(input.HorizonYears, 1);
-            var inflationPercent = (decimal)input.Inflation;
+            var inflationPercent = (decimal)input.InflationPercent;
 
             var scenarioDefaults = DeriveScenarioDefaults(monthlyConsumption, energyTariff, companyParameters);
 
@@ -118,29 +117,30 @@ namespace SolarEnergy.Services
             var monthlyRentalSavings = firstYearRentalSavings / 12m;
             var averageAnnualSavings = horizonYears > 0 ? annualSavingsInstallSum / horizonYears : 0m;
 
-            return new UserSimulationResultViewModel
+            return new UserSimulationResult
             {
                 Input = input,
                 CompanyParameters = companyParameters,
-                SelectedCompanyId = model.SelectedCompanyId,
-                SelectedCompanyName = model.SelectedCompanyName,
+                SelectedCompanyId = input.SelectedCompanyId,
+                SelectedCompanyName = input.SelectedCompanyName,
                 CostWithoutSolar = (double)totalBaseCost,
                 InstallationInvestment = (double)(installationCost - installationIncentive),
                 RentCost = (double)totalRentalCost,
                 InstallationSavings = (double)totalInstallSavings,
                 RentSavings = (double)totalRentalSavings,
                 AnnualGeneratedEnergyKwh = (double)annualGeneration,
-                MonthlyInstallSavings = (double)monthlyInstallSavings,
-                MonthlyRentalSavings = (double)monthlyRentalSavings,
-                AverageAnnualSavings = (double)averageAnnualSavings,
+                MonthlySavingInstallation = (double)monthlyInstallSavings,
+                MonthlySavingRent = (double)monthlyRentalSavings,
+                AverageAnnualSaving = (double)averageAnnualSavings,
                 PaybackYears = (double?)paybackYears,
                 InstallationTimeMonths = (double)installationTimeMonths,
-                RentalMonthlyCost = (double)rentalMonthly,
-                RentalDiscountRate = (double)rentalDiscount,
-                FiveYearSavings = (double)fiveYearSavings,
+                InitialRentAmount = (double)rentalMonthly,
+                DiscountAppliedPercent = (double)(rentalDiscount * 100m),
+                FiveYearAccumulatedSaving = (double)fiveYearSavings,
                 TotalInstallCost = (double)totalInstallCost,
                 TotalRentalCost = (double)totalRentalCost,
-                CoveragePercent = (double)(Math.Min(coverage, 1m) * 100m)
+                CoveragePercent = (double)Math.Min(Math.Max(coveragePercent, 0m), 120m),
+                AnalyzedHorizonYears = horizonYears
             };
         }
 

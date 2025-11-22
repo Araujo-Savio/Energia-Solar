@@ -13,7 +13,7 @@ namespace SolarEnergy.Services
 {
     public class SimulationExportService : ISimulationExportService
     {
-        public string GenerateCsv(UserSimulationResultViewModel result)
+        public string GenerateUserCsv(UserSimulationInput input, UserSimulationResult result)
         {
             var culture = new CultureInfo("pt-BR");
             var sb = new StringBuilder();
@@ -25,21 +25,21 @@ namespace SolarEnergy.Services
             sb.AppendLine($"Economia com instalação;{result.InstallationSavings.ToString("C", culture)}");
             sb.AppendLine($"Economia com aluguel;{result.RentSavings.ToString("C", culture)}");
             sb.AppendLine($"Energia gerada anualmente (kWh);{result.AnnualGeneratedEnergyKwh.ToString("N2", culture)}");
-            sb.AppendLine($"Economia mensal (instalação);{result.MonthlyInstallSavings.ToString("C", culture)}");
-            sb.AppendLine($"Economia mensal (aluguel);{result.MonthlyRentalSavings.ToString("C", culture)}");
-            sb.AppendLine($"Economia média anual;{result.AverageAnnualSavings.ToString("C", culture)}");
-            sb.AppendLine($"Prazo de payback (anos);{(result.PaybackYears?.ToString("F2", culture) ?? "Não recupera")}");
-            sb.AppendLine($"Tempo de instalação (meses);{result.InstallationTimeMonths.ToString("F1", culture)}");
-            sb.AppendLine($"Mensalidade de aluguel inicial;{result.RentalMonthlyCost.ToString("C", culture)}");
-            sb.AppendLine($"Desconto aplicado na conta (%);{(result.RentalDiscountRate * 100).ToString("F2", culture)}%");
-            sb.AppendLine($"Economia acumulada em 5 anos;{result.FiveYearSavings.ToString("C", culture)}");
-            sb.AppendLine($"Horizonte analisado (anos);{result.Input.HorizonYears.ToString(culture)}");
-            sb.AppendLine($"Cobertura considerada (%);{result.CoveragePercent.ToString("F2", culture)}%");
+            sb.AppendLine($"Economia mensal (instalação);{result.MonthlySavingInstallation.ToString("C", culture)}");
+            sb.AppendLine($"Economia mensal (aluguel);{result.MonthlySavingRent.ToString("C", culture)}");
+            sb.AppendLine($"Economia média anual;{result.AverageAnnualSaving.ToString("C", culture)}");
+            sb.AppendLine($"Payback estimado (anos);{(result.PaybackYears?.ToString("N2", culture) ?? "Não recupera")}");
+            sb.AppendLine($"Tempo de instalação (meses);{result.InstallationTimeMonths.ToString("N1", culture)}");
+            sb.AppendLine($"Mensalidade de aluguel inicial;{result.InitialRentAmount.ToString("C", culture)}");
+            sb.AppendLine($"Desconto aplicado na conta (%);{result.DiscountAppliedPercent.ToString("N2", culture)}%");
+            sb.AppendLine($"Economia acumulada em 5 anos;{result.FiveYearAccumulatedSaving.ToString("C", culture)}");
+            sb.AppendLine($"Horizonte analisado (anos);{result.AnalyzedHorizonYears.ToString(culture)}");
+            sb.AppendLine($"Cobertura considerada (%);{result.CoveragePercent.ToString("N2", culture)}%");
 
             return sb.ToString();
         }
 
-        public byte[] GeneratePdf(UserSimulationResultViewModel result)
+        public byte[] GenerateUserPdf(UserSimulationInput input, UserSimulationResult result)
         {
             var culture = new CultureInfo("pt-BR");
             using var memoryStream = new MemoryStream();
@@ -68,7 +68,7 @@ namespace SolarEnergy.Services
             }
 
             var inputInfo = new Paragraph(
-                    $"Consumo médio: {result.Input.MonthlyConsumption.ToString("N0", culture)} kWh | Tarifa: {result.Input.EnergyTariff.ToString("C", culture)} | Cobertura: {result.CoveragePercent.ToString("F2", culture)}% | Horizonte: {result.Input.HorizonYears} anos")
+                    $"Consumo médio: {input.AverageMonthlyConsumptionKwh.ToString("N0", culture)} kWh | Tarifa: {input.TariffPerKwh.ToString("C", culture)} | Cobertura: {input.CoveragePercent.ToString("N2", culture)}% | Horizonte: {input.HorizonYears} anos")
                 .SetFont(normalFont)
                 .SetFontSize(10)
                 .SetTextAlignment(TextAlignment.CENTER)
@@ -85,16 +85,16 @@ namespace SolarEnergy.Services
             AddRow(table, "Economia com instalação", result.InstallationSavings.ToString("C", culture), normalFont);
             AddRow(table, "Economia com aluguel", result.RentSavings.ToString("C", culture), normalFont);
             AddRow(table, "Energia gerada anualmente (kWh)", result.AnnualGeneratedEnergyKwh.ToString("N2", culture), normalFont);
-            AddRow(table, "Economia mensal (instalação)", result.MonthlyInstallSavings.ToString("C", culture), normalFont);
-            AddRow(table, "Economia mensal (aluguel)", result.MonthlyRentalSavings.ToString("C", culture), normalFont);
-            AddRow(table, "Economia média anual", result.AverageAnnualSavings.ToString("C", culture), normalFont);
-            AddRow(table, "Payback estimado", result.PaybackYears.HasValue ? $"{result.PaybackYears.Value.ToString("F2", culture)} anos" : "Não recupera investimento", normalFont);
-            AddRow(table, "Tempo de instalação", $"{result.InstallationTimeMonths.ToString("F1", culture)} meses", normalFont);
-            AddRow(table, "Mensalidade de aluguel inicial", result.RentalMonthlyCost.ToString("C", culture), normalFont);
-            AddRow(table, "Desconto aplicado na conta", $"{(result.RentalDiscountRate * 100).ToString("F2", culture)}%", normalFont);
-            AddRow(table, "Economia acumulada em 5 anos", result.FiveYearSavings.ToString("C", culture), normalFont);
-            AddRow(table, "Horizonte analisado", $"{result.Input.HorizonYears} anos", normalFont);
-            AddRow(table, "Cobertura considerada", $"{result.CoveragePercent.ToString("F2", culture)}%", normalFont);
+            AddRow(table, "Economia mensal (instalação)", result.MonthlySavingInstallation.ToString("C", culture), normalFont);
+            AddRow(table, "Economia mensal (aluguel)", result.MonthlySavingRent.ToString("C", culture), normalFont);
+            AddRow(table, "Economia média anual", result.AverageAnnualSaving.ToString("C", culture), normalFont);
+            AddRow(table, "Payback estimado", result.PaybackYears.HasValue ? $"{result.PaybackYears.Value.ToString("N2", culture)} anos" : "Não recupera investimento", normalFont);
+            AddRow(table, "Tempo de instalação", $"{result.InstallationTimeMonths.ToString("N1", culture)} meses", normalFont);
+            AddRow(table, "Mensalidade de aluguel inicial", result.InitialRentAmount.ToString("C", culture), normalFont);
+            AddRow(table, "Desconto aplicado na conta", $"{result.DiscountAppliedPercent.ToString("N2", culture)}%", normalFont);
+            AddRow(table, "Economia acumulada em 5 anos", result.FiveYearAccumulatedSaving.ToString("C", culture), normalFont);
+            AddRow(table, "Horizonte analisado", $"{result.AnalyzedHorizonYears} anos", normalFont);
+            AddRow(table, "Cobertura considerada", $"{result.CoveragePercent.ToString("N2", culture)}%", normalFont);
 
             document.Add(table);
 
