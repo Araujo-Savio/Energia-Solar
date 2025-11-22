@@ -425,6 +425,8 @@ namespace SolarEnergy.Controllers
                 })
                 .ToListAsync();
 
+            model.SelectedCompanyName = model.Companies.FirstOrDefault(c => c.Id == companyId)?.Name;
+
             if (!string.IsNullOrWhiteSpace(companyId))
             {
                 var parameters = await _context.CompanyParameters
