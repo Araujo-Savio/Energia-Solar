@@ -65,12 +65,23 @@ namespace SolarEnergy.Controllers
         // POST: /CompanyParameters/Save
         // ===============================
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Save(CompanyParameters updated)
         {
             var user = await _userManager.GetUserAsync(User);
 
             if (user == null)
                 return Unauthorized();
+
+            if (!ModelState.IsValid)
+            {
+                if (IsAjaxRequest())
+                {
+                    return BadRequest(new { success = false, errors = ModelState });
+                }
+
+                return View("Index", updated);
+            }
 
             var existing = await _context.CompanyParameters
                 .FirstOrDefaultAsync(x => x.CompanyId == user.Id);
@@ -94,6 +105,11 @@ namespace SolarEnergy.Controllers
 
             _context.CompanyParameters.Update(existing);
             await _context.SaveChangesAsync();
+
+            if (IsAjaxRequest())
+            {
+                return Json(new { success = true });
+            }
 
             return RedirectToAction("Index");
         }
@@ -136,8 +152,9 @@ namespace SolarEnergy.Controllers
 
             var responseModel = MapToInputModel(existing);
 
-            return Json(model);}
-            
+            return Json(model);
+        }
+
 
         private static void UpdateEntityFromInputModel(CompanyParameters entity, CompanyParametersInputModel model)
         {
@@ -169,6 +186,12 @@ namespace SolarEnergy.Controllers
                 ConsumptionPerKwp = parameters.ConsumptionPerKwp,
                 MinSystemSizeKwp = parameters.MinSystemSizeKwp
             };
+        }
+
+        private bool IsAjaxRequest()
+        {
+            return Request?.Headers?["X-Requested-With"] == "XMLHttpRequest"
+                || (Request?.Headers?["Accept"].ToString().Contains("application/json") ?? false);
         }
     }
 }
