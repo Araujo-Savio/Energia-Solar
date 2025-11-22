@@ -190,7 +190,9 @@ namespace SolarEnergy.Controllers
 
         private bool IsAjaxRequest()
         {
-            return Request?.Headers?["X-Requested-With"] == "XMLHttpRequest"
+            var requestedWith = Request?.Headers?["X-Requested-With"].ToString();
+
+            return string.Equals(requestedWith, "XMLHttpRequest", StringComparison.OrdinalIgnoreCase)
                 || (Request?.Headers?["Accept"].ToString().Contains("application/json") ?? false);
         }
     }
