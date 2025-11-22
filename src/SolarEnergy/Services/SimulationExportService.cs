@@ -19,22 +19,22 @@ namespace SolarEnergy.Services
             var sb = new StringBuilder();
 
             sb.AppendLine("Métrica;Valor");
-            sb.AppendLine($"Custo sem energia solar;{result.CostWithoutSolar.ToString("F2", culture)}");
-            sb.AppendLine($"Investimento com instalação;{result.InstallationInvestment.ToString("F2", culture)}");
-            sb.AppendLine($"Custo com aluguel;{result.RentCost.ToString("F2", culture)}");
-            sb.AppendLine($"Economia com instalação;{result.InstallationSavings.ToString("F2", culture)}");
-            sb.AppendLine($"Economia com aluguel;{result.RentSavings.ToString("F2", culture)}");
-            sb.AppendLine($"Energia gerada anualmente (kWh);{result.AnnualGeneratedEnergyKwh.ToString("F2", culture)}");
-            sb.AppendLine($"Economia mensal (instalação);{result.MonthlyInstallSavings.ToString("F2", culture)}");
-            sb.AppendLine($"Economia mensal (aluguel);{result.MonthlyRentalSavings.ToString("F2", culture)}");
-            sb.AppendLine($"Economia média anual;{result.AverageAnnualSavings.ToString("F2", culture)}");
+            sb.AppendLine($"Custo sem energia solar;{result.CostWithoutSolar.ToString("C", culture)}");
+            sb.AppendLine($"Investimento com instalação;{result.InstallationInvestment.ToString("C", culture)}");
+            sb.AppendLine($"Custo com aluguel;{result.RentCost.ToString("C", culture)}");
+            sb.AppendLine($"Economia com instalação;{result.InstallationSavings.ToString("C", culture)}");
+            sb.AppendLine($"Economia com aluguel;{result.RentSavings.ToString("C", culture)}");
+            sb.AppendLine($"Energia gerada anualmente (kWh);{result.AnnualGeneratedEnergyKwh.ToString("N2", culture)}");
+            sb.AppendLine($"Economia mensal (instalação);{result.MonthlyInstallSavings.ToString("C", culture)}");
+            sb.AppendLine($"Economia mensal (aluguel);{result.MonthlyRentalSavings.ToString("C", culture)}");
+            sb.AppendLine($"Economia média anual;{result.AverageAnnualSavings.ToString("C", culture)}");
             sb.AppendLine($"Prazo de payback (anos);{(result.PaybackYears?.ToString("F2", culture) ?? "Não recupera")}");
             sb.AppendLine($"Tempo de instalação (meses);{result.InstallationTimeMonths.ToString("F1", culture)}");
-            sb.AppendLine($"Mensalidade de aluguel inicial;{result.RentalMonthlyCost.ToString("F2", culture)}");
-            sb.AppendLine($"Desconto aplicado na conta (%);{(result.RentalDiscountRate * 100).ToString("F2", culture)}");
-            sb.AppendLine($"Economia acumulada em 5 anos;{result.FiveYearSavings.ToString("F2", culture)}");
+            sb.AppendLine($"Mensalidade de aluguel inicial;{result.RentalMonthlyCost.ToString("C", culture)}");
+            sb.AppendLine($"Desconto aplicado na conta (%);{(result.RentalDiscountRate * 100).ToString("F2", culture)}%");
+            sb.AppendLine($"Economia acumulada em 5 anos;{result.FiveYearSavings.ToString("C", culture)}");
             sb.AppendLine($"Horizonte analisado (anos);{result.Input.HorizonYears.ToString(culture)}");
-            sb.AppendLine($"Cobertura considerada (%);{result.CoveragePercent.ToString("F2", culture)}");
+            sb.AppendLine($"Cobertura considerada (%);{result.CoveragePercent.ToString("F2", culture)}%");
 
             return sb.ToString();
         }
@@ -94,6 +94,7 @@ namespace SolarEnergy.Services
             AddRow(table, "Desconto aplicado na conta", $"{(result.RentalDiscountRate * 100).ToString("F2", culture)}%", normalFont);
             AddRow(table, "Economia acumulada em 5 anos", result.FiveYearSavings.ToString("C", culture), normalFont);
             AddRow(table, "Horizonte analisado", $"{result.Input.HorizonYears} anos", normalFont);
+            AddRow(table, "Cobertura considerada", $"{result.CoveragePercent.ToString("F2", culture)}%", normalFont);
 
             document.Add(table);
 

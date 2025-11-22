@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SolarEnergy.Services;
 using SolarEnergy.ViewModels;
+using System.Text.Json;
 
 namespace SolarEnergy.Controllers
 {
@@ -36,6 +37,7 @@ namespace SolarEnergy.Controllers
                 return Forbid();
             }
 
+            HydrateCompanyParameters(model);
             var result = _simulationService.CalculateUserSimulation(model);
             var csv = _simulationExportService.GenerateCsv(result);
 
@@ -54,11 +56,38 @@ namespace SolarEnergy.Controllers
                 return Forbid();
             }
 
+            HydrateCompanyParameters(model);
             var result = _simulationService.CalculateUserSimulation(model);
             var pdfBytes = _simulationExportService.GeneratePdf(result);
             var fileName = $"simulacao-usuario-{DateTime.UtcNow:yyyyMMddHHmmss}.pdf";
 
             return File(pdfBytes, "application/pdf", fileName);
+        }
+
+        private static void HydrateCompanyParameters(SimulationViewModel model)
+        {
+            if (model.CompanyParameters is not null)
+            {
+                return;
+            }
+
+            var json = model.CompanyParametersJson;
+            if (string.IsNullOrWhiteSpace(json) || json.Trim().Equals("null", StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            try
+            {
+                model.CompanyParameters = JsonSerializer.Deserialize<CompanyParametersInputModel>(json, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+            }
+            catch
+            {
+                model.CompanyParameters = null;
+            }
         }
     }
 }

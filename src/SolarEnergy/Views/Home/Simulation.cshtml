@@ -65,6 +65,7 @@
                 <input type="hidden" name="SelectedCompanyId" value="@Model.SelectedCompanyId" />
                 <input type="hidden" name="SelectedCompanyName" value="@Model.SelectedCompanyName" />
                 <input type="hidden" name="IsCompanyUser" value="@Model.IsCompanyUser" />
+                <input type="hidden" asp-for="CompanyParametersJson" />
 
                 @await Html.PartialAsync("_SimulationContent", Model)
             </form>
