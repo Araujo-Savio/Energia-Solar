@@ -3,11 +3,15 @@
    ======================================== */
 
 :root {
+  --solar-navy: #0b2440;
+  --solar-navy-dark: #050f20;
+  --solar-orange: #f57c00;
+  --solar-bg-light: #f5f7fb;
+
   /* Cores extraídas da logo */
   --solar-blue-primary: #1a2b3d;      /* Azul escuro da logo */
   --solar-blue-secondary: #2c4a6b;     /* Azul médio da logo */
   --solar-blue-gradient: linear-gradient(135deg, #1a2b3d 0%, #2c4a6b 50%, #3d5a7a 100%);
-  --solar-orange: #ff6b35;             /* Laranja principal da logo */
   --solar-orange-dark: #e55722;        /* Laranja escuro */
   --solar-orange-light: #ff8555;       /* Laranja claro */
   --solar-white: #ffffff;              /* Branco puro */
@@ -17,7 +21,7 @@
   --solar-gray-dark: #374151;
   
   /* RGB values para uso com rgba() */
-  --solar-orange-rgb: 255, 107, 53;    /* RGB do laranja principal */
+  --solar-orange-rgb: 245, 124, 0;    /* RGB do laranja principal */
   --solar-blue-rgb: 26, 43, 61;        /* RGB do azul principal */
   --solar-blue-secondary-rgb: 44, 74, 107; /* RGB do azul secundário */
   --solar-gray-rgb: 107, 114, 128;     /* RGB do cinza */
@@ -44,11 +48,25 @@ html {
 }
 
 body {
-  margin: 0; /* Remove margin-bottom que estava causando o espaço */
-  padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  line-height: 1.6;
-  color: var(--solar-gray-dark);
+  margin: 0;
+  background-color: var(--solar-navy-dark);
+  color: #111827;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* Brilhos e textura (efeito solar + painel) */
+  background-image:
+      radial-gradient(circle at 20% 0%, rgba(245, 124, 0, 0.18), transparent 60%),
+      radial-gradient(circle at 80% 100%, rgba(255, 255, 255, 0.06), transparent 55%),
+      linear-gradient(135deg, rgba(255,255,255,0.04) 1px, transparent 1px),
+      linear-gradient(45deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+
+  background-size:
+      100% 100%,       /* glow laranja */
+      100% 100%,       /* glow branco */
+      38px 38px,       /* grid 1 */
+      38px 38px;       /* grid 2 */
+
+  background-attachment: fixed;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -57,6 +75,26 @@ body {
 /* Layout para garantir que o footer fique no final */
 main {
   flex: 1;
+}
+
+.solar-shell {
+  max-width: 1280px;
+  margin: 32px auto 40px auto;
+  padding: 24px 28px;
+  border-radius: 24px;
+  background: rgba(245, 247, 251, 0.98);
+  box-shadow:
+      0 24px 60px rgba(0, 0, 0, 0.55),
+      0 0 0 1px rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+}
+
+@media (max-width: 992px) {
+  .solar-shell {
+    margin: 16px 12px 24px 12px;
+    padding: 18px 16px;
+    border-radius: 16px;
+  }
 }
 
 /* ========================================
@@ -684,6 +722,11 @@ input[type="search"].form-control:focus {
   z-index: 1030 !important;
   position: relative;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.navbar.navbar-solar {
+  background: linear-gradient(to right, var(--solar-navy-dark), var(--solar-navy)) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
 /* Efeito de textura no navbar */

@@ -40,7 +40,7 @@
     }
 }
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-solar-blue shadow-sm navbar-enhanced">
+        <nav class="navbar navbar-expand-lg navbar-dark navbar-solar shadow-sm navbar-enhanced">
             <div class="container">
                 <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
                     <img src="~/images/logo.png" alt="Solar Energy" class="navbar-logo me-2" />
@@ -387,7 +387,9 @@
     }
     
     <main>
-        @RenderBody()
+        <div class="solar-shell">
+            @RenderBody()
+        </div>
     </main>
 
     <footer class="bg-solar-blue text-white py-4 mt-5">
