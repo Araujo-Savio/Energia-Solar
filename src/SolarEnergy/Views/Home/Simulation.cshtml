@@ -552,6 +552,12 @@
     <script>
         window.companyParameters = @Html.Raw(companyParametersJson);
 
+        // JSON com os parâmetros de empresa para a tela do usuário
+        const companyParametersJsonString = '@companyParametersJson';
+        const companyParametersData = companyParametersJsonString && companyParametersJsonString !== "null"
+            ? JSON.parse(companyParametersJsonString)
+            : {};
+
         (function () {
             const currencyFormatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
             const numberFormatter = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 });
@@ -585,6 +591,8 @@
             const companyParametersForm = document.getElementById('companyParametersForm');
             const companyParametersModalFeedback = document.getElementById('companyParametersModalFeedback');
             const saveCompanyParametersButton = document.getElementById('btnSaveCompanyParameters');
+            const companySelect = document.getElementById('SelectedCompanyId');
+            const companyParameterElements = Array.from(document.querySelectorAll('[data-company-param]'));
             let companyParametersAlertTimeout;
 
             function showCompanyParametersAlert(message, type = 'success') {
@@ -645,6 +653,33 @@
                         input.value = value;
                     }
                 });
+            }
+
+            // Atualiza os campos exibidos na seção "Parâmetros da Empresa" conforme a empresa escolhida
+            function applyCompanyParametersToDisplay(params) {
+                companyParameterElements.forEach((element) => {
+                    const key = element.dataset.companyParam;
+                    const field = companyParametersFields.find(f => f.dataKey === key);
+                    const value = params && field ? getParamValueFromPayload(params, field) : null;
+                    element.value = value !== null ? value : '';
+                });
+            }
+
+            // Busca os parâmetros pelo ID selecionado e injeta nos campos e no objeto usado nos cálculos
+            function updateCompanyParameters(companyId) {
+                if (!companyId) {
+                    window.companyParameters = null;
+                    applyCompanyParametersToDisplay(null);
+                    return;
+                }
+
+                const normalizedId = companyId.toString();
+                const params = companyParametersData && typeof companyParametersData === 'object'
+                    ? companyParametersData[normalizedId]
+                    : null;
+
+                window.companyParameters = params ?? null;
+                applyCompanyParametersToDisplay(params ?? null);
             }
 
             function collectCompanyParametersFromInputs() {
@@ -760,6 +795,17 @@
             }
 
             initializeCompanyParametersModal();
+
+            // Evento de mudança do select de empresa para carregar os parâmetros correspondentes
+            if (companySelect) {
+                companySelect.addEventListener('change', function () {
+                    updateCompanyParameters(this.value);
+                });
+
+                if (companySelect.value) {
+                    updateCompanyParameters(companySelect.value);
+                }
+            }
 
             const outputs = {
                 baseTotal: document.querySelector('[data-sim-output="base-total"]'),
