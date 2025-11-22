@@ -19,6 +19,18 @@ namespace SolarEnergy.ViewModels
             HorizonYears = 10,
             Inflation = 7.5
         };
+
+        public decimal AverageMonthlyConsumptionKwh => (decimal)(UserInput?.MonthlyConsumption ?? 0);
+
+        public decimal TariffPerKwh => (decimal)(UserInput?.EnergyTariff ?? 0);
+
+        public decimal CoveragePercent => (decimal)(UserInput?.Coverage ?? 0);
+
+        public decimal DegradationPercent => (decimal)(UserInput?.Degradation ?? 0);
+
+        public int HorizonYears => UserInput?.HorizonYears ?? 0;
+
+        public decimal TariffInflationPercent => (decimal)(UserInput?.Inflation ?? 0);
     }
 
     public class CompanyOptionViewModel
