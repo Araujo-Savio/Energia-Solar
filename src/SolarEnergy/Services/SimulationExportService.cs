@@ -15,26 +15,27 @@ namespace SolarEnergy.Services
     {
         public string GenerateUserCsv(UserSimulationInput input, UserSimulationResult result)
         {
-            var culture = new CultureInfo("pt-BR");
+            var ptBr = new CultureInfo("pt-BR");
             var sb = new StringBuilder();
 
             sb.AppendLine("Métrica;Valor");
-            sb.AppendLine($"Custo sem energia solar;{result.CostWithoutSolar.ToString("C", culture)}");
-            sb.AppendLine($"Investimento com instalação;{result.InstallationInvestment.ToString("C", culture)}");
-            sb.AppendLine($"Custo com aluguel;{result.RentCost.ToString("C", culture)}");
-            sb.AppendLine($"Economia com instalação;{result.InstallationSavings.ToString("C", culture)}");
-            sb.AppendLine($"Economia com aluguel;{result.RentSavings.ToString("C", culture)}");
-            sb.AppendLine($"Energia gerada anualmente (kWh);{result.AnnualGeneratedEnergyKwh.ToString("N2", culture)}");
-            sb.AppendLine($"Economia mensal (instalação);{result.MonthlySavingInstallation.ToString("C", culture)}");
-            sb.AppendLine($"Economia mensal (aluguel);{result.MonthlySavingRent.ToString("C", culture)}");
-            sb.AppendLine($"Economia média anual;{result.AverageAnnualSaving.ToString("C", culture)}");
-            sb.AppendLine($"Payback estimado (anos);{(result.PaybackYears?.ToString("N2", culture) ?? "Não recupera")}");
-            sb.AppendLine($"Tempo de instalação (meses);{result.InstallationTimeMonths.ToString("N1", culture)}");
-            sb.AppendLine($"Mensalidade de aluguel inicial;{result.InitialRentAmount.ToString("C", culture)}");
-            sb.AppendLine($"Desconto aplicado na conta (%);{result.DiscountAppliedPercent.ToString("N2", culture)}%");
-            sb.AppendLine($"Economia acumulada em 5 anos;{result.FiveYearAccumulatedSaving.ToString("C", culture)}");
-            sb.AppendLine($"Horizonte analisado (anos);{result.AnalyzedHorizonYears.ToString(culture)}");
-            sb.AppendLine($"Cobertura considerada (%);{result.CoveragePercent.ToString("N2", culture)}%");
+
+            sb.AppendLine($"Custo sem energia solar;{result.CostWithoutSolar.ToString("C", ptBr)}");
+            sb.AppendLine($"Investimento com instalação;{result.InstallationInvestment.ToString("C", ptBr)}");
+            sb.AppendLine($"Custo com aluguel;{result.RentCost.ToString("C", ptBr)}");
+            sb.AppendLine($"Economia com instalação;{result.InstallationSavings.ToString("C", ptBr)}");
+            sb.AppendLine($"Economia com aluguel;{result.RentSavings.ToString("C", ptBr)}");
+            sb.AppendLine($"Energia gerada anualmente (kWh);{result.AnnualGeneratedEnergyKwh.ToString("N2", ptBr)}");
+            sb.AppendLine($"Economia mensal (instalação);{result.MonthlySavingInstallation.ToString("C", ptBr)}");
+            sb.AppendLine($"Economia mensal (aluguel);{result.MonthlySavingRent.ToString("C", ptBr)}");
+            sb.AppendLine($"Economia média anual;{result.AverageAnnualSaving.ToString("C", ptBr)}");
+            sb.AppendLine($"Payback estimado (anos);{result.PaybackYears.ToString("N2", ptBr)}");
+            sb.AppendLine($"Tempo de instalação (meses);{result.InstallationTimeMonths.ToString("N1", ptBr)}");
+            sb.AppendLine($"Mensalidade de aluguel inicial;{result.InitialRentAmount.ToString("C", ptBr)}");
+            sb.AppendLine($"Desconto aplicado na conta;{result.DiscountAppliedPercent.ToString("N2", ptBr)}%");
+            sb.AppendLine($"Economia acumulada em 5 anos;{result.FiveYearAccumulatedSaving.ToString("C", ptBr)}");
+            sb.AppendLine($"Horizonte analisado (anos);{result.AnalyzedHorizonYears}");
+            sb.AppendLine($"Cobertura considerada (%);{result.CoveragePercent.ToString("N2", ptBr)}");
 
             return sb.ToString();
         }
