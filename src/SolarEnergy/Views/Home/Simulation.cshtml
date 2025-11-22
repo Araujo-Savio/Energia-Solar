@@ -130,6 +130,96 @@
                     </p>
                     </div>
 
+                    @if (isCompanyUser && Model.CompanyParameters is not null)
+                    {
+                        <div class="solar-card rounded-4 shadow-sm p-4 company-parameters-card">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <h6 class="mb-0 d-flex align-items-center gap-2">
+                                        <i class="fas fa-building text-solar-blue"></i>
+                                        Parâmetros da empresa
+                                    </h6>
+                                </div>
+                                <span class="badge bg-light text-solar-blue border rounded-pill">Configurações</span>
+                            </div>
+
+                            <!-- Investimento / instalação -->
+                            <h6 class="text-muted mb-2">Investimento / instalação</h6>
+                            <div class="row g-3">
+                                <div class="col-12 col-md-6">
+                                    <label asp-for="CompanyParameters.SystemPricePerKwp" class="form-label">Preço do sistema por kWp (R$/kWp)</label>
+                                    <input asp-for="CompanyParameters.SystemPricePerKwp" type="number" min="0" step="50" class="form-control" data-company-param="system-price-per-kwp" readonly />
+                                    <small class="text-muted">Valor usado para calcular o custo de instalação.</small>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label asp-for="CompanyParameters.MaintenancePercent" class="form-label">Manutenção anual (% do investimento)</label>
+                                    <input asp-for="CompanyParameters.MaintenancePercent" type="number" min="0" max="50" step="0.1" class="form-control" data-company-param="maintenance-percent" readonly />
+                                    <small class="text-muted">Percentual do investimento aplicado por ano.</small>
+                                </div>
+                            </div>
+                            <div class="row g-3 mt-3">
+                                <div class="col-12 col-md-6">
+                                    <label asp-for="CompanyParameters.InstallDiscountPercent" class="form-label">Incentivo / desconto na instalação (%)</label>
+                                    <input asp-for="CompanyParameters.InstallDiscountPercent" type="number" min="0" max="100" step="0.1" class="form-control" data-company-param="install-discount-percent" readonly />
+                                    <small class="text-muted">Percentual aplicado sobre o valor da instalação.</small>
+                                </div>
+                            </div>
+
+                            <hr class="my-4" />
+
+                            <!-- Mensalidade / aluguel -->
+                            <h6 class="text-muted mb-2">Mensalidade / aluguel</h6>
+                            <div class="row g-3">
+                                <div class="col-12 col-md-6">
+                                    <label asp-for="CompanyParameters.RentalFactorPercent" class="form-label">Fator da mensalidade do aluguel (% da conta)</label>
+                                    <input asp-for="CompanyParameters.RentalFactorPercent" type="number" min="0" max="100" step="1" class="form-control" data-company-param="rental-factor-percent" readonly />
+                                    <small class="text-muted">Fração da conta transformada em mensalidade.</small>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label asp-for="CompanyParameters.RentalSetupPerKwp" class="form-label">Taxa de instalação do aluguel (R$ por kWp ou projeto)</label>
+                                    <input asp-for="CompanyParameters.RentalSetupPerKwp" type="number" min="0" step="10" class="form-control" data-company-param="rental-setup-per-kwp" readonly />
+                                    <small class="text-muted">Taxa de setup aplicada ao aluguel.</small>
+                                </div>
+                            </div>
+                            <div class="row g-3 mt-3">
+                                <div class="col-12 col-md-6">
+                                    <label asp-for="CompanyParameters.RentalMinMonthly" class="form-label">Mensalidade mínima de aluguel (R$)</label>
+                                    <input asp-for="CompanyParameters.RentalMinMonthly" type="number" min="0" step="10" class="form-control" data-company-param="rental-min-monthly" readonly />
+                                    <small class="text-muted">Valor mínimo praticado.</small>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label asp-for="CompanyParameters.RentalAnnualIncreasePercent" class="form-label">Reajuste anual da mensalidade do aluguel (%)</label>
+                                    <input asp-for="CompanyParameters.RentalAnnualIncreasePercent" type="number" min="0" max="50" step="0.1" class="form-control" data-company-param="rental-annual-increase-percent" readonly />
+                                    <small class="text-muted">Percentual aplicado a cada ano.</small>
+                                </div>
+                            </div>
+
+                            <hr class="my-4" />
+
+                            <!-- Consumo mínimo da empresa -->
+                            <h6 class="text-muted mb-2">Consumo mínimo da empresa</h6>
+                            <div class="row g-3">
+                                <div class="col-12 col-md-6">
+                                    <label asp-for="CompanyParameters.RentalDiscountPercent" class="form-label">Desconto na conta no modelo de aluguel (%)</label>
+                                    <input asp-for="CompanyParameters.RentalDiscountPercent" type="number" min="0" max="100" step="0.1" class="form-control" data-company-param="rental-discount-percent" readonly />
+                                    <small class="text-muted">Percentual médio aplicado na fatura.</small>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label asp-for="CompanyParameters.ConsumptionPerKwp" class="form-label">Consumo mensal por 1 kWp (kWh/mês por kWp)</label>
+                                    <input asp-for="CompanyParameters.ConsumptionPerKwp" type="number" min="0" step="1" class="form-control" data-company-param="consumption-per-kwp" readonly />
+                                    <small class="text-muted">Conversão usada para dimensionamento.</small>
+                                </div>
+                            </div>
+                            <div class="row g-3 mt-3">
+                                <div class="col-12 col-md-6">
+                                    <label asp-for="CompanyParameters.MinSystemSizeKwp" class="form-label">Potência mínima do sistema (kWp)</label>
+                                    <input asp-for="CompanyParameters.MinSystemSizeKwp" type="number" min="0" step="0.1" class="form-control" data-company-param="min-system-size-kwp" readonly />
+                                    <small class="text-muted">Limite mínimo da solução ofertada.</small>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
                     @if (!isCompanyUser && Model.CompanyParameters is not null && !string.IsNullOrWhiteSpace(Model.SelectedCompanyId))
                     {
                         <!-- Classe dedicada para compactar o card de parâmetros da empresa -->
