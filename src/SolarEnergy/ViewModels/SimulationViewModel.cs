@@ -50,6 +50,10 @@ namespace SolarEnergy.ViewModels
         public string? SelectedCompanyName { get; set; }
     }
 
+    public class CompanySimulationInput : UserSimulationInput
+    {
+    }
+
     public class UserSimulationResult
     {
         public UserSimulationInput Input { get; set; } = new();
@@ -77,5 +81,13 @@ namespace SolarEnergy.ViewModels
         public double TotalRentalCost { get; set; }
         public double CoveragePercent { get; set; }
         public int AnalyzedHorizonYears { get; set; }
+        public double InitialInvestment { get; set; }
+        public double InstallationTotalSavingHorizon { get; set; }
+        public double RentTotalSavingHorizon { get; set; }
+        public double InvestmentRecoveryYears { get; set; }
+    }
+
+    public class CompanySimulationResult : UserSimulationResult
+    {
     }
 }

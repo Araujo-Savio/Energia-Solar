@@ -152,7 +152,11 @@ namespace SolarEnergy.Services
                 TotalInstallCost = (double)totalInstallCost,
                 TotalRentalCost = (double)totalRentalCost,
                 CoveragePercent = (double)Math.Min(Math.Max(coveragePercent, 0m), 120m),
-                AnalyzedHorizonYears = horizonYears
+                AnalyzedHorizonYears = horizonYears,
+                InitialInvestment = (double)(installationCost - installationIncentive),
+                InstallationTotalSavingHorizon = (double)totalInstallSavings,
+                RentTotalSavingHorizon = (double)totalRentalSavings,
+                InvestmentRecoveryYears = paybackYears.HasValue ? (double)paybackYears : 0d
             };
         }
 

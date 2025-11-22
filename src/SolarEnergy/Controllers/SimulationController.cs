@@ -10,15 +10,20 @@ namespace SolarEnergy.Controllers
     public class SimulationController : Controller
     {
         private readonly IUserSimulationService _simulationService;
+        private readonly ICompanySimulationService _companySimulationService;
         private readonly ISimulationExportService _simulationExportService;
         private readonly IUserSimulationMapper _userSimulationMapper;
+        private readonly ICompanySimulationMapper _companySimulationMapper;
 
-        public SimulationController(IUserSimulationService simulationService, ISimulationExportService simulationExportService,
-            IUserSimulationMapper userSimulationMapper)
+        public SimulationController(IUserSimulationService simulationService, ICompanySimulationService companySimulationService,
+            ISimulationExportService simulationExportService, IUserSimulationMapper userSimulationMapper,
+            ICompanySimulationMapper companySimulationMapper)
         {
             _simulationService = simulationService;
+            _companySimulationService = companySimulationService;
             _simulationExportService = simulationExportService;
             _userSimulationMapper = userSimulationMapper;
+            _companySimulationMapper = companySimulationMapper;
         }
 
         [HttpPost]
@@ -47,19 +52,21 @@ namespace SolarEnergy.Controllers
                     IsCompanyUser = false,
                     SelectedCompanyName = model.SelectedCompanyName,
                     UserInput = userInput,
+                    CompanyParameters = model.CompanyParameters,
                     UserResult = userResult
                 };
             }
             else
             {
-                var companyInput = _userSimulationMapper.ToInput(model);
-                var companyResult = _simulationService.Calculate(companyInput);
+                var companyInput = _companySimulationMapper.ToInput(model);
+                var companyResult = _companySimulationService.Calculate(companyInput);
 
                 pdfModel = new SimulationPdfViewModel
                 {
                     IsCompanyUser = true,
                     SelectedCompanyName = model.SelectedCompanyName,
                     CompanyInput = companyInput,
+                    CompanyParameters = model.CompanyParameters,
                     CompanyResult = companyResult
                 };
             }
