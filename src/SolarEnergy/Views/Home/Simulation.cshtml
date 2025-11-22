@@ -149,19 +149,16 @@
                                 <div class="col-12 col-md-6">
                                     <label asp-for="CompanyParameters.SystemPricePerKwp" class="form-label">Preço do sistema por kWp (R$/kWp)</label>
                                     <input asp-for="CompanyParameters.SystemPricePerKwp" type="number" min="0" step="50" class="form-control" data-company-param="system-price-per-kwp" readonly />
-                                    <small class="text-muted">Valor usado para calcular o custo de instalação.</small>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <label asp-for="CompanyParameters.MaintenancePercent" class="form-label">Manutenção anual (% do investimento)</label>
                                     <input asp-for="CompanyParameters.MaintenancePercent" type="number" min="0" max="50" step="0.1" class="form-control" data-company-param="maintenance-percent" readonly />
-                                    <small class="text-muted">Percentual do investimento aplicado por ano.</small>
                                 </div>
                             </div>
                             <div class="row g-3 mt-3">
                                 <div class="col-12 col-md-6">
                                     <label asp-for="CompanyParameters.InstallDiscountPercent" class="form-label">Incentivo / desconto na instalação (%)</label>
                                     <input asp-for="CompanyParameters.InstallDiscountPercent" type="number" min="0" max="100" step="0.1" class="form-control" data-company-param="install-discount-percent" readonly />
-                                    <small class="text-muted">Percentual aplicado sobre o valor da instalação.</small>
                                 </div>
                             </div>
 
@@ -173,24 +170,20 @@
                                 <div class="col-12 col-md-6">
                                     <label asp-for="CompanyParameters.RentalFactorPercent" class="form-label">Fator da mensalidade do aluguel (% da conta)</label>
                                     <input asp-for="CompanyParameters.RentalFactorPercent" type="number" min="0" max="100" step="1" class="form-control" data-company-param="rental-factor-percent" readonly />
-                                    <small class="text-muted">Fração da conta transformada em mensalidade.</small>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <label asp-for="CompanyParameters.RentalSetupPerKwp" class="form-label">Taxa de instalação do aluguel (R$ por kWp ou projeto)</label>
                                     <input asp-for="CompanyParameters.RentalSetupPerKwp" type="number" min="0" step="10" class="form-control" data-company-param="rental-setup-per-kwp" readonly />
-                                    <small class="text-muted">Taxa de setup aplicada ao aluguel.</small>
                                 </div>
                             </div>
                             <div class="row g-3 mt-3">
                                 <div class="col-12 col-md-6">
                                     <label asp-for="CompanyParameters.RentalMinMonthly" class="form-label">Mensalidade mínima de aluguel (R$)</label>
                                     <input asp-for="CompanyParameters.RentalMinMonthly" type="number" min="0" step="10" class="form-control" data-company-param="rental-min-monthly" readonly />
-                                    <small class="text-muted">Valor mínimo praticado.</small>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <label asp-for="CompanyParameters.RentalAnnualIncreasePercent" class="form-label">Reajuste anual da mensalidade do aluguel (%)</label>
                                     <input asp-for="CompanyParameters.RentalAnnualIncreasePercent" type="number" min="0" max="50" step="0.1" class="form-control" data-company-param="rental-annual-increase-percent" readonly />
-                                    <small class="text-muted">Percentual aplicado a cada ano.</small>
                                 </div>
                             </div>
 
