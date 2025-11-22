@@ -29,7 +29,7 @@ namespace SolarEnergy.Services
             sb.AppendLine($"Economia mensal (instalação);{result.MonthlySavingInstallation.ToString("C", ptBr)}");
             sb.AppendLine($"Economia mensal (aluguel);{result.MonthlySavingRent.ToString("C", ptBr)}");
             sb.AppendLine($"Economia média anual;{result.AverageAnnualSaving.ToString("C", ptBr)}");
-            sb.AppendLine($"Payback estimado (anos);{result.PaybackYears.ToString("N2", ptBr)}");
+            sb.AppendLine($"Payback estimado (anos);{result.PaybackYears?.ToString("N2", ptBr)}");
             sb.AppendLine($"Tempo de instalação (meses);{result.InstallationTimeMonths.ToString("N1", ptBr)}");
             sb.AppendLine($"Mensalidade de aluguel inicial;{result.InitialRentAmount.ToString("C", ptBr)}");
             sb.AppendLine($"Desconto aplicado na conta;{result.DiscountAppliedPercent.ToString("N2", ptBr)}%");
