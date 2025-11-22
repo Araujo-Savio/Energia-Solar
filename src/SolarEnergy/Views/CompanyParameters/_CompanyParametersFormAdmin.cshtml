@@ -1,0 +1,87 @@
+@model SolarEnergy.ViewModels.CompanyParametersViewModel
+
+<div class="card company-parameters-card mb-3">
+    <div class="card-header bg-light">
+        <h5 class="mb-0">Investimento e descontos</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <label asp-for="SystemPricePerKwp" class="form-label"></label>
+                <input asp-for="SystemPricePerKwp" class="form-control" type="number" step="0.01" min="0" />
+                <span asp-validation-for="SystemPricePerKwp" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="MaintenancePercent" class="form-label"></label>
+                <input asp-for="MaintenancePercent" class="form-control" type="number" step="0.01" min="0" />
+                <span asp-validation-for="MaintenancePercent" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <label asp-for="InstallDiscountPercent" class="form-label"></label>
+                <input asp-for="InstallDiscountPercent" class="form-control" type="number" step="0.01" min="0" />
+                <span asp-validation-for="InstallDiscountPercent" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card company-parameters-card mb-3">
+    <div class="card-header bg-light">
+        <h5 class="mb-0">Mensalidade e setup</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <label asp-for="RentalFactorPercent" class="form-label"></label>
+                <input asp-for="RentalFactorPercent" class="form-control" type="number" step="0.01" min="0" />
+                <span asp-validation-for="RentalFactorPercent" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="RentalSetupPerKwp" class="form-label"></label>
+                <input asp-for="RentalSetupPerKwp" class="form-control" type="number" step="0.01" min="0" />
+                <span asp-validation-for="RentalSetupPerKwp" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <label asp-for="RentalMinMonthly" class="form-label"></label>
+                <input asp-for="RentalMinMonthly" class="form-control" type="number" step="0.01" min="0" />
+                <span asp-validation-for="RentalMinMonthly" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="RentalAnnualIncreasePercent" class="form-label"></label>
+                <input asp-for="RentalAnnualIncreasePercent" class="form-control" type="number" step="0.01" min="0" />
+                <span asp-validation-for="RentalAnnualIncreasePercent" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card company-parameters-card mb-3">
+    <div class="card-header bg-light">
+        <h5 class="mb-0">Consumo mínimo da empresa</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <label asp-for="RentalDiscountPercent" class="form-label"></label>
+                <input asp-for="RentalDiscountPercent" class="form-control" type="number" step="0.01" min="0" />
+                <span asp-validation-for="RentalDiscountPercent" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="ConsumptionPerKwp" class="form-label"></label>
+                <input asp-for="ConsumptionPerKwp" class="form-control" type="number" step="0.01" min="0" />
+                <span asp-validation-for="ConsumptionPerKwp" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <label asp-for="MinSystemSizeKwp" class="form-label"></label>
+                <input asp-for="MinSystemSizeKwp" class="form-control" type="number" step="0.01" min="0" />
+                <span asp-validation-for="MinSystemSizeKwp" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+</div>

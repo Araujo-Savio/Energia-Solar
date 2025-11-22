@@ -57,7 +57,9 @@ namespace SolarEnergy.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            return View(parameters);
+            var viewModel = MapToViewModel(parameters);
+
+            return View(viewModel);
         }
 
 
@@ -65,12 +67,23 @@ namespace SolarEnergy.Controllers
         // POST: /CompanyParameters/Save
         // ===============================
         [HttpPost]
-        public async Task<IActionResult> Save(CompanyParameters updated)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Save(CompanyParametersViewModel updated)
         {
             var user = await _userManager.GetUserAsync(User);
 
             if (user == null)
                 return Unauthorized();
+
+            if (!ModelState.IsValid)
+            {
+                if (IsAjaxRequest())
+                {
+                    return BadRequest(new { success = false, errors = ModelState });
+                }
+
+                return View("Index", updated);
+            }
 
             var existing = await _context.CompanyParameters
                 .FirstOrDefaultAsync(x => x.CompanyId == user.Id);
@@ -94,6 +107,11 @@ namespace SolarEnergy.Controllers
 
             _context.CompanyParameters.Update(existing);
             await _context.SaveChangesAsync();
+
+            if (IsAjaxRequest())
+            {
+                return Json(new { success = true });
+            }
 
             return RedirectToAction("Index");
         }
@@ -136,8 +154,29 @@ namespace SolarEnergy.Controllers
 
             var responseModel = MapToInputModel(existing);
 
-            return Json(model);}
-            
+            return Json(model);
+        }
+
+
+        private static CompanyParametersViewModel MapToViewModel(CompanyParameters parameters)
+        {
+            return new CompanyParametersViewModel
+            {
+                Id = parameters.Id,
+                CompanyId = parameters.CompanyId,
+                SystemPricePerKwp = parameters.SystemPricePerKwp,
+                MaintenancePercent = parameters.MaintenancePercent,
+                InstallDiscountPercent = parameters.InstallDiscountPercent,
+                RentalFactorPercent = parameters.RentalFactorPercent,
+                RentalSetupPerKwp = parameters.RentalSetupPerKwp,
+                RentalMinMonthly = parameters.RentalMinMonthly,
+                RentalAnnualIncreasePercent = parameters.RentalAnnualIncreasePercent,
+                RentalDiscountPercent = parameters.RentalDiscountPercent,
+                ConsumptionPerKwp = parameters.ConsumptionPerKwp,
+                MinSystemSizeKwp = parameters.MinSystemSizeKwp
+            };
+        }
+
 
         private static void UpdateEntityFromInputModel(CompanyParameters entity, CompanyParametersInputModel model)
         {
@@ -169,6 +208,14 @@ namespace SolarEnergy.Controllers
                 ConsumptionPerKwp = parameters.ConsumptionPerKwp,
                 MinSystemSizeKwp = parameters.MinSystemSizeKwp
             };
+        }
+
+        private bool IsAjaxRequest()
+        {
+            var requestedWith = Request?.Headers?["X-Requested-With"].ToString();
+
+            return string.Equals(requestedWith, "XMLHttpRequest", StringComparison.OrdinalIgnoreCase)
+                || (Request?.Headers?["Accept"].ToString().Contains("application/json") ?? false);
         }
     }
 }
