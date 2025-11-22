@@ -58,6 +58,15 @@
             </div>
         }
 
+        @if (!isCompanyUser)
+        {
+            <form asp-action="UserSimulator" asp-controller="Simulation" method="post" id="user-simulation-form">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="SelectedCompanyId" value="@Model.SelectedCompanyId" />
+                <input type="hidden" name="SelectedCompanyName" value="@Model.SelectedCompanyName" />
+                <input type="hidden" name="IsCompanyUser" value="@Model.IsCompanyUser" />
+        }
+
         <!-- Seção: Layout principal do simulador -->
         <div class="row gx-4 gy-4 align-items-start">
             <!-- Seção: Métricas de Economia (coluna esquerda) -->
@@ -93,27 +102,73 @@
                         <div class="row g-3">
                             <div class="col-12 col-md-6">
                                 <label class="form-label" for="monthlyConsumption">Consumo médio mensal (kWh)</label>
-                                <input id="monthlyConsumption" type="number" min="0" step="1" class="form-control" value="0" data-sim-input="monthly-consumption" />
+                                <input id="monthlyConsumption"
+                                       name="UserInput.MonthlyConsumption"
+                                       type="number"
+                                       min="0"
+                                       step="1"
+                                       class="form-control"
+                                       value="@Model.UserInput.MonthlyConsumption.ToString(CultureInfo.InvariantCulture)"
+                                       data-sim-input="monthly-consumption" />
                             </div>
                             <div class="col-12 col-md-6">
                                 <label class="form-label" for="energyTariff">Tarifa da energia (R$/kWh)</label>
-                                <input id="energyTariff" type="number" min="0" step="0.01" class="form-control" value="0.92" data-sim-input="energy-tariff" />
+                                <input id="energyTariff"
+                                       name="UserInput.EnergyTariff"
+                                       type="number"
+                                       min="0"
+                                       step="0.01"
+                                       class="form-control"
+                                       value="@Model.UserInput.EnergyTariff.ToString(CultureInfo.InvariantCulture)"
+                                       data-sim-input="energy-tariff" />
                             </div>
                             <div class="col-12 col-md-6">
                                 <label class="form-label" for="coverage">Cobertura do sistema (%)</label>
-                                <input id="coverage" type="number" min="0" max="120" step="1" class="form-control" value="0" data-sim-input="coverage" />
+                                <input id="coverage"
+                                       name="UserInput.Coverage"
+                                       type="number"
+                                       min="0"
+                                       max="120"
+                                       step="1"
+                                       class="form-control"
+                                       value="@Model.UserInput.Coverage.ToString(CultureInfo.InvariantCulture)"
+                                       data-sim-input="coverage" />
                             </div>
                             <div class="col-12 col-md-6">
                                 <label class="form-label" for="degradation">Degradação anual do sistema (%)</label>
-                                <input id="degradation" type="number" min="0" max="5" step="0.1" class="form-control" value="0.7" data-sim-input="degradation" />
+                                <input id="degradation"
+                                       name="UserInput.Degradation"
+                                       type="number"
+                                       min="0"
+                                       max="5"
+                                       step="0.1"
+                                       class="form-control"
+                                       value="@Model.UserInput.Degradation.ToString(CultureInfo.InvariantCulture)"
+                                       data-sim-input="degradation" />
                             </div>
                             <div class="col-12 col-md-6">
                                 <label class="form-label" for="horizon">Horizonte de análise (anos)</label>
-                                <input id="horizon" type="number" min="0" max="30" step="1" class="form-control" value="0" data-sim-input="horizon" />
+                                <input id="horizon"
+                                       name="UserInput.HorizonYears"
+                                       type="number"
+                                       min="0"
+                                       max="30"
+                                       step="1"
+                                       class="form-control"
+                                       value="@Model.UserInput.HorizonYears.ToString(CultureInfo.InvariantCulture)"
+                                       data-sim-input="horizon" />
                             </div>
                             <div class="col-12 col-md-6">
                                 <label class="form-label" for="inflation">Inflação anual da tarifa (%)</label>
-                                <input id="inflation" type="number" min="0" max="25" step="0.1" class="form-control" value="7.5" data-sim-input="inflation" />
+                                <input id="inflation"
+                                       name="UserInput.Inflation"
+                                       type="number"
+                                       min="0"
+                                       max="25"
+                                       step="0.1"
+                                       class="form-control"
+                                       value="@Model.UserInput.Inflation.ToString(CultureInfo.InvariantCulture)"
+                                       data-sim-input="inflation" />
                             </div>
                         </div>
                     </div>
@@ -305,6 +360,25 @@
                         </div>
                         <span class="badge bg-status-online">Atualizado após o cálculo</span>
                     </div>
+
+                    @if (!isCompanyUser)
+                    {
+                        <div class="d-flex justify-content-end align-items-center mb-3 gap-2">
+                            <button type="submit"
+                                    formaction="@Url.Action("ExportUserSimulationCsv", "Simulation")"
+                                    form="user-simulation-form"
+                                    class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-file-csv me-1"></i> Exportar CSV
+                            </button>
+
+                            <button type="submit"
+                                    formaction="@Url.Action("ExportUserSimulationPdf", "Simulation")"
+                                    form="user-simulation-form"
+                                    class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-file-pdf me-1"></i> Exportar PDF
+                            </button>
+                        </div>
+                    }
 
                     <div class="row g-3 row-cols-1 row-cols-md-2">
                         <div class="col">
@@ -529,6 +603,10 @@
                 </div>
             </div>
         </div>
+        @if (!isCompanyUser)
+        {
+            </form>
+        }
     </div>
 </div>
 
