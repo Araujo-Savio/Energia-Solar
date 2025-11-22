@@ -61,7 +61,7 @@
         <!-- Seção: Layout principal do simulador -->
         <div class="row gx-4 gy-4 align-items-start">
             <!-- Seção: Métricas de Economia (coluna esquerda) -->
-            <div class="col-12 col-lg-4">
+            <div class="col-12 col-lg-4 col-xxl-4">
                 <div class="solar-card rounded-4 shadow-sm p-4 h-100" data-simulator-root data-company-user="@(isCompanyUser ? "true" : "false")">
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         <div class="d-flex align-items-center gap-2">
@@ -128,10 +128,37 @@
                         Os resultados só são atualizados quando você solicitar o cálculo pelo botão acima.
                     </p>
                 </div>
+
+                <!-- Campos reposicionados para equilibrar a coluna e aliviar a altura do card de parâmetros da empresa -->
+                <div class="solar-card rounded-4 shadow-sm p-4 mt-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <h6 class="mb-0 d-flex align-items-center gap-2">
+                                <i class="fas fa-battery-three-quarters text-success"></i>
+                                Consumo mínimo da empresa
+                            </h6>
+                        </div>
+                        <span class="badge bg-light text-success border rounded-pill">Dimensionamento</span>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label" for="displayRentalDiscount">Desconto na conta (%)</label>
+                            <input id="displayRentalDiscount" type="number" class="form-control" value="@((Model.CompanyParameters?.RentalDiscountPercent ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="rental-discount-percent" readonly />
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label" for="displayConsumption">Consumo mensal por 1 kWp (kWh)</label>
+                            <input id="displayConsumption" type="number" class="form-control" value="@((Model.CompanyParameters?.ConsumptionPerKwp ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="consumption-per-kwp" readonly />
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label" for="displayMinSystem">Potência mínima do sistema (kWp)</label>
+                            <input id="displayMinSystem" type="number" class="form-control" value="@((Model.CompanyParameters?.MinSystemSizeKwp ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="min-system-size-kwp" readonly />
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Seção: Projeção comparativa + Resumo (coluna central) -->
-            <div class="col-12 col-lg-5 col-xxl-5 d-flex flex-column gap-4">
+            <div class="col-12 col-lg-4 col-xxl-4 d-flex flex-column gap-4">
                 <div class="solar-card rounded-4 shadow-sm p-4" id="projectionCard">
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         <div class="d-flex align-items-center gap-2">
@@ -260,7 +287,7 @@
             </div>
 
             <!-- Seção: Parâmetros da empresa + Cards de resultado (coluna direita) -->
-            <div class="col-12 col-lg-3 col-xxl-3">
+            <div class="col-12 col-lg-4 col-xxl-4">
                 <div class="d-flex flex-column gap-3">
                     @if (!isCompanyUser && Model.CompanyParameters is not null && !string.IsNullOrWhiteSpace(Model.SelectedCompanyId))
                     {
@@ -276,21 +303,22 @@
                                 </div>
                             </div>
                             <div class="d-flex flex-column gap-3">
+                                <!-- Grid reorganizado para alinhar os campos e reduzir a altura do card principal -->
                                 <div class="border rounded-3 p-3">
                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                         <span class="text-uppercase text-muted small fw-semibold">Investimento e descontos</span>
                                         <span class="badge bg-light text-solar-blue border rounded-pill">Instalação</span>
                                     </div>
                                     <div class="row g-3">
-                                        <div class="col-12">
+                                        <div class="col-12 col-md-6">
                                             <label class="form-label" for="displayPricePerKwp">Preço do sistema por kWp (R$/kWp)</label>
                                             <input id="displayPricePerKwp" type="number" class="form-control" value="@((Model.CompanyParameters?.SystemPricePerKwp ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="system-price-per-kwp" readonly />
                                         </div>
-                                        <div class="col-12 col-sm-6">
+                                        <div class="col-12 col-md-6">
                                             <label class="form-label" for="displayMaintenance">Manutenção anual (% do investimento)</label>
                                             <input id="displayMaintenance" type="number" class="form-control" value="@((Model.CompanyParameters?.MaintenancePercent ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="maintenance-percent" readonly />
                                         </div>
-                                        <div class="col-12 col-sm-6">
+                                        <div class="col-12">
                                             <label class="form-label" for="displayInstallDiscount">Desconto na instalação (%)</label>
                                             <input id="displayInstallDiscount" type="number" class="form-control" value="@((Model.CompanyParameters?.InstallDiscountPercent ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="install-discount-percent" readonly />
                                         </div>
@@ -302,41 +330,21 @@
                                         <span class="badge bg-light text-solar-orange border rounded-pill">Aluguel</span>
                                     </div>
                                     <div class="row g-3">
-                                        <div class="col-12 col-sm-6">
+                                        <div class="col-12 col-md-6">
                                             <label class="form-label" for="displayRentalFactor">Fator da mensalidade (% da conta)</label>
                                             <input id="displayRentalFactor" type="number" class="form-control" value="@((Model.CompanyParameters?.RentalFactorPercent ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="rental-factor-percent" readonly />
                                         </div>
-                                        <div class="col-12 col-sm-6">
-                                            <label class="form-label" for="displayRentalMinMonthly">Mensalidade mínima (R$)</label>
-                                            <input id="displayRentalMinMonthly" type="number" class="form-control" value="@((Model.CompanyParameters?.RentalMinMonthly ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="rental-min-monthly" readonly />
-                                        </div>
-                                        <div class="col-12 col-sm-6">
+                                        <div class="col-12 col-md-6">
                                             <label class="form-label" for="displayRentalSetup">Taxa de setup por kWp (R$)</label>
                                             <input id="displayRentalSetup" type="number" class="form-control" value="@((Model.CompanyParameters?.RentalSetupPerKwp ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="rental-setup-per-kwp" readonly />
                                         </div>
-                                        <div class="col-12 col-sm-6">
+                                        <div class="col-12 col-md-6">
+                                            <label class="form-label" for="displayRentalMinMonthly">Mensalidade mínima (R$)</label>
+                                            <input id="displayRentalMinMonthly" type="number" class="form-control" value="@((Model.CompanyParameters?.RentalMinMonthly ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="rental-min-monthly" readonly />
+                                        </div>
+                                        <div class="col-12 col-md-6">
                                             <label class="form-label" for="displayRentalIncrease">Reajuste anual do aluguel (%)</label>
                                             <input id="displayRentalIncrease" type="number" class="form-control" value="@((Model.CompanyParameters?.RentalAnnualIncreasePercent ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="rental-annual-increase-percent" readonly />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="border rounded-3 p-3">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <span class="text-uppercase text-muted small fw-semibold">Consumo mínimo</span>
-                                        <span class="badge bg-light text-success border rounded-pill">Dimensionamento</span>
-                                    </div>
-                                    <div class="row g-3">
-                                        <div class="col-12 col-sm-6">
-                                            <label class="form-label" for="displayRentalDiscount">Desconto na conta (%)</label>
-                                            <input id="displayRentalDiscount" type="number" class="form-control" value="@((Model.CompanyParameters?.RentalDiscountPercent ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="rental-discount-percent" readonly />
-                                        </div>
-                                        <div class="col-12 col-sm-6">
-                                            <label class="form-label" for="displayConsumption">Consumo mensal por 1 kWp (kWh)</label>
-                                            <input id="displayConsumption" type="number" class="form-control" value="@((Model.CompanyParameters?.ConsumptionPerKwp ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="consumption-per-kwp" readonly />
-                                        </div>
-                                        <div class="col-12 col-sm-6">
-                                            <label class="form-label" for="displayMinSystem">Potência mínima do sistema (kWp)</label>
-                                            <input id="displayMinSystem" type="number" class="form-control" value="@((Model.CompanyParameters?.MinSystemSizeKwp ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="min-system-size-kwp" readonly />
                                         </div>
                                     </div>
                                 </div>
