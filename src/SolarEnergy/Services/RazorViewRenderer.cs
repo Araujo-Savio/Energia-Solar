@@ -34,34 +34,40 @@ namespace SolarEnergy.Services
 
         public async Task<string> RenderViewToStringAsync(string viewPath, object model)
         {
-            var httpContext = new DefaultHttpContext { RequestServices = _serviceProvider };
+            var httpContext = new DefaultHttpContext
+            {
+                RequestServices = _serviceProvider
+            };
+
             var actionContext = new ActionContext(httpContext, new RouteData(), new ActionDescriptor());
 
             await using var sw = new StringWriter();
+
             var viewResult = _viewEngine.GetView(executingFilePath: null, viewPath: viewPath, isMainPage: true);
+
             if (!viewResult.Success)
             {
-                viewResult = _viewEngine.FindView(actionContext, viewPath, isMainPage: true);
+                throw new InvalidOperationException($"Não foi possível localizar a view '{viewPath}'.");
             }
 
-            var view = viewResult.View ?? throw new InvalidOperationException($"View '{viewPath}' não encontrada.");
-
-            var viewDataDictionary = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary())
+            var viewDictionary = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary())
             {
                 Model = model
             };
 
-            var tempDataDictionary = new TempDataDictionary(actionContext.HttpContext, _tempDataProvider);
+            var tempData = new TempDataDictionary(actionContext.HttpContext, _tempDataProvider);
 
             var viewContext = new ViewContext(
                 actionContext,
-                view,
-                viewDataDictionary,
-                tempDataDictionary,
+                viewResult.View,
+                viewDictionary,
+                tempData,
                 sw,
-                new HtmlHelperOptions());
+                new HtmlHelperOptions()
+            );
 
-            await view.RenderAsync(viewContext);
+            await viewResult.View.RenderAsync(viewContext);
+
             return sw.ToString();
         }
     }
