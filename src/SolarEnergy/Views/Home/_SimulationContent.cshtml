@@ -317,24 +317,14 @@
                 <span class="badge bg-status-online">Atualizado após o cálculo</span>
             </div>
 
-            @if (!Model.IsCompanyUser)
-            {
-                <div class="d-flex justify-content-end align-items-center mb-3 gap-2">
-                    <button type="submit"
-                            formaction="@Url.Action("ExportUserSimulationCsv", "Simulation")"
-                            form="user-simulation-form"
-                            class="btn btn-outline-secondary btn-sm">
-                        <i class="fas fa-file-csv me-1"></i> Exportar CSV
-                    </button>
-
-                    <button type="submit"
-                            formaction="@Url.Action("ExportUserSimulationPdf", "Simulation")"
-                            form="user-simulation-form"
-                            class="btn btn-outline-secondary btn-sm">
-                        <i class="fas fa-file-pdf me-1"></i> Exportar PDF
-                    </button>
-                </div>
-            }
+            <div class="d-flex justify-content-end align-items-center mb-3 gap-2">
+                <button type="submit"
+                        formaction="@Url.Action("ExportSimulationPdf", "Simulation")"
+                        form="simulation-form"
+                        class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-file-pdf me-1"></i> Exportar PDF
+                </button>
+            </div>
 
             <div class="row g-3 row-cols-1 row-cols-md-2">
                 <div class="col">

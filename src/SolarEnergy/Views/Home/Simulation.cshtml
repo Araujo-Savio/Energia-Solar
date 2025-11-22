@@ -58,22 +58,15 @@
             </div>
         }
 
-        @if (!isCompanyUser)
-        {
-            <form asp-action="UserSimulator" asp-controller="Simulation" method="post" id="user-simulation-form">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="SelectedCompanyId" value="@Model.SelectedCompanyId" />
-                <input type="hidden" name="SelectedCompanyName" value="@Model.SelectedCompanyName" />
-                <input type="hidden" name="IsCompanyUser" value="@Model.IsCompanyUser" />
-                <input type="hidden" asp-for="CompanyParametersJson" />
+        <form asp-action="UserSimulator" asp-controller="Simulation" method="post" id="simulation-form">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="SelectedCompanyId" value="@Model.SelectedCompanyId" />
+            <input type="hidden" name="SelectedCompanyName" value="@Model.SelectedCompanyName" />
+            <input type="hidden" name="IsCompanyUser" value="@Model.IsCompanyUser" />
+            <input type="hidden" asp-for="CompanyParametersJson" />
 
-                @await Html.PartialAsync("_SimulationContent", Model)
-            </form>
-        }
-        else
-        {
             @await Html.PartialAsync("_SimulationContent", Model)
-        }
+        </form>
 
 @if (isCompanyUser)
 {
@@ -745,7 +738,7 @@
             }
 
             const calculateUserSimulationUrl = '@Url.Action("CalculateUserSimulation", "Simulation")';
-            const antiForgeryTokenInput = document.querySelector('#user-simulation-form input[name="__RequestVerificationToken"]')
+            const antiForgeryTokenInput = document.querySelector('#simulation-form input[name="__RequestVerificationToken"]')
                 || document.querySelector('input[name="__RequestVerificationToken"]');
             const hiddenCompanyIdInput = document.querySelector('input[name="SelectedCompanyId"]');
             const hiddenCompanyNameInput = document.querySelector('input[name="SelectedCompanyName"]');
