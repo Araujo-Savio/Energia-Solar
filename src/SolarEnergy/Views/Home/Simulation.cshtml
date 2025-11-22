@@ -370,11 +370,31 @@
                 return null;
             }
 
+            const companyParametersJsonInput = document.querySelector('input[name="CompanyParametersJson"]');
+
+            function syncCompanyParametersJsonField(parameters) {
+                if (!companyParametersJsonInput) {
+                    return;
+                }
+
+                if (!parameters) {
+                    companyParametersJsonInput.value = "null";
+                    return;
+                }
+
+                try {
+                    companyParametersJsonInput.value = JSON.stringify(parameters);
+                } catch {
+                    companyParametersJsonInput.value = "null";
+                }
+            }
+
             // Busca os parâmetros pelo ID selecionado e injeta nos campos e no objeto usado nos cálculos
             function updateCompanyParameters(companyId) {
                 const params = getCompanyParametersFromData(companyId);
                 window.companyParameters = params ?? null;
                 applyCompanyParametersToDisplay(params ?? null);
+                syncCompanyParametersJsonField(params ?? null);
             }
 
             // Carrega os parâmetros iniciais (empresa logada ou empresa pré-selecionada no filtro).
@@ -462,6 +482,7 @@
 
                     const savedParameters = await response.json();
                     window.companyParameters = savedParameters;
+                    syncCompanyParametersJsonField(savedParameters);
                     applyCompanyParametersToInputs(savedParameters);
                     hideCompanyParametersModal();
                     showCompanyParametersAlert('Parâmetros da empresa salvos com sucesso.');
@@ -677,6 +698,14 @@
                 return Number.isFinite(value) ? percentFormatter.format(value) : '-';
             }
 
+            function formatPercentNumber(value) {
+                if (!Number.isFinite(value)) {
+                    return '-';
+                }
+
+                return `${value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
+            }
+
             function formatMonths(totalMonths) {
                 if (!Number.isFinite(totalMonths)) {
                     return '-';
@@ -715,232 +744,140 @@
                 }
             }
 
-            function deriveScenarioDefaults(monthlyConsumption, energyTariff) {
-                const safeConsumption = Math.max(monthlyConsumption, 0);
-                const safeTariff = Math.max(energyTariff, 0);
+            const calculateUserSimulationUrl = '@Url.Action("CalculateUserSimulation", "Simulation")';
+            const antiForgeryTokenInput = document.querySelector('#user-simulation-form input[name="__RequestVerificationToken"]')
+                || document.querySelector('input[name="__RequestVerificationToken"]');
+            const hiddenCompanyIdInput = document.querySelector('input[name="SelectedCompanyId"]');
+            const hiddenCompanyNameInput = document.querySelector('input[name="SelectedCompanyName"]');
 
-                const monthlyBill = safeConsumption * safeTariff;
-                let systemSizeKw = Math.max(safeConsumption / 120, 2.5);
-
-                let installationCost = systemSizeKw * 4200;
-                let maintenanceAnnual = installationCost * 0.012;
-                let installationIncentive = installationCost * 0.04;
-                let installationTimeMonths = Math.min(Math.max(systemSizeKw * 0.8, 2), 8);
-
-                let rentalMonthly = Math.max(monthlyBill * 0.68, 250);
-                let rentalSetup = Math.max(systemSizeKw * 150, 0);
-                let rentalIncreaseRate = 0.045;
-                let rentalDiscountRate = Math.min(0.18, 0.1 + systemSizeKw / 100);
-
-                const hasCompanyParameters = !!(window.companyParameters && typeof window.companyParameters === 'object');
-
-                if (isCompanyUser || hasCompanyParameters) {
-                    const pricePerKwp = parseCompanyParam('system-price-per-kwp', 0);
-                    const maintenancePercent = parseCompanyParam('maintenance-percent', 0);
-                    const installDiscountPercent = parseCompanyParam('install-discount-percent', 0);
-                    const rentalFactorPercent = parseCompanyParam('rental-factor-percent', 0);
-                    const rentalMinMonthly = parseCompanyParam('rental-min-monthly', 0);
-                    const rentalSetupPerKwp = parseCompanyParam('rental-setup-per-kwp', 0);
-                    const rentalAnnualIncreasePercent = parseCompanyParam('rental-annual-increase-percent', 0);
-                    const rentalDiscountPercent = parseCompanyParam('rental-discount-percent', 0);
-                    const consumptionPerKwp = parseCompanyParam('consumption-per-kwp', 0);
-                    const minSystemSizeKwp = parseCompanyParam('min-system-size-kwp', 0);
-
-                    const baseSystemSize = consumptionPerKwp > 0 ? safeConsumption / consumptionPerKwp : safeConsumption;
-                    systemSizeKw = Math.max(baseSystemSize, minSystemSizeKwp);
-
-                    installationCost = systemSizeKw * Math.max(pricePerKwp, 0);
-                    maintenanceAnnual = installationCost * Math.max(maintenancePercent, 0) / 100;
-                    installationIncentive = installationCost * Math.max(installDiscountPercent, 0) / 100;
-                    installationTimeMonths = Math.min(Math.max(systemSizeKw * 0.8, 2), 8);
-
-                    const rentalFactor = Math.max(rentalFactorPercent, 0) / 100;
-                    rentalMonthly = Math.max(monthlyBill * rentalFactor, Math.max(rentalMinMonthly, 0));
-                    rentalSetup = Math.max(systemSizeKw * Math.max(rentalSetupPerKwp, 0), 0);
-                    rentalIncreaseRate = Math.max(rentalAnnualIncreasePercent, 0) / 100;
-                    rentalDiscountRate = Math.min(Math.max(rentalDiscountPercent, 0) / 100, 1);
-                }
+            function buildSimulationPayload() {
+                const companyParametersPayload = window.companyParameters ?? collectCompanyParametersFromInputs();
+                syncCompanyParametersJsonField(companyParametersPayload);
 
                 return {
-                    installationCost,
-                    installationTimeMonths,
-                    maintenanceAnnual,
-                    installationIncentive,
-                    rentalMonthly,
-                    rentalSetup,
-                    rentalIncreaseRate,
-                    rentalDiscountRate
+                    selectedCompanyId: hiddenCompanyIdInput?.value || null,
+                    selectedCompanyName: hiddenCompanyNameInput?.value || null,
+                    companyParameters: companyParametersPayload,
+                    companyParametersJson: companyParametersJsonInput?.value || 'null',
+                    userInput: {
+                        monthlyConsumption: parseInput('monthly-consumption'),
+                        energyTariff: parseInput('energy-tariff'),
+                        coverage: parseInput('coverage'),
+                        degradation: parseInput('degradation'),
+                        horizonYears: Math.max(1, parseInput('horizon')),
+                        inflation: parseInput('inflation')
+                    }
                 };
             }
 
-            function recalculate() {
-                const monthlyConsumption = parseInput('monthly-consumption');
-                const energyTariff = parseInput('energy-tariff');
-                const coveragePercent = parseInput('coverage');
-                const degradationPercent = parseInput('degradation');
-                const horizonYears = Math.max(1, parseInput('horizon'));
-                const inflationPercent = parseInput('inflation');
-
-                const scenarioDefaults = deriveScenarioDefaults(monthlyConsumption, energyTariff);
-
-                const installationCost = scenarioDefaults.installationCost;
-                const installationTimeMonths = scenarioDefaults.installationTimeMonths;
-                const maintenanceAnnual = scenarioDefaults.maintenanceAnnual;
-                const installationIncentive = scenarioDefaults.installationIncentive;
-
-                const rentalMonthly = scenarioDefaults.rentalMonthly;
-                const rentalSetup = scenarioDefaults.rentalSetup;
-                const rentalIncreaseRate = scenarioDefaults.rentalIncreaseRate;
-                const rentalDiscountRate = scenarioDefaults.rentalDiscountRate;
-
-                const coverage = Math.min(Math.max(coveragePercent / 100, 0), 1.2);
-                const degradation = Math.min(Math.max(degradationPercent / 100, 0), 0.3);
-                const inflation = Math.max(inflationPercent / 100, 0);
-                const rentalIncrease = Math.max(rentalIncreaseRate, 0);
-                const rentalDiscount = Math.min(Math.max(rentalDiscountRate, 0), 1);
-
-                const monthlyTariffWithoutInflation = energyTariff > 0 ? energyTariff : 0;
-                const annualConsumption = monthlyConsumption * 12;
-
-                let cumulativeBase = 0;
-                let cumulativeInstall = installationCost - installationIncentive;
-                let cumulativeRental = rentalSetup;
-                let annualSavingsInstallSum = 0;
-                let annualSavingsRentalSum = 0;
-                let fiveYearSavings = 0;
-
-                let paybackYears = null;
-                let cumulativeInstallSavings = -cumulativeInstall;
-                let cumulativeRentalSavings = -cumulativeRental;
-                let firstYearInstallSavings = 0;
-                let firstYearRentalSavings = 0;
-
-                const timelineLabels = [];
-                const installationSavingsSeries = [];
-                const rentalSavingsSeries = [];
-
-                for (let year = 1; year <= horizonYears; year++) {
-                    const tariffWithInflation = monthlyTariffWithoutInflation * Math.pow(1 + inflation, year - 1);
-
-                    const coverageForYear = Math.min(coverage, 1) * Math.pow(1 - degradation, Math.max(year - 1, 0));
-                    const coveredConsumptionMonthly = monthlyConsumption * coverageForYear;
-                    const remainingConsumptionMonthly = Math.max(monthlyConsumption - coveredConsumptionMonthly, 0);
-                    const remainingConsumptionAnnual = remainingConsumptionMonthly * 12;
-
-                    const baseCostYear = annualConsumption * tariffWithInflation;
-                    cumulativeBase += baseCostYear;
-
-                    const maintenanceYear = maintenanceAnnual * Math.pow(1 + inflation, year - 1);
-                    const installCostYear = remainingConsumptionAnnual * tariffWithInflation + maintenanceYear;
-                    cumulativeInstall += installCostYear;
-
-                    const rentalMonthlyYear = rentalMonthly * Math.pow(1 + rentalIncrease, year - 1);
-                    const rentalDiscountYear = remainingConsumptionAnnual * tariffWithInflation * (1 - rentalDiscount);
-                    const rentalCostYear = rentalMonthlyYear * 12 + rentalDiscountYear;
-                    cumulativeRental += rentalCostYear;
-
-                    const annualSavingsInstall = baseCostYear - installCostYear;
-                    const annualSavingsRental = baseCostYear - rentalCostYear;
-
-                    if (year === 1) {
-                        firstYearInstallSavings = annualSavingsInstall;
-                        firstYearRentalSavings = annualSavingsRental;
-                    }
-
-                    annualSavingsInstallSum += annualSavingsInstall;
-                    annualSavingsRentalSum += annualSavingsRental;
-
-                    if (year <= 5) {
-                        fiveYearSavings += annualSavingsInstall;
-                    }
-
-                    cumulativeInstallSavings += annualSavingsInstall;
-                    cumulativeRentalSavings += annualSavingsRental;
-
-                    if (paybackYears === null && cumulativeInstallSavings >= 0) {
-                        const previousSavings = cumulativeInstallSavings - annualSavingsInstall;
-                        const fractionOfYear =
-                            annualSavingsInstall > 0
-                                ? (installationCost - installationIncentive - previousSavings) / annualSavingsInstall
-                                : 0;
-
-                        paybackYears = year - 1 + Math.max(0, Math.min(1, fractionOfYear));
-                    }
-
-                    timelineLabels.push(`Ano ${year}`);
-                    installationSavingsSeries.push(cumulativeInstallSavings);
-                    rentalSavingsSeries.push(cumulativeRentalSavings);
+            function updateProjectionChartFromResult(result) {
+                if (!projectionChart) {
+                    return;
                 }
 
-                const totalBaseCost = cumulativeBase;
-                const totalInstallCost = cumulativeInstall;
-                const totalRentalCost = cumulativeRental;
+                const labels = Array.isArray(result.timelineLabels) && result.timelineLabels.length
+                    ? result.timelineLabels
+                    : generateTimelineLabels(defaultTimelineLength);
 
-                const totalInstallSavings = totalBaseCost - totalInstallCost;
-                const totalRentalSavings = totalBaseCost - totalRentalCost;
+                const installSeries = Array.isArray(result.installationSavingsTimeline) && result.installationSavingsTimeline.length
+                    ? result.installationSavingsTimeline
+                    : new Array(labels.length).fill(0);
 
-                const annualGeneration = annualConsumption * Math.min(coverage, 1);
+                const rentalSeries = Array.isArray(result.rentalSavingsTimeline) && result.rentalSavingsTimeline.length
+                    ? result.rentalSavingsTimeline
+                    : new Array(labels.length).fill(0);
 
-                const monthlyInstallSavings = firstYearInstallSavings / 12;
-                const monthlyRentalSavings = firstYearRentalSavings / 12;
-                const averageAnnualSavings = annualSavingsInstallSum / horizonYears;
+                projectionChart.data.labels = labels;
+                projectionChart.data.datasets[0].data = installSeries;
+                projectionChart.data.datasets[1].data = rentalSeries;
+                projectionChart.update();
+            }
 
-                if (outputs.baseTotal) outputs.baseTotal.textContent = formatCurrency(totalBaseCost);
-                if (outputs.installTotal) outputs.installTotal.textContent = formatCurrency(totalInstallCost);
-                if (outputs.rentalTotal) outputs.rentalTotal.textContent = formatCurrency(totalRentalCost);
-                if (outputs.installSavings) outputs.installSavings.textContent = formatCurrency(totalInstallSavings);
-                if (outputs.rentalSavings) outputs.rentalSavings.textContent = formatCurrency(totalRentalSavings);
-                if (outputs.installMonthlySavings) outputs.installMonthlySavings.textContent = formatCurrency(monthlyInstallSavings);
-                if (outputs.rentalMonthlySavings) outputs.rentalMonthlySavings.textContent = formatCurrency(monthlyRentalSavings);
-                if (outputs.installInvestment) outputs.installInvestment.textContent = formatCurrency(installationCost - installationIncentive);
-                if (outputs.installSavingsTotal) outputs.installSavingsTotal.textContent = formatCurrency(totalInstallSavings);
-                if (outputs.rentalSavingsTotal) outputs.rentalSavingsTotal.textContent = formatCurrency(totalRentalSavings);
+            function applySimulationResult(result) {
+                if (!result) {
+                    return;
+                }
+
+                const coveragePercent = Number(result.coveragePercent ?? result.input?.coveragePercent ?? 0);
+                const horizonYears = Number(result.analyzedHorizonYears ?? result.input?.horizonYears ?? 0);
+
+                if (outputs.baseTotal) outputs.baseTotal.textContent = formatCurrency(result.costWithoutSolar);
+                if (outputs.installTotal) outputs.installTotal.textContent = formatCurrency(result.totalInstallCost);
+                if (outputs.rentalTotal) outputs.rentalTotal.textContent = formatCurrency(result.totalRentalCost);
+                if (outputs.installSavings) outputs.installSavings.textContent = formatCurrency(result.installationSavings);
+                if (outputs.rentalSavings) outputs.rentalSavings.textContent = formatCurrency(result.rentSavings);
+                if (outputs.installMonthlySavings) outputs.installMonthlySavings.textContent = formatCurrency(result.monthlySavingInstallation);
+                if (outputs.rentalMonthlySavings) outputs.rentalMonthlySavings.textContent = formatCurrency(result.monthlySavingRent);
+                if (outputs.installInvestment) outputs.installInvestment.textContent = formatCurrency(result.installationInvestment);
+                if (outputs.installSavingsTotal) outputs.installSavingsTotal.textContent = formatCurrency(result.installationSavings);
+                if (outputs.rentalSavingsTotal) outputs.rentalSavingsTotal.textContent = formatCurrency(result.rentSavings);
+
                 if (outputs.annualGeneration) {
-                    outputs.annualGeneration.textContent = Number.isFinite(annualGeneration)
-                        ? formatNumber(annualGeneration, ' kWh')
+                    outputs.annualGeneration.textContent = Number.isFinite(result.annualGeneratedEnergyKwh)
+                        ? formatNumber(result.annualGeneratedEnergyKwh, ' kWh')
                         : '-';
                 }
-                if (outputs.coverageLabel) outputs.coverageLabel.textContent = formatPercent(Math.min(coverage, 1));
-                if (outputs.installTime) outputs.installTime.textContent = formatMonths(installationTimeMonths);
+
+                if (outputs.coverageLabel) {
+                    outputs.coverageLabel.textContent = formatPercentNumber(coveragePercent);
+                }
+
+                if (outputs.installTime) outputs.installTime.textContent = formatMonths(result.installationTimeMonths);
                 if (outputs.installPayback) {
                     outputs.installPayback.textContent =
-                        paybackYears !== null ? formatMonths(paybackYears * 12) : 'Não alcançado';
+                        Number.isFinite(result.paybackYears) ? formatMonths(result.paybackYears * 12) : 'Não alcançado';
                 }
-                if (outputs.rentalMonthly) outputs.rentalMonthly.textContent = formatCurrency(rentalMonthly);
-                if (outputs.rentalDiscountLabel) outputs.rentalDiscountLabel.textContent = formatPercent(rentalDiscount);
-                if (outputs.annualSavingsAverage) outputs.annualSavingsAverage.textContent = formatCurrency(averageAnnualSavings);
+
+                if (outputs.rentalMonthly) outputs.rentalMonthly.textContent = formatCurrency(result.initialRentAmount);
+                if (outputs.rentalDiscountLabel) outputs.rentalDiscountLabel.textContent = formatPercentNumber(result.discountAppliedPercent);
+                if (outputs.annualSavingsAverage) outputs.annualSavingsAverage.textContent = formatCurrency(result.averageAnnualSaving);
+
                 if (outputs.paybackResume) {
                     outputs.paybackResume.textContent =
-                        paybackYears !== null ? formatMonths(paybackYears * 12) : 'Não recupera investimento';
+                        Number.isFinite(result.paybackYears) ? formatMonths(result.paybackYears * 12) : 'Não recupera investimento';
                 }
-                if (outputs.fiveYearSavings) outputs.fiveYearSavings.textContent = formatCurrency(fiveYearSavings);
+
+                if (outputs.fiveYearSavings) outputs.fiveYearSavings.textContent = formatCurrency(result.fiveYearAccumulatedSaving);
                 if (outputs.horizonLabel) {
                     outputs.horizonLabel.textContent =
                         `${horizonYears} ${horizonYears === 1 ? 'ano' : 'anos'}`;
                 }
 
-                updateBadge(outputs.installBadge, totalInstallSavings);
-                updateBadge(outputs.rentalBadge, totalRentalSavings);
+                updateBadge(outputs.installBadge, result.installationSavings);
+                updateBadge(outputs.rentalBadge, result.rentSavings);
 
                 if (coverageProgress) {
-                    const progressValue = Math.min(Math.max(coverage * 100, 0), 120);
+                    const progressValue = Math.min(Math.max(coveragePercent, 0), 120);
                     coverageProgress.style.width = `${progressValue}%`;
                     coverageProgress.setAttribute('aria-valuenow', progressValue.toFixed(0));
                 }
 
-                if (projectionChart) {
-                    const labels = timelineLabels.length ? timelineLabels : generateTimelineLabels(defaultTimelineLength);
-                    const installSeries = installationSavingsSeries.length
-                        ? installationSavingsSeries
-                        : new Array(defaultTimelineLength).fill(0);
-                    const rentalSeries = rentalSavingsSeries.length
-                        ? rentalSavingsSeries
-                        : new Array(defaultTimelineLength).fill(0);
+                updateProjectionChartFromResult(result);
+            }
 
-                    projectionChart.data.labels = labels;
-                    projectionChart.data.datasets[0].data = installSeries;
-                    projectionChart.data.datasets[1].data = rentalSeries;
-                    projectionChart.update();
+            async function recalculate() {
+                const payload = buildSimulationPayload();
+                const token = antiForgeryTokenInput?.value;
+
+                try {
+                    const response = await fetch(calculateUserSimulationUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...(token ? { 'RequestVerificationToken': token } : {})
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        console.error('Falha ao calcular simulação do usuário:', response.statusText);
+                        return;
+                    }
+
+                    const result = await response.json();
+                    applySimulationResult(result);
+                } catch (error) {
+                    console.error('Erro ao recalcular simulação do usuário:', error);
                 }
             }
 
@@ -962,13 +899,13 @@
                 if (outputs.fiveYearSavings) outputs.fiveYearSavings.textContent = formatCurrency(0);
                 if (outputs.horizonLabel) outputs.horizonLabel.textContent = '-';
 
-                if (outputs.coverageLabel) outputs.coverageLabel.textContent = '0%';
+                if (outputs.coverageLabel) outputs.coverageLabel.textContent = formatPercentNumber(0);
                 if (outputs.installTime) outputs.installTime.textContent = '-';
                 if (outputs.installPayback) outputs.installPayback.textContent = 'Não calculado';
                 if (outputs.paybackResume) outputs.paybackResume.textContent = 'Não calculado';
 
                 if (outputs.rentalMonthly) outputs.rentalMonthly.textContent = formatCurrency(0);
-                if (outputs.rentalDiscountLabel) outputs.rentalDiscountLabel.textContent = '0%';
+                if (outputs.rentalDiscountLabel) outputs.rentalDiscountLabel.textContent = formatPercentNumber(0);
 
                 if (outputs.installBadge) {
                     outputs.installBadge.classList.remove('badge-positive', 'badge-negative');

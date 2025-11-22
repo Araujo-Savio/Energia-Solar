@@ -56,6 +56,9 @@ namespace SolarEnergy.ViewModels
         public CompanyParametersInputModel? CompanyParameters { get; set; }
         public string? SelectedCompanyId { get; set; }
         public string? SelectedCompanyName { get; set; }
+        public List<double> InstallationSavingsTimeline { get; set; } = new();
+        public List<double> RentalSavingsTimeline { get; set; } = new();
+        public List<string> TimelineLabels { get; set; } = new();
         public double CostWithoutSolar { get; set; }
         public double InstallationInvestment { get; set; }
         public double RentCost { get; set; }
