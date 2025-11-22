@@ -1,153 +1,108 @@
 @model SolarEnergy.ViewModels.SimulationPdfViewModel
-@using System.Globalization
 @{
     Layout = null;
-    var ptBr = new CultureInfo("pt-BR");
     var isCompany = Model.IsCompanyUser;
 }
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="utf-8" />
-    <title>Simulação de Economia - Resultado</title>
+    <title>Resultados da simulação</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 24px; }
-        h1 { text-align: center; margin-bottom: 12px; }
-        p { margin: 4px 0; }
-        table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+        h1 { text-align: center; margin-bottom: 16px; }
+        table { width: 100%; border-collapse: collapse; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background: #f5f5f5; }
-        h2 { margin-top: 24px; }
-        h3 { margin-top: 16px; }
+        th { background: #f7f7f7; }
+        tbody tr:last-child td { border-bottom: 1px solid #ddd; }
     </style>
 </head>
 <body>
-    <h1>Simulação de Economia - Resultado</h1>
-
-    <p>
-        Empresa selecionada: @Model.SelectedCompanyName
-    </p>
-
-    <p>
-        Consumo médio: @Model.CalculatorAverageMonthlyConsumptionKwh kWh |
-        Tarifa: @Model.CalculatorTariffPerKwh.ToString("C", ptBr) |
-        Cobertura: @Model.CalculatorCoveragePercent.ToString("N2", ptBr)% |
-        Horizonte: @Model.CalculatorHorizonYears anos
-    </p>
-
-    <h2>Métricas utilizadas</h2>
-
-    <h3>Parâmetros da calculadora</h3>
-    <table>
-        <thead>
-            <tr><th>Parâmetro</th><th>Valor</th></tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Consumo médio mensal (kWh)</td>
-                <td>@Model.CalculatorAverageMonthlyConsumptionKwh</td>
-            </tr>
-            <tr>
-                <td>Tarifa da energia (R$/kWh)</td>
-                <td>@Model.CalculatorTariffPerKwh.ToString("C", ptBr)</td>
-            </tr>
-            <tr>
-                <td>Cobertura do sistema (%)</td>
-                <td>@Model.CalculatorCoveragePercent.ToString("N2", ptBr)%</td>
-            </tr>
-            <tr>
-                <td>Degradação anual do sistema (%)</td>
-                <td>@Model.CalculatorDegradationPercent.ToString("N2", ptBr)%</td>
-            </tr>
-            <tr>
-                <td>Horizonte de análise (anos)</td>
-                <td>@Model.CalculatorHorizonYears</td>
-            </tr>
-            <tr>
-                <td>Inflação anual da tarifa (%)</td>
-                <td>@Model.CalculatorTariffInflationPercent.ToString("N2", ptBr)%</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <h3>Parâmetros da empresa</h3>
-    <table>
-        <thead>
-            <tr><th>Parâmetro</th><th>Valor</th></tr>
-        </thead>
-        <tbody>
-        @if (Model.CompanyParameters is not null)
-        {
-            <tr><td>Preço do sistema por kWp (R$/kWp)</td><td>@Model.CompanyParameters.SystemPricePerKwp.ToString("C", ptBr)</td></tr>
-            <tr><td>Manutenção anual (% do investimento)</td><td>@Model.CompanyParameters.MaintenancePercent.ToString("N2", ptBr)%</td></tr>
-            <tr><td>Incentivo / desconto na instalação (%)</td><td>@Model.CompanyParameters.InstallDiscountPercent.ToString("N2", ptBr)%</td></tr>
-            <tr><td>Fator da mensalidade do aluguel (% da conta)</td><td>@Model.CompanyParameters.RentalFactorPercent.ToString("N2", ptBr)%</td></tr>
-            <tr><td>Taxa de instalação do aluguel (R$ por kWp ou projeto)</td><td>@Model.CompanyParameters.RentalSetupPerKwp.ToString("C", ptBr)</td></tr>
-            <tr><td>Mensalidade mínima de aluguel (R$)</td><td>@Model.CompanyParameters.RentalMinMonthly.ToString("C", ptBr)</td></tr>
-            <tr><td>Reajuste anual da mensalidade do aluguel (%)</td><td>@Model.CompanyParameters.RentalAnnualIncreasePercent.ToString("N2", ptBr)%</td></tr>
-            <tr><td>Desconto na conta (%)</td><td>@Model.CompanyParameters.RentalDiscountPercent.ToString("N2", ptBr)%</td></tr>
-            <tr><td>Consumo mensal por 1 kWp (kWh)</td><td>@Model.CompanyParameters.ConsumptionPerKwp.ToString("N2", ptBr)</td></tr>
-            <tr><td>Potência mínima do sistema (kWp)</td><td>@Model.CompanyParameters.MinSystemSizeKwp.ToString("N2", ptBr)</td></tr>
-        }
-        </tbody>
-    </table>
-
-    <h2>Resultados da simulação</h2>
+    <h1>Resultados da simulação</h1>
 
     <table>
         <thead>
-            <tr><th>Métrica</th><th>Valor</th></tr>
+            <tr>
+                <th>Métrica</th>
+                <th>Valor</th>
+            </tr>
         </thead>
         <tbody>
         @if (!isCompany && Model.UserResult is not null)
         {
             var r = Model.UserResult;
-
-            <tr><td>Custo sem energia solar</td><td>@r.CostWithoutSolar.ToString("C", ptBr)</td></tr>
-            <tr><td>Custo com aluguel</td><td>@r.RentCost.ToString("C", ptBr)</td></tr>
-            <tr><td>Investimento com instalação</td><td>@r.InstallationInvestment.ToString("C", ptBr)</td></tr>
-            <tr><td>Economia com aluguel</td><td>@r.RentSavings.ToString("C", ptBr)</td></tr>
-            <tr><td>Energia gerada anualmente (kWh)</td><td>@r.AnnualGeneratedEnergyKwh.ToString("N2", ptBr)</td></tr>
-
-            <tr><td>Investimento inicial</td><td>@r.InitialInvestment.ToString("C", ptBr)</td></tr>
-            <tr><td>Economia mensal estimada</td><td>@r.MonthlySavingInstallation.ToString("C", ptBr)</td></tr>
-            <tr><td>Economia total no horizonte</td><td>@r.InstallationTotalSavingHorizon.ToString("C", ptBr)</td></tr>
-            <tr><td>Payback estimado</td><td>@r.PaybackYears.GetValueOrDefault().ToString("N2", ptBr) anos</td></tr>
-
-            <tr><td>Mensalidade inicial</td><td>@r.InitialRentAmount.ToString("C", ptBr)</td></tr>
-            <tr><td>Economia mensal estimada do aluguel</td><td>@r.MonthlySavingRent.ToString("C", ptBr)</td></tr>
-            <tr><td>Economia total no horizonte de aluguel</td><td>@r.RentTotalSavingHorizon.ToString("C", ptBr)</td></tr>
-            <tr><td>Desconto aplicado na conta</td><td>@r.DiscountAppliedPercent.ToString("N2", ptBr)%</td></tr>
-
-            <tr><td>Economia média anual</td><td>@r.AverageAnnualSaving.ToString("C", ptBr)</td></tr>
-            <tr><td>Investimento recuperado em</td><td>@r.InvestmentRecoveryYears.ToString("N2", ptBr) anos</td></tr>
-            <tr><td>Economia acumulada em 5 anos</td><td>@r.FiveYearAccumulatedSaving.ToString("C", ptBr)</td></tr>
-            <tr><td>Horizonte analisado</td><td>@r.AnalyzedHorizonYears anos</td></tr>
+            <tr><td>Empresa selecionada</td><td>@Model.SelectedCompanyName</td></tr>
+            <tr><td>Consumo médio mensal (kWh)</td><td>@Model.CalculatorAverageMonthlyConsumptionKwh</td></tr>
+            <tr><td>Tarifa da energia (R$/kWh)</td><td>@Model.CalculatorTariffPerKwh</td></tr>
+            <tr><td>Cobertura do sistema (%)</td><td>@Model.CalculatorCoveragePercent</td></tr>
+            <tr><td>Degradação anual do sistema (%)</td><td>@Model.CalculatorDegradationPercent</td></tr>
+            <tr><td>Horizonte de análise (anos)</td><td>@Model.CalculatorHorizonYears</td></tr>
+            <tr><td>Inflação anual da tarifa (%)</td><td>@Model.CalculatorTariffInflationPercent</td></tr>
+            <tr><td>Preço do sistema por kWp (R$/kWp)</td><td>@Model.CompanyParameters?.SystemPricePerKwp</td></tr>
+            <tr><td>Manutenção anual (% do investimento)</td><td>@Model.CompanyParameters?.MaintenancePercent</td></tr>
+            <tr><td>Incentivo / desconto na instalação (%)</td><td>@Model.CompanyParameters?.InstallDiscountPercent</td></tr>
+            <tr><td>Fator da mensalidade do aluguel (% da conta)</td><td>@Model.CompanyParameters?.RentalFactorPercent</td></tr>
+            <tr><td>Taxa de instalação do aluguel (R$ por kWp ou projeto)</td><td>@Model.CompanyParameters?.RentalSetupPerKwp</td></tr>
+            <tr><td>Mensalidade mínima de aluguel (R$)</td><td>@Model.CompanyParameters?.RentalMinMonthly</td></tr>
+            <tr><td>Reajuste anual da mensalidade do aluguel (%)</td><td>@Model.CompanyParameters?.RentalAnnualIncreasePercent</td></tr>
+            <tr><td>Desconto na conta (%)</td><td>@Model.CompanyParameters?.RentalDiscountPercent</td></tr>
+            <tr><td>Consumo mensal por 1 kWp (kWh)</td><td>@Model.CompanyParameters?.ConsumptionPerKwp</td></tr>
+            <tr><td>Potência mínima do sistema (kWp)</td><td>@Model.CompanyParameters?.MinSystemSizeKwp</td></tr>
+            <tr><td>Custo sem energia solar</td><td>@r.CostWithoutSolar</td></tr>
+            <tr><td>Custo com aluguel</td><td>@r.RentCost</td></tr>
+            <tr><td>Investimento com instalação</td><td>@r.InstallationInvestment</td></tr>
+            <tr><td>Economia com aluguel</td><td>@r.RentSavings</td></tr>
+            <tr><td>Energia gerada anualmente (kWh)</td><td>@r.AnnualGeneratedEnergyKwh</td></tr>
+            <tr><td>Investimento inicial</td><td>@r.InitialInvestment</td></tr>
+            <tr><td>Economia mensal estimada</td><td>@r.MonthlySavingInstallation</td></tr>
+            <tr><td>Economia total no horizonte</td><td>@r.InstallationTotalSavingHorizon</td></tr>
+            <tr><td>Payback estimado</td><td>@r.PaybackYears</td></tr>
+            <tr><td>Mensalidade inicial</td><td>@r.InitialRentAmount</td></tr>
+            <tr><td>Economia mensal estimada do aluguel</td><td>@r.MonthlySavingRent</td></tr>
+            <tr><td>Economia total no horizonte de aluguel</td><td>@r.RentTotalSavingHorizon</td></tr>
+            <tr><td>Desconto aplicado na conta</td><td>@r.DiscountAppliedPercent</td></tr>
+            <tr><td>Economia média anual</td><td>@r.AverageAnnualSaving</td></tr>
+            <tr><td>Investimento recuperado em</td><td>@r.InvestmentRecoveryYears</td></tr>
+            <tr><td>Economia acumulada em 5 anos</td><td>@r.FiveYearAccumulatedSaving</td></tr>
+            <tr><td>Horizonte analisado</td><td>@r.AnalyzedHorizonYears</td></tr>
         }
         else if (isCompany && Model.CompanyResult is not null)
         {
             var r = Model.CompanyResult;
-
-            <tr><td>Custo sem energia solar</td><td>@r.CostWithoutSolar.ToString("C", ptBr)</td></tr>
-            <tr><td>Custo com aluguel</td><td>@r.RentCost.ToString("C", ptBr)</td></tr>
-            <tr><td>Investimento com instalação</td><td>@r.InstallationInvestment.ToString("C", ptBr)</td></tr>
-            <tr><td>Economia com aluguel</td><td>@r.RentSavings.ToString("C", ptBr)</td></tr>
-            <tr><td>Energia gerada anualmente (kWh)</td><td>@r.AnnualGeneratedEnergyKwh.ToString("N2", ptBr)</td></tr>
-
-            <tr><td>Investimento inicial</td><td>@r.InitialInvestment.ToString("C", ptBr)</td></tr>
-            <tr><td>Economia mensal estimada</td><td>@r.MonthlySavingInstallation.ToString("C", ptBr)</td></tr>
-            <tr><td>Economia total no horizonte</td><td>@r.InstallationTotalSavingHorizon.ToString("C", ptBr)</td></tr>
-            <tr><td>Payback estimado</td><td>@r.PaybackYears.GetValueOrDefault().ToString("N2", ptBr) anos</td></tr>
-
-            <tr><td>Mensalidade inicial</td><td>@r.InitialRentAmount.ToString("C", ptBr)</td></tr>
-            <tr><td>Economia mensal estimada do aluguel</td><td>@r.MonthlySavingRent.ToString("C", ptBr)</td></tr>
-            <tr><td>Economia total no horizonte de aluguel</td><td>@r.RentTotalSavingHorizon.ToString("C", ptBr)</td></tr>
-            <tr><td>Desconto aplicado na conta</td><td>@r.DiscountAppliedPercent.ToString("N2", ptBr)%</td></tr>
-
-            <tr><td>Economia média anual</td><td>@r.AverageAnnualSaving.ToString("C", ptBr)</td></tr>
-            <tr><td>Investimento recuperado em</td><td>@r.InvestmentRecoveryYears.ToString("N2", ptBr) anos</td></tr>
-            <tr><td>Economia acumulada em 5 anos</td><td>@r.FiveYearAccumulatedSaving.ToString("C", ptBr)</td></tr>
-            <tr><td>Horizonte analisado</td><td>@r.AnalyzedHorizonYears anos</td></tr>
+            <tr><td>Empresa selecionada</td><td>@Model.SelectedCompanyName</td></tr>
+            <tr><td>Consumo médio mensal (kWh)</td><td>@Model.CalculatorAverageMonthlyConsumptionKwh</td></tr>
+            <tr><td>Tarifa da energia (R$/kWh)</td><td>@Model.CalculatorTariffPerKwh</td></tr>
+            <tr><td>Cobertura do sistema (%)</td><td>@Model.CalculatorCoveragePercent</td></tr>
+            <tr><td>Degradação anual do sistema (%)</td><td>@Model.CalculatorDegradationPercent</td></tr>
+            <tr><td>Horizonte de análise (anos)</td><td>@Model.CalculatorHorizonYears</td></tr>
+            <tr><td>Inflação anual da tarifa (%)</td><td>@Model.CalculatorTariffInflationPercent</td></tr>
+            <tr><td>Preço do sistema por kWp (R$/kWp)</td><td>@Model.CompanyParameters?.SystemPricePerKwp</td></tr>
+            <tr><td>Manutenção anual (% do investimento)</td><td>@Model.CompanyParameters?.MaintenancePercent</td></tr>
+            <tr><td>Incentivo / desconto na instalação (%)</td><td>@Model.CompanyParameters?.InstallDiscountPercent</td></tr>
+            <tr><td>Fator da mensalidade do aluguel (% da conta)</td><td>@Model.CompanyParameters?.RentalFactorPercent</td></tr>
+            <tr><td>Taxa de instalação do aluguel (R$ por kWp ou projeto)</td><td>@Model.CompanyParameters?.RentalSetupPerKwp</td></tr>
+            <tr><td>Mensalidade mínima de aluguel (R$)</td><td>@Model.CompanyParameters?.RentalMinMonthly</td></tr>
+            <tr><td>Reajuste anual da mensalidade do aluguel (%)</td><td>@Model.CompanyParameters?.RentalAnnualIncreasePercent</td></tr>
+            <tr><td>Desconto na conta (%)</td><td>@Model.CompanyParameters?.RentalDiscountPercent</td></tr>
+            <tr><td>Consumo mensal por 1 kWp (kWh)</td><td>@Model.CompanyParameters?.ConsumptionPerKwp</td></tr>
+            <tr><td>Potência mínima do sistema (kWp)</td><td>@Model.CompanyParameters?.MinSystemSizeKwp</td></tr>
+            <tr><td>Custo sem energia solar</td><td>@r.CostWithoutSolar</td></tr>
+            <tr><td>Custo com aluguel</td><td>@r.RentCost</td></tr>
+            <tr><td>Investimento com instalação</td><td>@r.InstallationInvestment</td></tr>
+            <tr><td>Economia com aluguel</td><td>@r.RentSavings</td></tr>
+            <tr><td>Energia gerada anualmente (kWh)</td><td>@r.AnnualGeneratedEnergyKwh</td></tr>
+            <tr><td>Investimento inicial</td><td>@r.InitialInvestment</td></tr>
+            <tr><td>Economia mensal estimada</td><td>@r.MonthlySavingInstallation</td></tr>
+            <tr><td>Economia total no horizonte</td><td>@r.InstallationTotalSavingHorizon</td></tr>
+            <tr><td>Payback estimado</td><td>@r.PaybackYears</td></tr>
+            <tr><td>Mensalidade inicial</td><td>@r.InitialRentAmount</td></tr>
+            <tr><td>Economia mensal estimada do aluguel</td><td>@r.MonthlySavingRent</td></tr>
+            <tr><td>Economia total no horizonte de aluguel</td><td>@r.RentTotalSavingHorizon</td></tr>
+            <tr><td>Desconto aplicado na conta</td><td>@r.DiscountAppliedPercent</td></tr>
+            <tr><td>Economia média anual</td><td>@r.AverageAnnualSaving</td></tr>
+            <tr><td>Investimento recuperado em</td><td>@r.InvestmentRecoveryYears</td></tr>
+            <tr><td>Economia acumulada em 5 anos</td><td>@r.FiveYearAccumulatedSaving</td></tr>
+            <tr><td>Horizonte analisado</td><td>@r.AnalyzedHorizonYears</td></tr>
         }
         </tbody>
     </table>
