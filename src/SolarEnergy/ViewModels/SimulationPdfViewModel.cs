@@ -5,8 +5,12 @@ namespace SolarEnergy.ViewModels
         public bool IsCompanyUser { get; set; }
         public string? SelectedCompanyName { get; set; }
 
-        public UserSimulationInput? UserInput { get; set; }
-        public CompanySimulationInput? CompanyInput { get; set; }
+        public decimal AverageMonthlyConsumptionKwh { get; set; }
+        public decimal TariffPerKwh { get; set; }
+        public decimal CoveragePercent { get; set; }
+        public decimal DegradationPercent { get; set; }
+        public int HorizonYears { get; set; }
+        public decimal TariffInflationPercent { get; set; }
 
         public CompanyParametersInputModel? CompanyParameters { get; set; }
 

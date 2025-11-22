@@ -28,24 +28,12 @@
         Empresa selecionada: @Model.SelectedCompanyName
     </p>
 
-    @if (!isCompany && Model.UserInput is not null)
-    {
-        <p>
-            Consumo médio: @Model.UserInput.AverageMonthlyConsumptionKwh kWh |
-            Tarifa: @Model.UserInput.TariffPerKwh.ToString("C", ptBr) |
-            Cobertura: @Model.UserInput.CoveragePercent.ToString("N2", ptBr)% |
-            Horizonte: @Model.UserInput.HorizonYears anos
-        </p>
-    }
-    else if (isCompany && Model.CompanyInput is not null)
-    {
-        <p>
-            Consumo médio: @Model.CompanyInput.AverageMonthlyConsumptionKwh kWh |
-            Tarifa: @Model.CompanyInput.TariffPerKwh.ToString("C", ptBr) |
-            Cobertura: @Model.CompanyInput.CoveragePercent.ToString("N2", ptBr)% |
-            Horizonte: @Model.CompanyInput.HorizonYears anos
-        </p>
-    }
+    <p>
+        Consumo médio: @Model.AverageMonthlyConsumptionKwh kWh |
+        Tarifa: @Model.TariffPerKwh.ToString("C", ptBr) |
+        Cobertura: @Model.CoveragePercent.ToString("N2", ptBr)% |
+        Horizonte: @Model.HorizonYears anos
+    </p>
 
     <h2>Métricas utilizadas</h2>
 
@@ -55,24 +43,12 @@
             <tr><th>Parâmetro</th><th>Valor</th></tr>
         </thead>
         <tbody>
-        @if (!isCompany && Model.UserInput is not null)
-        {
-            <tr><td>Consumo médio mensal (kWh)</td><td>@Model.UserInput.AverageMonthlyConsumptionKwh</td></tr>
-            <tr><td>Tarifa da energia (R$/kWh)</td><td>@Model.UserInput.TariffPerKwh.ToString("C", ptBr)</td></tr>
-            <tr><td>Cobertura do sistema (%)</td><td>@Model.UserInput.CoveragePercent.ToString("N2", ptBr)%</td></tr>
-            <tr><td>Degradação anual do sistema (%)</td><td>@Model.UserInput.DegradationPercent.ToString("N2", ptBr)%</td></tr>
-            <tr><td>Horizonte de análise (anos)</td><td>@Model.UserInput.HorizonYears</td></tr>
-            <tr><td>Inflação anual da tarifa (%)</td><td>@Model.UserInput.InflationPercent.ToString("N2", ptBr)%</td></tr>
-        }
-        else if (isCompany && Model.CompanyInput is not null)
-        {
-            <tr><td>Consumo médio mensal (kWh)</td><td>@Model.CompanyInput.AverageMonthlyConsumptionKwh</td></tr>
-            <tr><td>Tarifa da energia (R$/kWh)</td><td>@Model.CompanyInput.TariffPerKwh.ToString("C", ptBr)</td></tr>
-            <tr><td>Cobertura do sistema (%)</td><td>@Model.CompanyInput.CoveragePercent.ToString("N2", ptBr)%</td></tr>
-            <tr><td>Degradação anual do sistema (%)</td><td>@Model.CompanyInput.DegradationPercent.ToString("N2", ptBr)%</td></tr>
-            <tr><td>Horizonte de análise (anos)</td><td>@Model.CompanyInput.HorizonYears</td></tr>
-            <tr><td>Inflação anual da tarifa (%)</td><td>@Model.CompanyInput.InflationPercent.ToString("N2", ptBr)%</td></tr>
-        }
+            <tr><td>Consumo médio mensal (kWh)</td><td>@Model.AverageMonthlyConsumptionKwh</td></tr>
+            <tr><td>Tarifa da energia (R$/kWh)</td><td>@Model.TariffPerKwh.ToString("C", ptBr)</td></tr>
+            <tr><td>Cobertura do sistema (%)</td><td>@Model.CoveragePercent.ToString("N2", ptBr)%</td></tr>
+            <tr><td>Degradação anual do sistema (%)</td><td>@Model.DegradationPercent.ToString("N2", ptBr)%</td></tr>
+            <tr><td>Horizonte de análise (anos)</td><td>@Model.HorizonYears</td></tr>
+            <tr><td>Inflação anual da tarifa (%)</td><td>@Model.TariffInflationPercent.ToString("N2", ptBr)%</td></tr>
         </tbody>
     </table>
 
