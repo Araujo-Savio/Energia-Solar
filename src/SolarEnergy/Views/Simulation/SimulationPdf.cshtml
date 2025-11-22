@@ -1,8 +1,9 @@
 @model SolarEnergy.ViewModels.SimulationPdfViewModel
 @using System.Globalization
-@{ 
+@{
     Layout = null;
     var ptBr = new CultureInfo("pt-BR");
+    var isCompany = Model.IsCompanyUser;
 }
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -16,6 +17,8 @@
         table { width: 100%; border-collapse: collapse; margin-top: 12px; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
         th { background: #f5f5f5; }
+        h2 { margin-top: 24px; }
+        h3 { margin-top: 16px; }
     </style>
 </head>
 <body>
@@ -25,173 +28,134 @@
         Empresa selecionada: @Model.SelectedCompanyName
     </p>
 
-    @if (!Model.IsCompanyUser && Model.UserInput is not null && Model.UserResult is not null)
+    @if (!isCompany && Model.UserInput is not null)
     {
         <p>
-            Consumo médio: @Model.UserInput.AverageMonthlyConsumptionKwh.ToString("N0", ptBr) kWh |
+            Consumo médio: @Model.UserInput.AverageMonthlyConsumptionKwh kWh |
             Tarifa: @Model.UserInput.TariffPerKwh.ToString("C", ptBr) |
             Cobertura: @Model.UserInput.CoveragePercent.ToString("N2", ptBr)% |
             Horizonte: @Model.UserInput.HorizonYears anos
         </p>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Métrica</th>
-                    <th>Valor</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Custo sem energia solar</td>
-                    <td>@Model.UserResult.CostWithoutSolar.ToString("C", ptBr)</td>
-                </tr>
-                <tr>
-                    <td>Investimento com instalação</td>
-                    <td>@Model.UserResult.InstallationInvestment.ToString("C", ptBr)</td>
-                </tr>
-                <tr>
-                    <td>Custo com aluguel</td>
-                    <td>@Model.UserResult.RentCost.ToString("C", ptBr)</td>
-                </tr>
-                <tr>
-                    <td>Economia com instalação</td>
-                    <td>@Model.UserResult.InstallationSavings.ToString("C", ptBr)</td>
-                </tr>
-                <tr>
-                    <td>Economia com aluguel</td>
-                    <td>@Model.UserResult.RentSavings.ToString("C", ptBr)</td>
-                </tr>
-                <tr>
-                    <td>Energia gerada anualmente (kWh)</td>
-                    <td>@Model.UserResult.AnnualGeneratedEnergyKwh.ToString("N2", ptBr)</td>
-                </tr>
-                <tr>
-                    <td>Economia média anual</td>
-                    <td>@Model.UserResult.AverageAnnualSaving.ToString("C", ptBr)</td>
-                </tr>
-                <tr>
-                    <td>Economia mensal (instalação)</td>
-                    <td>@Model.UserResult.MonthlySavingInstallation.ToString("C", ptBr)</td>
-                </tr>
-                <tr>
-                    <td>Economia mensal (aluguel)</td>
-                    <td>@Model.UserResult.MonthlySavingRent.ToString("C", ptBr)</td>
-                </tr>
-                <tr>
-                    <td>Payback estimado</td>
-                    <td>@(Model.UserResult.PaybackYears.HasValue ? $"{Model.UserResult.PaybackYears.Value.ToString("N2", ptBr)} anos" : "Não recupera investimento")</td>
-                </tr>
-                <tr>
-                    <td>Tempo de instalação</td>
-                    <td>@Model.UserResult.InstallationTimeMonths.ToString("N1", ptBr) meses</td>
-                </tr>
-                <tr>
-                    <td>Mensalidade de aluguel inicial</td>
-                    <td>@Model.UserResult.InitialRentAmount.ToString("C", ptBr)</td>
-                </tr>
-                <tr>
-                    <td>Desconto aplicado na conta</td>
-                    <td>@Model.UserResult.DiscountAppliedPercent.ToString("N2", ptBr)%</td>
-                </tr>
-                <tr>
-                    <td>Economia acumulada em 5 anos</td>
-                    <td>@Model.UserResult.FiveYearAccumulatedSaving.ToString("C", ptBr)</td>
-                </tr>
-                <tr>
-                    <td>Horizonte analisado</td>
-                    <td>@Model.UserResult.AnalyzedHorizonYears anos</td>
-                </tr>
-                <tr>
-                    <td>Cobertura considerada</td>
-                    <td>@Model.UserResult.CoveragePercent.ToString("N2", ptBr)%</td>
-                </tr>
-            </tbody>
-        </table>
     }
-    else if (Model.IsCompanyUser && Model.CompanyInput is not null && Model.CompanyResult is not null)
+    else if (isCompany && Model.CompanyInput is not null)
     {
         <p>
-            Consumo médio: @Model.CompanyInput.AverageMonthlyConsumptionKwh.ToString("N0", ptBr) kWh |
+            Consumo médio: @Model.CompanyInput.AverageMonthlyConsumptionKwh kWh |
             Tarifa: @Model.CompanyInput.TariffPerKwh.ToString("C", ptBr) |
             Cobertura: @Model.CompanyInput.CoveragePercent.ToString("N2", ptBr)% |
             Horizonte: @Model.CompanyInput.HorizonYears anos
         </p>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Métrica</th>
-                    <th>Valor</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Custo sem energia solar</td>
-                    <td>@Model.CompanyResult.CostWithoutSolar.ToString("C", ptBr)</td>
-                </tr>
-                <tr>
-                    <td>Investimento com instalação</td>
-                    <td>@Model.CompanyResult.InstallationInvestment.ToString("C", ptBr)</td>
-                </tr>
-                <tr>
-                    <td>Custo com aluguel</td>
-                    <td>@Model.CompanyResult.RentCost.ToString("C", ptBr)</td>
-                </tr>
-                <tr>
-                    <td>Economia com instalação</td>
-                    <td>@Model.CompanyResult.InstallationSavings.ToString("C", ptBr)</td>
-                </tr>
-                <tr>
-                    <td>Economia com aluguel</td>
-                    <td>@Model.CompanyResult.RentSavings.ToString("C", ptBr)</td>
-                </tr>
-                <tr>
-                    <td>Energia gerada anualmente (kWh)</td>
-                    <td>@Model.CompanyResult.AnnualGeneratedEnergyKwh.ToString("N2", ptBr)</td>
-                </tr>
-                <tr>
-                    <td>Economia média anual</td>
-                    <td>@Model.CompanyResult.AverageAnnualSaving.ToString("C", ptBr)</td>
-                </tr>
-                <tr>
-                    <td>Economia mensal (instalação)</td>
-                    <td>@Model.CompanyResult.MonthlySavingInstallation.ToString("C", ptBr)</td>
-                </tr>
-                <tr>
-                    <td>Economia mensal (aluguel)</td>
-                    <td>@Model.CompanyResult.MonthlySavingRent.ToString("C", ptBr)</td>
-                </tr>
-                <tr>
-                    <td>Payback estimado</td>
-                    <td>@(Model.CompanyResult.PaybackYears.HasValue ? $"{Model.CompanyResult.PaybackYears.Value.ToString("N2", ptBr)} anos" : "Não recupera investimento")</td>
-                </tr>
-                <tr>
-                    <td>Tempo de instalação</td>
-                    <td>@Model.CompanyResult.InstallationTimeMonths.ToString("N1", ptBr) meses</td>
-                </tr>
-                <tr>
-                    <td>Mensalidade de aluguel inicial</td>
-                    <td>@Model.CompanyResult.InitialRentAmount.ToString("C", ptBr)</td>
-                </tr>
-                <tr>
-                    <td>Desconto aplicado na conta</td>
-                    <td>@Model.CompanyResult.DiscountAppliedPercent.ToString("N2", ptBr)%</td>
-                </tr>
-                <tr>
-                    <td>Economia acumulada em 5 anos</td>
-                    <td>@Model.CompanyResult.FiveYearAccumulatedSaving.ToString("C", ptBr)</td>
-                </tr>
-                <tr>
-                    <td>Horizonte analisado</td>
-                    <td>@Model.CompanyResult.AnalyzedHorizonYears anos</td>
-                </tr>
-                <tr>
-                    <td>Cobertura considerada</td>
-                    <td>@Model.CompanyResult.CoveragePercent.ToString("N2", ptBr)%</td>
-                </tr>
-            </tbody>
-        </table>
     }
+
+    <h2>Métricas utilizadas</h2>
+
+    <h3>Parâmetros da calculadora</h3>
+    <table>
+        <thead>
+            <tr><th>Parâmetro</th><th>Valor</th></tr>
+        </thead>
+        <tbody>
+        @if (!isCompany && Model.UserInput is not null)
+        {
+            <tr><td>Consumo médio mensal (kWh)</td><td>@Model.UserInput.AverageMonthlyConsumptionKwh</td></tr>
+            <tr><td>Tarifa da energia (R$/kWh)</td><td>@Model.UserInput.TariffPerKwh.ToString("C", ptBr)</td></tr>
+            <tr><td>Cobertura do sistema (%)</td><td>@Model.UserInput.CoveragePercent.ToString("N2", ptBr)%</td></tr>
+            <tr><td>Degradação anual do sistema (%)</td><td>@Model.UserInput.DegradationPercent.ToString("N2", ptBr)%</td></tr>
+            <tr><td>Horizonte de análise (anos)</td><td>@Model.UserInput.HorizonYears</td></tr>
+            <tr><td>Inflação anual da tarifa (%)</td><td>@Model.UserInput.InflationPercent.ToString("N2", ptBr)%</td></tr>
+        }
+        else if (isCompany && Model.CompanyInput is not null)
+        {
+            <tr><td>Consumo médio mensal (kWh)</td><td>@Model.CompanyInput.AverageMonthlyConsumptionKwh</td></tr>
+            <tr><td>Tarifa da energia (R$/kWh)</td><td>@Model.CompanyInput.TariffPerKwh.ToString("C", ptBr)</td></tr>
+            <tr><td>Cobertura do sistema (%)</td><td>@Model.CompanyInput.CoveragePercent.ToString("N2", ptBr)%</td></tr>
+            <tr><td>Degradação anual do sistema (%)</td><td>@Model.CompanyInput.DegradationPercent.ToString("N2", ptBr)%</td></tr>
+            <tr><td>Horizonte de análise (anos)</td><td>@Model.CompanyInput.HorizonYears</td></tr>
+            <tr><td>Inflação anual da tarifa (%)</td><td>@Model.CompanyInput.InflationPercent.ToString("N2", ptBr)%</td></tr>
+        }
+        </tbody>
+    </table>
+
+    <h3>Parâmetros da empresa</h3>
+    <table>
+        <thead>
+            <tr><th>Parâmetro</th><th>Valor</th></tr>
+        </thead>
+        <tbody>
+        @if (Model.CompanyParameters is not null)
+        {
+            <tr><td>Preço do sistema por kWp (R$/kWp)</td><td>@Model.CompanyParameters.SystemPricePerKwp.ToString("C", ptBr)</td></tr>
+            <tr><td>Manutenção anual (% do investimento)</td><td>@Model.CompanyParameters.MaintenancePercent.ToString("N2", ptBr)%</td></tr>
+            <tr><td>Incentivo / desconto na instalação (%)</td><td>@Model.CompanyParameters.InstallDiscountPercent.ToString("N2", ptBr)%</td></tr>
+            <tr><td>Fator da mensalidade do aluguel (% da conta)</td><td>@Model.CompanyParameters.RentalFactorPercent.ToString("N2", ptBr)%</td></tr>
+            <tr><td>Taxa de instalação do aluguel (R$ por kWp ou projeto)</td><td>@Model.CompanyParameters.RentalSetupPerKwp.ToString("C", ptBr)</td></tr>
+            <tr><td>Mensalidade mínima de aluguel (R$)</td><td>@Model.CompanyParameters.RentalMinMonthly.ToString("C", ptBr)</td></tr>
+            <tr><td>Reajuste anual da mensalidade do aluguel (%)</td><td>@Model.CompanyParameters.RentalAnnualIncreasePercent.ToString("N2", ptBr)%</td></tr>
+            <tr><td>Desconto na conta (%)</td><td>@Model.CompanyParameters.RentalDiscountPercent.ToString("N2", ptBr)%</td></tr>
+            <tr><td>Consumo mensal por 1 kWp (kWh)</td><td>@Model.CompanyParameters.ConsumptionPerKwp.ToString("N2", ptBr)</td></tr>
+            <tr><td>Potência mínima do sistema (kWp)</td><td>@Model.CompanyParameters.MinSystemSizeKwp.ToString("N2", ptBr)</td></tr>
+        }
+        </tbody>
+    </table>
+
+    <h2>Resultados da simulação</h2>
+
+    <table>
+        <thead>
+            <tr><th>Métrica</th><th>Valor</th></tr>
+        </thead>
+        <tbody>
+        @if (!isCompany && Model.UserResult is not null)
+        {
+            var r = Model.UserResult;
+
+            <tr><td>Custo sem energia solar</td><td>@r.CostWithoutSolar.ToString("C", ptBr)</td></tr>
+            <tr><td>Custo com aluguel</td><td>@r.RentCost.ToString("C", ptBr)</td></tr>
+            <tr><td>Investimento com instalação</td><td>@r.InstallationInvestment.ToString("C", ptBr)</td></tr>
+            <tr><td>Economia com aluguel</td><td>@r.RentSavings.ToString("C", ptBr)</td></tr>
+            <tr><td>Energia gerada anualmente (kWh)</td><td>@r.AnnualGeneratedEnergyKwh.ToString("N2", ptBr)</td></tr>
+
+            <tr><td>Investimento inicial</td><td>@r.InitialInvestment.ToString("C", ptBr)</td></tr>
+            <tr><td>Economia mensal estimada</td><td>@r.MonthlySavingInstallation.ToString("C", ptBr)</td></tr>
+            <tr><td>Economia total no horizonte</td><td>@r.InstallationTotalSavingHorizon.ToString("C", ptBr)</td></tr>
+            <tr><td>Payback estimado</td><td>@r.PaybackYears.GetValueOrDefault().ToString("N2", ptBr) anos</td></tr>
+
+            <tr><td>Mensalidade inicial</td><td>@r.InitialRentAmount.ToString("C", ptBr)</td></tr>
+            <tr><td>Economia mensal estimada do aluguel</td><td>@r.MonthlySavingRent.ToString("C", ptBr)</td></tr>
+            <tr><td>Economia total no horizonte de aluguel</td><td>@r.RentTotalSavingHorizon.ToString("C", ptBr)</td></tr>
+            <tr><td>Desconto aplicado na conta</td><td>@r.DiscountAppliedPercent.ToString("N2", ptBr)%</td></tr>
+
+            <tr><td>Economia média anual</td><td>@r.AverageAnnualSaving.ToString("C", ptBr)</td></tr>
+            <tr><td>Investimento recuperado em</td><td>@r.InvestmentRecoveryYears.ToString("N2", ptBr) anos</td></tr>
+            <tr><td>Economia acumulada em 5 anos</td><td>@r.FiveYearAccumulatedSaving.ToString("C", ptBr)</td></tr>
+            <tr><td>Horizonte analisado</td><td>@r.AnalyzedHorizonYears anos</td></tr>
+        }
+        else if (isCompany && Model.CompanyResult is not null)
+        {
+            var r = Model.CompanyResult;
+
+            <tr><td>Custo sem energia solar</td><td>@r.CostWithoutSolar.ToString("C", ptBr)</td></tr>
+            <tr><td>Custo com aluguel</td><td>@r.RentCost.ToString("C", ptBr)</td></tr>
+            <tr><td>Investimento com instalação</td><td>@r.InstallationInvestment.ToString("C", ptBr)</td></tr>
+            <tr><td>Economia com aluguel</td><td>@r.RentSavings.ToString("C", ptBr)</td></tr>
+            <tr><td>Energia gerada anualmente (kWh)</td><td>@r.AnnualGeneratedEnergyKwh.ToString("N2", ptBr)</td></tr>
+
+            <tr><td>Investimento inicial</td><td>@r.InitialInvestment.ToString("C", ptBr)</td></tr>
+            <tr><td>Economia mensal estimada</td><td>@r.MonthlySavingInstallation.ToString("C", ptBr)</td></tr>
+            <tr><td>Economia total no horizonte</td><td>@r.InstallationTotalSavingHorizon.ToString("C", ptBr)</td></tr>
+            <tr><td>Payback estimado</td><td>@r.PaybackYears.GetValueOrDefault().ToString("N2", ptBr) anos</td></tr>
+
+            <tr><td>Mensalidade inicial</td><td>@r.InitialRentAmount.ToString("C", ptBr)</td></tr>
+            <tr><td>Economia mensal estimada do aluguel</td><td>@r.MonthlySavingRent.ToString("C", ptBr)</td></tr>
+            <tr><td>Economia total no horizonte de aluguel</td><td>@r.RentTotalSavingHorizon.ToString("C", ptBr)</td></tr>
+            <tr><td>Desconto aplicado na conta</td><td>@r.DiscountAppliedPercent.ToString("N2", ptBr)%</td></tr>
+
+            <tr><td>Economia média anual</td><td>@r.AverageAnnualSaving.ToString("C", ptBr)</td></tr>
+            <tr><td>Investimento recuperado em</td><td>@r.InvestmentRecoveryYears.ToString("N2", ptBr) anos</td></tr>
+            <tr><td>Economia acumulada em 5 anos</td><td>@r.FiveYearAccumulatedSaving.ToString("C", ptBr)</td></tr>
+            <tr><td>Horizonte analisado</td><td>@r.AnalyzedHorizonYears anos</td></tr>
+        }
+        </tbody>
+    </table>
 </body>
 </html>
