@@ -4,7 +4,16 @@
     Layout = null;
     var ptBr = new CultureInfo("pt-BR");
     var isCompany = Model.IsCompanyUser;
+   
+    decimal rawTariff = (decimal)Model.CalculatorTariffPerKwh;
+    decimal rawDegradation = (decimal)Model.CalculatorDegradationPercent;
+    decimal rawInflation = (decimal)Model.CalculatorTariffInflationPercent;
+
+    decimal displayTariff = rawTariff / 100m;
+    decimal displayDegradation = rawDegradation / 10m;
+    decimal displayInflation = rawInflation / 10m;
 }
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -30,10 +39,11 @@
 
     <p>
         Consumo médio: @Model.CalculatorAverageMonthlyConsumptionKwh kWh |
-        Tarifa: @Model.CalculatorTariffPerKwh.ToString("C", ptBr) |
+        Tarifa: @displayTariff.ToString("C", ptBr) |
         Cobertura: @Model.CalculatorCoveragePercent.ToString("N2", ptBr)% |
         Horizonte: @Model.CalculatorHorizonYears anos
     </p>
+
 
     <h2>Métricas utilizadas</h2>
 
@@ -49,7 +59,7 @@
             </tr>
             <tr>
                 <td>Tarifa da energia (R$/kWh)</td>
-                <td>@Model.CalculatorTariffPerKwh.ToString("C", ptBr)</td>
+                <td>@displayTariff.ToString("C", ptBr)</td>
             </tr>
             <tr>
                 <td>Cobertura do sistema (%)</td>
@@ -57,7 +67,7 @@
             </tr>
             <tr>
                 <td>Degradação anual do sistema (%)</td>
-                <td>@Model.CalculatorDegradationPercent.ToString("N2", ptBr)%</td>
+                <td>@displayDegradation.ToString("N2", ptBr)%</td>
             </tr>
             <tr>
                 <td>Horizonte de análise (anos)</td>
@@ -65,8 +75,9 @@
             </tr>
             <tr>
                 <td>Inflação anual da tarifa (%)</td>
-                <td>@Model.CalculatorTariffInflationPercent.ToString("N2", ptBr)%</td>
+                <td>@displayInflation.ToString("N2", ptBr)%</td>
             </tr>
+
         </tbody>
     </table>
 
