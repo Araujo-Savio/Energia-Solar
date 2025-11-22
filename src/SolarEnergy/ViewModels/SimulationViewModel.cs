@@ -37,29 +37,42 @@ namespace SolarEnergy.ViewModels
         public double Inflation { get; set; }
     }
 
-    public class UserSimulationResultViewModel
+    public class UserSimulationInput
     {
-        public SimulationInputModel Input { get; set; } = new();
+        public double AverageMonthlyConsumptionKwh { get; set; }
+        public double TariffPerKwh { get; set; }
+        public double CoveragePercent { get; set; }
+        public double DegradationPercent { get; set; }
+        public int HorizonYears { get; set; }
+        public double InflationPercent { get; set; }
         public CompanyParametersInputModel? CompanyParameters { get; set; }
         public string? SelectedCompanyId { get; set; }
         public string? SelectedCompanyName { get; set; }
+    }
 
+    public class UserSimulationResult
+    {
+        public UserSimulationInput Input { get; set; } = new();
+        public CompanyParametersInputModel? CompanyParameters { get; set; }
+        public string? SelectedCompanyId { get; set; }
+        public string? SelectedCompanyName { get; set; }
         public double CostWithoutSolar { get; set; }
         public double InstallationInvestment { get; set; }
         public double RentCost { get; set; }
         public double InstallationSavings { get; set; }
         public double RentSavings { get; set; }
         public double AnnualGeneratedEnergyKwh { get; set; }
-        public double MonthlyInstallSavings { get; set; }
-        public double MonthlyRentalSavings { get; set; }
-        public double AverageAnnualSavings { get; set; }
+        public double MonthlySavingInstallation { get; set; }
+        public double MonthlySavingRent { get; set; }
+        public double AverageAnnualSaving { get; set; }
         public double? PaybackYears { get; set; }
         public double InstallationTimeMonths { get; set; }
-        public double RentalMonthlyCost { get; set; }
-        public double RentalDiscountRate { get; set; }
-        public double FiveYearSavings { get; set; }
+        public double InitialRentAmount { get; set; }
+        public double DiscountAppliedPercent { get; set; }
+        public double FiveYearAccumulatedSaving { get; set; }
         public double TotalInstallCost { get; set; }
         public double TotalRentalCost { get; set; }
         public double CoveragePercent { get; set; }
+        public int AnalyzedHorizonYears { get; set; }
     }
 }

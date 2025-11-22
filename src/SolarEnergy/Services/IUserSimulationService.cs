@@ -4,6 +4,6 @@ namespace SolarEnergy.Services
 {
     public interface IUserSimulationService
     {
-        UserSimulationResultViewModel CalculateUserSimulation(SimulationViewModel model);
+        UserSimulationResult Calculate(UserSimulationInput input);
     }
 }

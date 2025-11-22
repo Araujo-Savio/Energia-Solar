@@ -13,11 +13,14 @@ namespace SolarEnergy.Controllers
     {
         private readonly IUserSimulationService _simulationService;
         private readonly ISimulationExportService _simulationExportService;
+        private readonly IUserSimulationMapper _userSimulationMapper;
 
-        public SimulationController(IUserSimulationService simulationService, ISimulationExportService simulationExportService)
+        public SimulationController(IUserSimulationService simulationService, ISimulationExportService simulationExportService,
+            IUserSimulationMapper userSimulationMapper)
         {
             _simulationService = simulationService;
             _simulationExportService = simulationExportService;
+            _userSimulationMapper = userSimulationMapper;
         }
 
         [HttpPost]
@@ -38,8 +41,9 @@ namespace SolarEnergy.Controllers
             }
 
             HydrateCompanyParameters(model);
-            var result = _simulationService.CalculateUserSimulation(model);
-            var csv = _simulationExportService.GenerateCsv(result);
+            var input = _userSimulationMapper.ToInput(model);
+            var result = _simulationService.Calculate(input);
+            var csv = _simulationExportService.GenerateUserCsv(input, result);
 
             var bytes = Encoding.UTF8.GetBytes(csv);
             var fileName = $"simulacao-usuario-{DateTime.UtcNow:yyyyMMddHHmmss}.csv";
@@ -57,8 +61,9 @@ namespace SolarEnergy.Controllers
             }
 
             HydrateCompanyParameters(model);
-            var result = _simulationService.CalculateUserSimulation(model);
-            var pdfBytes = _simulationExportService.GeneratePdf(result);
+            var input = _userSimulationMapper.ToInput(model);
+            var result = _simulationService.Calculate(input);
+            var pdfBytes = _simulationExportService.GenerateUserPdf(input, result);
             var fileName = $"simulacao-usuario-{DateTime.UtcNow:yyyyMMddHHmmss}.pdf";
 
             return File(pdfBytes, "application/pdf", fileName);

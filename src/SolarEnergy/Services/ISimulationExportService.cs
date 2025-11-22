@@ -4,7 +4,7 @@ namespace SolarEnergy.Services
 {
     public interface ISimulationExportService
     {
-        string GenerateCsv(UserSimulationResultViewModel result);
-        byte[] GeneratePdf(UserSimulationResultViewModel result);
+        string GenerateUserCsv(UserSimulationInput input, UserSimulationResult result);
+        byte[] GenerateUserPdf(UserSimulationInput input, UserSimulationResult result);
     }
 }
