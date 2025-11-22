@@ -51,7 +51,12 @@ namespace SolarEnergy.Controllers
                 {
                     IsCompanyUser = false,
                     SelectedCompanyName = model.SelectedCompanyName,
-                    UserInput = userInput,
+                    AverageMonthlyConsumptionKwh = (decimal)model.UserInput.MonthlyConsumption,
+                    TariffPerKwh = (decimal)model.UserInput.EnergyTariff,
+                    CoveragePercent = (decimal)model.UserInput.Coverage,
+                    DegradationPercent = (decimal)model.UserInput.Degradation,
+                    HorizonYears = model.UserInput.HorizonYears,
+                    TariffInflationPercent = (decimal)model.UserInput.Inflation,
                     CompanyParameters = model.CompanyParameters,
                     UserResult = userResult
                 };
@@ -65,7 +70,12 @@ namespace SolarEnergy.Controllers
                 {
                     IsCompanyUser = true,
                     SelectedCompanyName = model.SelectedCompanyName,
-                    CompanyInput = companyInput,
+                    AverageMonthlyConsumptionKwh = (decimal)model.UserInput.MonthlyConsumption,
+                    TariffPerKwh = (decimal)model.UserInput.EnergyTariff,
+                    CoveragePercent = (decimal)model.UserInput.Coverage,
+                    DegradationPercent = (decimal)model.UserInput.Degradation,
+                    HorizonYears = model.UserInput.HorizonYears,
+                    TariffInflationPercent = (decimal)model.UserInput.Inflation,
                     CompanyParameters = model.CompanyParameters,
                     CompanyResult = companyResult
                 };
