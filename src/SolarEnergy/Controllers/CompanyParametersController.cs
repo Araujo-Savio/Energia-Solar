@@ -57,7 +57,9 @@ namespace SolarEnergy.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            return View(parameters);
+            var viewModel = MapToViewModel(parameters);
+
+            return View(viewModel);
         }
 
 
@@ -66,7 +68,7 @@ namespace SolarEnergy.Controllers
         // ===============================
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Save(CompanyParameters updated)
+        public async Task<IActionResult> Save(CompanyParametersViewModel updated)
         {
             var user = await _userManager.GetUserAsync(User);
 
@@ -153,6 +155,26 @@ namespace SolarEnergy.Controllers
             var responseModel = MapToInputModel(existing);
 
             return Json(model);
+        }
+
+
+        private static CompanyParametersViewModel MapToViewModel(CompanyParameters parameters)
+        {
+            return new CompanyParametersViewModel
+            {
+                Id = parameters.Id,
+                CompanyId = parameters.CompanyId,
+                SystemPricePerKwp = parameters.SystemPricePerKwp,
+                MaintenancePercent = parameters.MaintenancePercent,
+                InstallDiscountPercent = parameters.InstallDiscountPercent,
+                RentalFactorPercent = parameters.RentalFactorPercent,
+                RentalSetupPerKwp = parameters.RentalSetupPerKwp,
+                RentalMinMonthly = parameters.RentalMinMonthly,
+                RentalAnnualIncreasePercent = parameters.RentalAnnualIncreasePercent,
+                RentalDiscountPercent = parameters.RentalDiscountPercent,
+                ConsumptionPerKwp = parameters.ConsumptionPerKwp,
+                MinSystemSizeKwp = parameters.MinSystemSizeKwp
+            };
         }
 
 
