@@ -198,23 +198,20 @@
 
                             <!-- Consumo mínimo da empresa -->
                             <h6 class="text-muted mb-2">Consumo mínimo da empresa</h6>
-                            <div class="row g-3">
-                                <div class="col-12 col-md-6">
-                                    <label asp-for="CompanyParameters.RentalDiscountPercent" class="form-label">Desconto na conta no modelo de aluguel (%)</label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label asp-for="CompanyParameters.RentalDiscountPercent" class="form-label">Desconto na conta (%)</label>
                                     <input asp-for="CompanyParameters.RentalDiscountPercent" type="number" min="0" max="100" step="0.1" class="form-control" data-company-param="rental-discount-percent" readonly />
-                                    <small class="text-muted">Percentual médio aplicado na fatura.</small>
                                 </div>
-                                <div class="col-12 col-md-6">
-                                    <label asp-for="CompanyParameters.ConsumptionPerKwp" class="form-label">Consumo mensal por 1 kWp (kWh/mês por kWp)</label>
+                                <div class="col-md-6">
+                                    <label asp-for="CompanyParameters.ConsumptionPerKwp" class="form-label">Consumo mensal por 1 kWp (kWh)</label>
                                     <input asp-for="CompanyParameters.ConsumptionPerKwp" type="number" min="0" step="1" class="form-control" data-company-param="consumption-per-kwp" readonly />
-                                    <small class="text-muted">Conversão usada para dimensionamento.</small>
                                 </div>
                             </div>
-                            <div class="row g-3 mt-3">
-                                <div class="col-12 col-md-6">
+                            <div class="row mt-3">
+                                <div class="col-md-6">
                                     <label asp-for="CompanyParameters.MinSystemSizeKwp" class="form-label">Potência mínima do sistema (kWp)</label>
                                     <input asp-for="CompanyParameters.MinSystemSizeKwp" type="number" min="0" step="0.1" class="form-control" data-company-param="min-system-size-kwp" readonly />
-                                    <small class="text-muted">Limite mínimo da solução ofertada.</small>
                                 </div>
                             </div>
                         </div>
@@ -283,32 +280,6 @@
                         </div>
                     }
 
-                    <!-- Campos reposicionados para equilibrar a coluna e aliviar a altura do card de parâmetros da empresa -->
-                    <div class="solar-card rounded-4 shadow-sm p-4">
-                        <div class="d-flex align-items-center justify-content-between mb-3">
-                            <div class="d-flex align-items-center gap-2">
-                                <h6 class="mb-0 d-flex align-items-center gap-2">
-                                    <i class="fas fa-battery-three-quarters text-success"></i>
-                                    Consumo mínimo da empresa
-                                </h6>
-                            </div>
-                            <span class="badge bg-light text-success border rounded-pill">Dimensionamento</span>
-                        </div>
-                        <div class="row g-3">
-                            <div class="col-12 col-md-6">
-                                <label class="form-label" for="displayRentalDiscount">Desconto na conta (%)</label>
-                                <input id="displayRentalDiscount" type="number" class="form-control" value="@((Model.CompanyParameters?.RentalDiscountPercent ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="rental-discount-percent" readonly />
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <label class="form-label" for="displayConsumption">Consumo mensal por 1 kWp (kWh)</label>
-                                <input id="displayConsumption" type="number" class="form-control" value="@((Model.CompanyParameters?.ConsumptionPerKwp ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="consumption-per-kwp" readonly />
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <label class="form-label" for="displayMinSystem">Potência mínima do sistema (kWp)</label>
-                                <input id="displayMinSystem" type="number" class="form-control" value="@((Model.CompanyParameters?.MinSystemSizeKwp ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="min-system-size-kwp" readonly />
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
 
