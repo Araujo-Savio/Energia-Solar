@@ -51,12 +51,12 @@ namespace SolarEnergy.Controllers
                 {
                     IsCompanyUser = false,
                     SelectedCompanyName = model.SelectedCompanyName,
-                    AverageMonthlyConsumptionKwh = (decimal)model.UserInput.MonthlyConsumption,
-                    TariffPerKwh = (decimal)model.UserInput.EnergyTariff,
-                    CoveragePercent = (decimal)model.UserInput.Coverage,
-                    DegradationPercent = (decimal)model.UserInput.Degradation,
-                    HorizonYears = model.UserInput.HorizonYears,
-                    TariffInflationPercent = (decimal)model.UserInput.Inflation,
+                    AverageMonthlyConsumptionKwh = model.AverageMonthlyConsumptionKwh,
+                    TariffPerKwh = model.TariffPerKwh,
+                    CoveragePercent = model.CoveragePercent,
+                    DegradationPercent = model.DegradationPercent,
+                    HorizonYears = model.HorizonYears,
+                    TariffInflationPercent = model.TariffInflationPercent,
                     CompanyParameters = model.CompanyParameters,
                     UserResult = userResult
                 };
@@ -70,12 +70,12 @@ namespace SolarEnergy.Controllers
                 {
                     IsCompanyUser = true,
                     SelectedCompanyName = model.SelectedCompanyName,
-                    AverageMonthlyConsumptionKwh = (decimal)model.UserInput.MonthlyConsumption,
-                    TariffPerKwh = (decimal)model.UserInput.EnergyTariff,
-                    CoveragePercent = (decimal)model.UserInput.Coverage,
-                    DegradationPercent = (decimal)model.UserInput.Degradation,
-                    HorizonYears = model.UserInput.HorizonYears,
-                    TariffInflationPercent = (decimal)model.UserInput.Inflation,
+                    AverageMonthlyConsumptionKwh = model.AverageMonthlyConsumptionKwh,
+                    TariffPerKwh = model.TariffPerKwh,
+                    CoveragePercent = model.CoveragePercent,
+                    DegradationPercent = model.DegradationPercent,
+                    HorizonYears = model.HorizonYears,
+                    TariffInflationPercent = model.TariffInflationPercent,
                     CompanyParameters = model.CompanyParameters,
                     CompanyResult = companyResult
                 };
