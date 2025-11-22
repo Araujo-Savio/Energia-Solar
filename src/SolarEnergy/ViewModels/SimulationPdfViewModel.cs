@@ -5,14 +5,16 @@ namespace SolarEnergy.ViewModels
         public bool IsCompanyUser { get; set; }
         public string? SelectedCompanyName { get; set; }
 
-        public decimal AverageMonthlyConsumptionKwh { get; set; }
-        public decimal TariffPerKwh { get; set; }
-        public decimal CoveragePercent { get; set; }
-        public decimal DegradationPercent { get; set; }
-        public int HorizonYears { get; set; }
-        public decimal TariffInflationPercent { get; set; }
+        // VALORES EXATOS DA CALCULADORA (do SimulationViewModel)
+        public decimal CalculatorAverageMonthlyConsumptionKwh { get; set; }
+        public decimal CalculatorTariffPerKwh { get; set; }
+        public decimal CalculatorCoveragePercent { get; set; }
+        public decimal CalculatorDegradationPercent { get; set; }
+        public int CalculatorHorizonYears { get; set; }
+        public decimal CalculatorTariffInflationPercent { get; set; }
 
-        public CompanyParametersInputModel? CompanyParameters { get; set; }
+        // Parâmetros da empresa + Resultados (já existentes)
+        public CompanyParametersViewModel? CompanyParameters { get; set; }
 
         public UserSimulationResult? UserResult { get; set; }
         public CompanySimulationResult? CompanyResult { get; set; }

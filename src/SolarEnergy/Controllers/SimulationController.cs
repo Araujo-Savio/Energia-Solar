@@ -51,13 +51,13 @@ namespace SolarEnergy.Controllers
                 {
                     IsCompanyUser = false,
                     SelectedCompanyName = model.SelectedCompanyName,
-                    AverageMonthlyConsumptionKwh = model.AverageMonthlyConsumptionKwh,
-                    TariffPerKwh = model.TariffPerKwh,
-                    CoveragePercent = model.CoveragePercent,
-                    DegradationPercent = model.DegradationPercent,
-                    HorizonYears = model.HorizonYears,
-                    TariffInflationPercent = model.TariffInflationPercent,
-                    CompanyParameters = model.CompanyParameters,
+                    CalculatorAverageMonthlyConsumptionKwh = model.AverageMonthlyConsumptionKwh,
+                    CalculatorTariffPerKwh = model.TariffPerKwh,
+                    CalculatorCoveragePercent = model.CoveragePercent,
+                    CalculatorDegradationPercent = model.DegradationPercent,
+                    CalculatorHorizonYears = model.HorizonYears,
+                    CalculatorTariffInflationPercent = model.TariffInflationPercent,
+                    CompanyParameters = MapCompanyParameters(model.CompanyParameters),
                     UserResult = userResult
                 };
             }
@@ -70,13 +70,13 @@ namespace SolarEnergy.Controllers
                 {
                     IsCompanyUser = true,
                     SelectedCompanyName = model.SelectedCompanyName,
-                    AverageMonthlyConsumptionKwh = model.AverageMonthlyConsumptionKwh,
-                    TariffPerKwh = model.TariffPerKwh,
-                    CoveragePercent = model.CoveragePercent,
-                    DegradationPercent = model.DegradationPercent,
-                    HorizonYears = model.HorizonYears,
-                    TariffInflationPercent = model.TariffInflationPercent,
-                    CompanyParameters = model.CompanyParameters,
+                    CalculatorAverageMonthlyConsumptionKwh = model.AverageMonthlyConsumptionKwh,
+                    CalculatorTariffPerKwh = model.TariffPerKwh,
+                    CalculatorCoveragePercent = model.CoveragePercent,
+                    CalculatorDegradationPercent = model.DegradationPercent,
+                    CalculatorHorizonYears = model.HorizonYears,
+                    CalculatorTariffInflationPercent = model.TariffInflationPercent,
+                    CompanyParameters = MapCompanyParameters(model.CompanyParameters),
                     CompanyResult = companyResult
                 };
             }
@@ -122,6 +122,28 @@ namespace SolarEnergy.Controllers
             {
                 model.CompanyParameters = null;
             }
+        }
+
+        private static CompanyParametersViewModel? MapCompanyParameters(CompanyParametersInputModel? input)
+        {
+            if (input is null)
+            {
+                return null;
+            }
+
+            return new CompanyParametersViewModel
+            {
+                SystemPricePerKwp = input.SystemPricePerKwp,
+                MaintenancePercent = input.MaintenancePercent,
+                InstallDiscountPercent = input.InstallDiscountPercent,
+                RentalFactorPercent = input.RentalFactorPercent,
+                RentalSetupPerKwp = input.RentalSetupPerKwp,
+                RentalMinMonthly = input.RentalMinMonthly,
+                RentalAnnualIncreasePercent = input.RentalAnnualIncreasePercent,
+                RentalDiscountPercent = input.RentalDiscountPercent,
+                ConsumptionPerKwp = input.ConsumptionPerKwp,
+                MinSystemSizeKwp = input.MinSystemSizeKwp
+            };
         }
     }
 }
