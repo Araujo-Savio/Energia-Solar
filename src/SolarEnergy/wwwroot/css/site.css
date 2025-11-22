@@ -1643,6 +1643,33 @@ footer .footer-links a:hover {
   box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
 }
 
+/* Compactação do card de parâmetros da empresa para reduzir altura e espaços vazios */
+.economy-simulator .company-parameters-card {
+  padding: 1.25rem 1.25rem 1.1rem;
+}
+
+.economy-simulator .company-parameters-card .form-group,
+.economy-simulator .company-parameters-card .mb-3,
+.economy-simulator .company-parameters-card .mb-4 {
+  margin-bottom: 0.5rem !important;
+}
+
+.economy-simulator .company-parameters-card .row {
+  row-gap: 0.5rem;
+}
+
+.economy-simulator .company-parameters-card .border {
+  padding: 0.85rem 0.95rem;
+}
+
+.economy-simulator .company-parameters-card .d-flex.gap-3 {
+  gap: 0.75rem !important;
+}
+
+.economy-simulator .company-parameters-card .form-label {
+  margin-bottom: 0.35rem;
+}
+
 .economy-simulator .simulator-section {
   background: rgba(26, 43, 61, 0.03);
   border-radius: 14px;
