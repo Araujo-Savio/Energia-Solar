@@ -29,10 +29,10 @@
     </p>
 
     <p>
-        Consumo médio: @Model.AverageMonthlyConsumptionKwh kWh |
-        Tarifa: @Model.TariffPerKwh.ToString("C", ptBr) |
-        Cobertura: @Model.CoveragePercent.ToString("N2", ptBr)% |
-        Horizonte: @Model.HorizonYears anos
+        Consumo médio: @Model.CalculatorAverageMonthlyConsumptionKwh kWh |
+        Tarifa: @Model.CalculatorTariffPerKwh.ToString("C", ptBr) |
+        Cobertura: @Model.CalculatorCoveragePercent.ToString("N2", ptBr)% |
+        Horizonte: @Model.CalculatorHorizonYears anos
     </p>
 
     <h2>Métricas utilizadas</h2>
@@ -43,12 +43,30 @@
             <tr><th>Parâmetro</th><th>Valor</th></tr>
         </thead>
         <tbody>
-            <tr><td>Consumo médio mensal (kWh)</td><td>@Model.AverageMonthlyConsumptionKwh</td></tr>
-            <tr><td>Tarifa da energia (R$/kWh)</td><td>@Model.TariffPerKwh.ToString("C", ptBr)</td></tr>
-            <tr><td>Cobertura do sistema (%)</td><td>@Model.CoveragePercent.ToString("N2", ptBr)%</td></tr>
-            <tr><td>Degradação anual do sistema (%)</td><td>@Model.DegradationPercent.ToString("N2", ptBr)%</td></tr>
-            <tr><td>Horizonte de análise (anos)</td><td>@Model.HorizonYears</td></tr>
-            <tr><td>Inflação anual da tarifa (%)</td><td>@Model.TariffInflationPercent.ToString("N2", ptBr)%</td></tr>
+            <tr>
+                <td>Consumo médio mensal (kWh)</td>
+                <td>@Model.CalculatorAverageMonthlyConsumptionKwh</td>
+            </tr>
+            <tr>
+                <td>Tarifa da energia (R$/kWh)</td>
+                <td>@Model.CalculatorTariffPerKwh.ToString("C", ptBr)</td>
+            </tr>
+            <tr>
+                <td>Cobertura do sistema (%)</td>
+                <td>@Model.CalculatorCoveragePercent.ToString("N2", ptBr)%</td>
+            </tr>
+            <tr>
+                <td>Degradação anual do sistema (%)</td>
+                <td>@Model.CalculatorDegradationPercent.ToString("N2", ptBr)%</td>
+            </tr>
+            <tr>
+                <td>Horizonte de análise (anos)</td>
+                <td>@Model.CalculatorHorizonYears</td>
+            </tr>
+            <tr>
+                <td>Inflação anual da tarifa (%)</td>
+                <td>@Model.CalculatorTariffInflationPercent.ToString("N2", ptBr)%</td>
+            </tr>
         </tbody>
     </table>
 
