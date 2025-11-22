@@ -34,20 +34,35 @@ namespace SolarEnergy.Controllers
         public IActionResult ExportSimulationPdf(SimulationViewModel model)
         {
             HydrateCompanyParameters(model);
-            var isCompanyUser = model.IsCompanyUser;
 
-            var input = _userSimulationMapper.ToInput(model);
-            var result = _simulationService.Calculate(input);
+            SimulationPdfViewModel pdfModel;
 
-            var pdfModel = new SimulationPdfViewModel
+            if (!model.IsCompanyUser)
             {
-                IsCompanyUser = isCompanyUser,
-                SelectedCompanyName = model.SelectedCompanyName,
-                UserInput = isCompanyUser ? null : input,
-                UserResult = isCompanyUser ? null : result,
-                CompanyInput = isCompanyUser ? input : null,
-                CompanyResult = isCompanyUser ? result : null
-            };
+                var userInput = _userSimulationMapper.ToInput(model);
+                var userResult = _simulationService.Calculate(userInput);
+
+                pdfModel = new SimulationPdfViewModel
+                {
+                    IsCompanyUser = false,
+                    SelectedCompanyName = model.SelectedCompanyName,
+                    UserInput = userInput,
+                    UserResult = userResult
+                };
+            }
+            else
+            {
+                var companyInput = _userSimulationMapper.ToInput(model);
+                var companyResult = _simulationService.Calculate(companyInput);
+
+                pdfModel = new SimulationPdfViewModel
+                {
+                    IsCompanyUser = true,
+                    SelectedCompanyName = model.SelectedCompanyName,
+                    CompanyInput = companyInput,
+                    CompanyResult = companyResult
+                };
+            }
 
             var pdfBytes = _simulationExportService.GenerateSimulationPdf(pdfModel);
             var fileName = $"simulacao-{(pdfModel.IsCompanyUser ? "empresa" : "usuario")}-{DateTime.UtcNow:yyyyMMddHHmmss}.pdf";
