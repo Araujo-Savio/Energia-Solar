@@ -51,6 +51,7 @@ builder.Services.AddScoped<SolarEnergy.Services.IReportService, SolarEnergy.Serv
 builder.Services.AddScoped<SolarEnergy.Services.IUserSimulationService, SolarEnergy.Services.UserSimulationService>();
 builder.Services.AddScoped<SolarEnergy.Services.IUserSimulationMapper, SolarEnergy.Services.UserSimulationMapper>();
 builder.Services.AddScoped<SolarEnergy.Services.ISimulationExportService, SolarEnergy.Services.SimulationExportService>();
+builder.Services.AddScoped<SolarEnergy.Services.IRazorViewRenderer, SolarEnergy.Services.RazorViewRenderer>();
 
 // Register export services
 builder.Services.AddScoped<SolarEnergy.Services.ExportService>();

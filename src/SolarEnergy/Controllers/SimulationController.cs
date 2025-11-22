@@ -1,5 +1,3 @@
-using System;
-using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SolarEnergy.Services;
@@ -33,38 +31,26 @@ namespace SolarEnergy.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult ExportUserSimulationCsv(SimulationViewModel model)
+        public IActionResult ExportSimulationPdf(SimulationViewModel model)
         {
-            if (User.IsInRole("Company"))
-            {
-                return Forbid();
-            }
-
             HydrateCompanyParameters(model);
+            var isCompanyUser = model.IsCompanyUser;
+
             var input = _userSimulationMapper.ToInput(model);
             var result = _simulationService.Calculate(input);
-            var csv = _simulationExportService.GenerateUserCsv(input, result);
 
-            var bytes = Encoding.UTF8.GetBytes(csv);
-            var fileName = $"simulacao-usuario-{DateTime.UtcNow:yyyyMMddHHmmss}.csv";
-
-            return File(bytes, "text/csv", fileName);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult ExportUserSimulationPdf(SimulationViewModel model)
-        {
-            if (User.IsInRole("Company"))
+            var pdfModel = new SimulationPdfViewModel
             {
-                return Forbid();
-            }
+                IsCompanyUser = isCompanyUser,
+                SelectedCompanyName = model.SelectedCompanyName,
+                UserInput = isCompanyUser ? null : input,
+                UserResult = isCompanyUser ? null : result,
+                CompanyInput = isCompanyUser ? input : null,
+                CompanyResult = isCompanyUser ? result : null
+            };
 
-            HydrateCompanyParameters(model);
-            var input = _userSimulationMapper.ToInput(model);
-            var result = _simulationService.Calculate(input);
-            var pdfBytes = _simulationExportService.GenerateUserPdf(input, result);
-            var fileName = $"simulacao-usuario-{DateTime.UtcNow:yyyyMMddHHmmss}.pdf";
+            var pdfBytes = _simulationExportService.GenerateSimulationPdf(pdfModel);
+            var fileName = $"simulacao-{(pdfModel.IsCompanyUser ? "empresa" : "usuario")}-{DateTime.UtcNow:yyyyMMddHHmmss}.pdf";
 
             return File(pdfBytes, "application/pdf", fileName);
         }
@@ -73,11 +59,6 @@ namespace SolarEnergy.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult CalculateUserSimulation([FromBody] SimulationViewModel model)
         {
-            if (User.IsInRole("Company"))
-            {
-                return Forbid();
-            }
-
             HydrateCompanyParameters(model);
             var input = _userSimulationMapper.ToInput(model);
             var result = _simulationService.Calculate(input);
