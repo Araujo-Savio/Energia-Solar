@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using SolarEnergy.ViewModels;
 
 namespace SolarEnergy.Services
@@ -8,6 +9,10 @@ namespace SolarEnergy.Services
         public UserSimulationResult Calculate(UserSimulationInput input)
         {
             var companyParameters = input.CompanyParameters;
+
+            var timelineLabels = new List<string>();
+            var installationSavingsTimeline = new List<double>();
+            var rentalSavingsTimeline = new List<double>();
 
             var monthlyConsumption = Math.Max((decimal)input.AverageMonthlyConsumptionKwh, 0m);
             var energyTariff = Math.Max((decimal)input.TariffPerKwh, 0m);
@@ -102,6 +107,10 @@ namespace SolarEnergy.Services
 
                     paybackYears = year - 1 + Math.Max(0m, Math.Min(1m, fractionOfYear));
                 }
+
+                timelineLabels.Add($"Ano {year}");
+                installationSavingsTimeline.Add((double)cumulativeInstallSavings);
+                rentalSavingsTimeline.Add((double)cumulativeRentalSavings);
             }
 
             var totalBaseCost = cumulativeBase;
@@ -123,6 +132,9 @@ namespace SolarEnergy.Services
                 CompanyParameters = companyParameters,
                 SelectedCompanyId = input.SelectedCompanyId,
                 SelectedCompanyName = input.SelectedCompanyName,
+                InstallationSavingsTimeline = installationSavingsTimeline,
+                RentalSavingsTimeline = rentalSavingsTimeline,
+                TimelineLabels = timelineLabels,
                 CostWithoutSolar = (double)totalBaseCost,
                 InstallationInvestment = (double)(installationCost - installationIncentive),
                 RentCost = (double)totalRentalCost,

@@ -69,6 +69,22 @@ namespace SolarEnergy.Controllers
             return File(pdfBytes, "application/pdf", fileName);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult CalculateUserSimulation([FromBody] SimulationViewModel model)
+        {
+            if (User.IsInRole("Company"))
+            {
+                return Forbid();
+            }
+
+            HydrateCompanyParameters(model);
+            var input = _userSimulationMapper.ToInput(model);
+            var result = _simulationService.Calculate(input);
+
+            return Ok(result);
+        }
+
         private static void HydrateCompanyParameters(SimulationViewModel model)
         {
             if (model.CompanyParameters is not null)
