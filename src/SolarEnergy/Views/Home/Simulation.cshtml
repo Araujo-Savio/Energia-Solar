@@ -1,8 +1,8 @@
 @model SolarEnergy.ViewModels.SimulationViewModel
+@using System.Globalization
 @{
     ViewData["Title"] = "Simulador";
     var isCompanyUser = Model.IsCompanyUser;
-    var companyParametersJson = Model.CompanyParametersJson ?? "null";
 }
 
 <div class="solar-page economy-simulator">
@@ -239,43 +239,43 @@
                             <div class="metrics-grid">
                                 <div>
                                     <label class="form-label" for="displayPricePerKwp">Preço do sistema por kWp (R$/kWp)</label>
-                                    <input id="displayPricePerKwp" type="number" class="form-control" value="@(Model.CompanyParameters?.SystemPricePerKwp ?? 0)" data-company-param="system-price-per-kwp" readonly />
+                                    <input id="displayPricePerKwp" type="number" class="form-control" value="@((Model.CompanyParameters?.SystemPricePerKwp ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="system-price-per-kwp" readonly />
                                 </div>
                                 <div>
                                     <label class="form-label" for="displayMaintenance">Manutenção anual (% do investimento)</label>
-                                    <input id="displayMaintenance" type="number" class="form-control" value="@(Model.CompanyParameters?.MaintenancePercent ?? 0)" data-company-param="maintenance-percent" readonly />
+                                    <input id="displayMaintenance" type="number" class="form-control" value="@((Model.CompanyParameters?.MaintenancePercent ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="maintenance-percent" readonly />
                                 </div>
                                 <div>
                                     <label class="form-label" for="displayInstallDiscount">Desconto na instalação (%)</label>
-                                    <input id="displayInstallDiscount" type="number" class="form-control" value="@(Model.CompanyParameters?.InstallDiscountPercent ?? 0)" data-company-param="install-discount-percent" readonly />
+                                    <input id="displayInstallDiscount" type="number" class="form-control" value="@((Model.CompanyParameters?.InstallDiscountPercent ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="install-discount-percent" readonly />
                                 </div>
                                 <div>
                                     <label class="form-label" for="displayRentalFactor">Fator da mensalidade (% da conta)</label>
-                                    <input id="displayRentalFactor" type="number" class="form-control" value="@(Model.CompanyParameters?.RentalFactorPercent ?? 0)" data-company-param="rental-factor-percent" readonly />
+                                    <input id="displayRentalFactor" type="number" class="form-control" value="@((Model.CompanyParameters?.RentalFactorPercent ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="rental-factor-percent" readonly />
                                 </div>
                                 <div>
                                     <label class="form-label" for="displayRentalMinMonthly">Mensalidade mínima (R$)</label>
-                                    <input id="displayRentalMinMonthly" type="number" class="form-control" value="@(Model.CompanyParameters?.RentalMinMonthly ?? 0)" data-company-param="rental-min-monthly" readonly />
+                                    <input id="displayRentalMinMonthly" type="number" class="form-control" value="@((Model.CompanyParameters?.RentalMinMonthly ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="rental-min-monthly" readonly />
                                 </div>
                                 <div>
                                     <label class="form-label" for="displayRentalSetup">Taxa de setup por kWp (R$)</label>
-                                    <input id="displayRentalSetup" type="number" class="form-control" value="@(Model.CompanyParameters?.RentalSetupPerKwp ?? 0)" data-company-param="rental-setup-per-kwp" readonly />
+                                    <input id="displayRentalSetup" type="number" class="form-control" value="@((Model.CompanyParameters?.RentalSetupPerKwp ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="rental-setup-per-kwp" readonly />
                                 </div>
                                 <div>
                                     <label class="form-label" for="displayRentalIncrease">Reajuste anual do aluguel (%)</label>
-                                    <input id="displayRentalIncrease" type="number" class="form-control" value="@(Model.CompanyParameters?.RentalAnnualIncreasePercent ?? 0)" data-company-param="rental-annual-increase-percent" readonly />
+                                    <input id="displayRentalIncrease" type="number" class="form-control" value="@((Model.CompanyParameters?.RentalAnnualIncreasePercent ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="rental-annual-increase-percent" readonly />
                                 </div>
                                 <div>
                                     <label class="form-label" for="displayRentalDiscount">Desconto na conta (%)</label>
-                                    <input id="displayRentalDiscount" type="number" class="form-control" value="@(Model.CompanyParameters?.RentalDiscountPercent ?? 0)" data-company-param="rental-discount-percent" readonly />
+                                    <input id="displayRentalDiscount" type="number" class="form-control" value="@((Model.CompanyParameters?.RentalDiscountPercent ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="rental-discount-percent" readonly />
                                 </div>
                                 <div>
                                     <label class="form-label" for="displayConsumption">Consumo mensal por 1 kWp (kWh)</label>
-                                    <input id="displayConsumption" type="number" class="form-control" value="@(Model.CompanyParameters?.ConsumptionPerKwp ?? 0)" data-company-param="consumption-per-kwp" readonly />
+                                    <input id="displayConsumption" type="number" class="form-control" value="@((Model.CompanyParameters?.ConsumptionPerKwp ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="consumption-per-kwp" readonly />
                                 </div>
                                 <div>
                                     <label class="form-label" for="displayMinSystem">Potência mínima do sistema (kWp)</label>
-                                    <input id="displayMinSystem" type="number" class="form-control" value="@(Model.CompanyParameters?.MinSystemSizeKwp ?? 0)" data-company-param="min-system-size-kwp" readonly />
+                                    <input id="displayMinSystem" type="number" class="form-control" value="@((Model.CompanyParameters?.MinSystemSizeKwp ?? 0).ToString(CultureInfo.InvariantCulture))" data-company-param="min-system-size-kwp" readonly />
                                 </div>
                             </div>
                         </div>
@@ -424,7 +424,7 @@
                                        min="0"
                                        step="50"
                                        class="form-control"
-                                       value="@(Model.CompanyParameters?.SystemPricePerKwp ?? 0)"
+                                       value="@((Model.CompanyParameters?.SystemPricePerKwp ?? 0).ToString(CultureInfo.InvariantCulture))"
                                        data-company-param="system-price-per-kwp" />
                                 <small class="text-muted">Valor usado para calcular o custo de instalação.</small>
                             </div>
@@ -436,7 +436,7 @@
                                        max="50"
                                        step="0.1"
                                        class="form-control"
-                                       value="@(Model.CompanyParameters?.MaintenancePercent ?? 0)"
+                                       value="@((Model.CompanyParameters?.MaintenancePercent ?? 0).ToString(CultureInfo.InvariantCulture))"
                                        data-company-param="maintenance-percent" />
                                 <small class="text-muted">Percentual do investimento aplicado por ano.</small>
                             </div>
@@ -448,7 +448,7 @@
                                        max="100"
                                        step="0.1"
                                        class="form-control"
-                                       value="@(Model.CompanyParameters?.InstallDiscountPercent ?? 0)"
+                                       value="@((Model.CompanyParameters?.InstallDiscountPercent ?? 0).ToString(CultureInfo.InvariantCulture))"
                                        data-company-param="install-discount-percent" />
                                 <small class="text-muted">Percentual aplicado sobre o valor da instalação.</small>
                             </div>
@@ -460,7 +460,7 @@
                                        max="100"
                                        step="1"
                                        class="form-control"
-                                       value="@(Model.CompanyParameters?.RentalFactorPercent ?? 0)"
+                                       value="@((Model.CompanyParameters?.RentalFactorPercent ?? 0).ToString(CultureInfo.InvariantCulture))"
                                        data-company-param="rental-factor-percent" />
                                 <small class="text-muted">Fração da conta transformada em mensalidade.</small>
                             </div>
@@ -471,7 +471,7 @@
                                        min="0"
                                        step="10"
                                        class="form-control"
-                                       value="@(Model.CompanyParameters?.RentalMinMonthly ?? 0)"
+                                       value="@((Model.CompanyParameters?.RentalMinMonthly ?? 0).ToString(CultureInfo.InvariantCulture))"
                                        data-company-param="rental-min-monthly" />
                                 <small class="text-muted">Valor mínimo praticado.</small>
                             </div>
@@ -482,7 +482,7 @@
                                        min="0"
                                        step="10"
                                        class="form-control"
-                                       value="@(Model.CompanyParameters?.RentalSetupPerKwp ?? 0)"
+                                       value="@((Model.CompanyParameters?.RentalSetupPerKwp ?? 0).ToString(CultureInfo.InvariantCulture))"
                                        data-company-param="rental-setup-per-kwp" />
                                 <small class="text-muted">Taxa de setup aplicada ao aluguel.</small>
                             </div>
@@ -494,7 +494,7 @@
                                        max="50"
                                        step="0.1"
                                        class="form-control"
-                                       value="@(Model.CompanyParameters?.RentalAnnualIncreasePercent ?? 0)"
+                                       value="@((Model.CompanyParameters?.RentalAnnualIncreasePercent ?? 0).ToString(CultureInfo.InvariantCulture))"
                                        data-company-param="rental-annual-increase-percent" />
                                 <small class="text-muted">Percentual aplicado a cada ano.</small>
                             </div>
@@ -506,7 +506,7 @@
                                        max="100"
                                        step="0.1"
                                        class="form-control"
-                                       value="@(Model.CompanyParameters?.RentalDiscountPercent ?? 0)"
+                                       value="@((Model.CompanyParameters?.RentalDiscountPercent ?? 0).ToString(CultureInfo.InvariantCulture))"
                                        data-company-param="rental-discount-percent" />
                                 <small class="text-muted">Percentual médio aplicado na fatura.</small>
                             </div>
@@ -517,7 +517,7 @@
                                        min="0"
                                        step="1"
                                        class="form-control"
-                                       value="@(Model.CompanyParameters?.ConsumptionPerKwp ?? 0)"
+                                       value="@((Model.CompanyParameters?.ConsumptionPerKwp ?? 0).ToString(CultureInfo.InvariantCulture))"
                                        data-company-param="consumption-per-kwp" />
                                 <small class="text-muted">Conversão usada para dimensionamento.</small>
                             </div>
@@ -528,7 +528,7 @@
                                        min="0"
                                        step="0.1"
                                        class="form-control"
-                                       value="@(Model.CompanyParameters?.MinSystemSizeKwp ?? 0)"
+                                       value="@((Model.CompanyParameters?.MinSystemSizeKwp ?? 0).ToString(CultureInfo.InvariantCulture))"
                                        data-company-param="min-system-size-kwp" />
                                 <small class="text-muted">Limite mínimo da solução ofertada.</small>
                             </div>
@@ -550,13 +550,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
 
     <script>
-        window.companyParameters = @Html.Raw(companyParametersJson);
-
-        // JSON com os parâmetros de empresa para a tela do usuário
-        const companyParametersJsonString = '@companyParametersJson';
-        const companyParametersData = companyParametersJsonString && companyParametersJsonString !== "null"
-            ? JSON.parse(companyParametersJsonString)
-            : {};
+        // Embutimos o JSON como objeto JS válido para evitar quebras de parse ou escapes de HTML.
+        const companyParametersData = @Html.Raw(Model.CompanyParametersJson ?? "null");
+        const initialCompanyId = '@(Model.SelectedCompanyId ?? string.Empty)';
+        window.companyParameters = null;
 
         (function () {
             const currencyFormatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -641,6 +638,17 @@
                 return null;
             }
 
+            function looksLikeParametersObject(candidate) {
+                if (!candidate || typeof candidate !== 'object') {
+                    return false;
+                }
+
+                return companyParametersFields.some((field) =>
+                    Object.prototype.hasOwnProperty.call(candidate, field.pascalKey)
+                    || Object.prototype.hasOwnProperty.call(candidate, field.camelKey)
+                );
+            }
+
             function applyCompanyParametersToInputs(params) {
                 if (!params) return;
 
@@ -649,8 +657,10 @@
                     if (!input) return;
 
                     const value = getParamValueFromPayload(params, field);
-                    if (value !== null) {
-                        input.value = value;
+                    const numericValue = Number(value);
+                    if (Number.isFinite(numericValue)) {
+                        // type="number" precisa de ponto como separador decimal para evitar avisos do navegador.
+                        input.value = numericValue.toString();
                     }
                 });
             }
@@ -661,26 +671,40 @@
                     const key = element.dataset.companyParam;
                     const field = companyParametersFields.find(f => f.dataKey === key);
                     const value = params && field ? getParamValueFromPayload(params, field) : null;
-                    element.value = value !== null ? value : '';
+                    const numericValue = Number(value);
+                    element.value = Number.isFinite(numericValue) ? numericValue.toString() : '';
                 });
+            }
+
+            function getCompanyParametersFromData(companyId) {
+                if (!companyParametersData || typeof companyParametersData !== 'object') {
+                    return null;
+                }
+
+                if (companyId) {
+                    const normalizedId = companyId.toString();
+                    const byId = companyParametersData[normalizedId];
+                    if (byId && typeof byId === 'object') {
+                        return byId;
+                    }
+                }
+
+                if (looksLikeParametersObject(companyParametersData)) {
+                    return companyParametersData;
+                }
+
+                return null;
             }
 
             // Busca os parâmetros pelo ID selecionado e injeta nos campos e no objeto usado nos cálculos
             function updateCompanyParameters(companyId) {
-                if (!companyId) {
-                    window.companyParameters = null;
-                    applyCompanyParametersToDisplay(null);
-                    return;
-                }
-
-                const normalizedId = companyId.toString();
-                const params = companyParametersData && typeof companyParametersData === 'object'
-                    ? companyParametersData[normalizedId]
-                    : null;
-
+                const params = getCompanyParametersFromData(companyId);
                 window.companyParameters = params ?? null;
                 applyCompanyParametersToDisplay(params ?? null);
             }
+
+            // Carrega os parâmetros iniciais (empresa logada ou empresa pré-selecionada no filtro).
+            updateCompanyParameters(initialCompanyId || null);
 
             function collectCompanyParametersFromInputs() {
                 const payload = {};
