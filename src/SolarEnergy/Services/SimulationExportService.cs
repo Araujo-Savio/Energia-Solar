@@ -105,13 +105,6 @@ namespace SolarEnergy.Services
                     ("Total projetado com instalação", FormatCurrency(resultadoSimulacao.TotalInstallCost, culture)),
                     ("Total projetado com aluguel", FormatCurrency(resultadoSimulacao.TotalRentalCost, culture))
                 });
-
-                AddKeyValueSection(document, "Linhas do tempo", new (string, string?)[]
-                {
-                    ("Linhas de economia por instalação", string.Join(", ", resultadoSimulacao.InstallationSavingsTimeline)),
-                    ("Linhas de economia por aluguel", string.Join(", ", resultadoSimulacao.RentalSavingsTimeline)),
-                    ("Períodos analisados", string.Join(", ", resultadoSimulacao.TimelineLabels))
-                });
             }
             else
             {
