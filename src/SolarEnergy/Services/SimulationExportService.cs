@@ -32,6 +32,9 @@ namespace SolarEnergy.Services
                 .SetFontSize(10)
                 .SetFontColor(ColorConstants.GRAY));
 
+            var tariffDisplay = resultados.CalculatorTariffPerKwh / 100;
+            var inflationDisplay = resultados.CalculatorTariffInflationPercent / 10;
+
             AddKeyValueSection(document, "Informações gerais", new (string, string?)[]
             {
                 ("Perfil", resultados.IsCompanyUser ? "Empresa" : "Usuário"),
@@ -41,11 +44,11 @@ namespace SolarEnergy.Services
             AddKeyValueSection(document, "Dados informados na calculadora", new (string, string?)[]
             {
                 ("Consumo médio mensal (kWh)", FormatNumber(resultados.CalculatorAverageMonthlyConsumptionKwh, culture, " kWh")),
-                ("Tarifa de energia (R$/kWh)", FormatCurrency(resultados.CalculatorTariffPerKwh, culture)),
+                ("Tarifa de energia (R$/kWh)", FormatCurrency(tariffDisplay, culture)),
                 ("Cobertura desejada (%)", FormatPercent(resultados.CalculatorCoveragePercent, culture)),
                 ("Degradação anual (%)", FormatPercent(resultados.CalculatorDegradationPercent, culture)),
                 ("Horizonte de análise (anos)", resultados.CalculatorHorizonYears.ToString(culture)),
-                ("Inflação da tarifa informada (%)", FormatPercent(resultados.CalculatorTariffInflationPercent, culture))
+                ("Inflação da tarifa informada (%)", $"{inflationDisplay.ToString("N1", culture)}%")
             });
 
             if (resultados.CompanyParameters is not null)
