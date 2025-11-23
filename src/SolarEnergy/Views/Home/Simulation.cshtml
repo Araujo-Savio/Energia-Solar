@@ -35,26 +35,34 @@
         else
         {
             <div class="solar-card mb-4">
-                <form method="get" asp-action="Simulation" class="row g-3 align-items-end">
-                    <div class="col-12 col-md-6 col-lg-5">
-                        <div class="form-group mb-0">
-                            <label class="form-label" for="SelectedCompanyId">Escolha a empresa para simular:</label>
-                            <select id="SelectedCompanyId"
-                                    name="companyId"
-                                    class="form-select"
-                                    onchange="this.form.submit()">
-                                <option value="">Selecione...</option>
-                                @foreach (var company in Model.Companies)
-                                {
-                                    <option value="@company.Id" selected="@(company.Id == Model.SelectedCompanyId)">@company.Name</option>
-                                }
-                            </select>
-                        </div>
+                <div class="d-flex justify-content-between align-items-end gap-3 flex-wrap">
+                    <form method="get" asp-action="Simulation" class="flex-grow-1" style="max-width: 340px;">
+                        <label class="form-label" for="SelectedCompanyId">Escolha a empresa para simular:</label>
+                        <select id="SelectedCompanyId"
+                                name="companyId"
+                                class="form-select"
+                                onchange="this.form.submit()">
+                            <option value="">Selecione...</option>
+                            @foreach (var company in Model.Companies)
+                            {
+                                <option value="@company.Id" selected="@(company.Id == Model.SelectedCompanyId)">@company.Name</option>
+                            }
+                        </select>
+                    </form>
+                    <div>
+                        <button type="submit"
+                                form="simulation-form"
+                                formaction="@Url.Action("ExportSimulationPdf", "Simulation")"
+                                class="btn btn-primary btn-lg px-4 d-flex align-items-center"
+                                id="btnExportarPdf">
+                            <i class="fas fa-file-pdf me-2"></i>
+                            Exportar PDF
+                        </button>
                     </div>
-                    <div class="col-12 col-md-6 col-lg-7">
-                        <p class="text-muted mb-0 small">Selecione uma empresa para visualizar os parâmetros usados no cálculo do simulador.</p>
-                    </div>
-                </form>
+                </div>
+                <small class="text-muted d-block mt-1">
+                    Selecione uma empresa para visualizar os parâmetros usados no cálculo do simulador.
+                </small>
             </div>
         }
 
