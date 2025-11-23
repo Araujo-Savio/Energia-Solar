@@ -4,6 +4,6 @@ namespace SolarEnergy.Services
 {
     public interface ISimulationExportService
     {
-        byte[] GenerateSimulationPdf(SimulationPdfViewModel model);
+        byte[] ExportarSimulacaoParaPdf(SimulationResultsDto resultados);
     }
 }

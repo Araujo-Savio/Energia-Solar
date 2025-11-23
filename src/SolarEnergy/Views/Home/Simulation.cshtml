@@ -64,6 +64,7 @@
             <input type="hidden" name="SelectedCompanyName" value="@Model.SelectedCompanyName" />
             <input type="hidden" name="IsCompanyUser" value="@Model.IsCompanyUser" />
             <input type="hidden" asp-for="CompanyParametersJson" />
+            <input type="hidden" asp-for="SimulationResultJson" id="SimulationResultJson" />
 
             @await Html.PartialAsync("_SimulationContent", Model)
         </form>
@@ -742,6 +743,7 @@
                 || document.querySelector('input[name="__RequestVerificationToken"]');
             const hiddenCompanyIdInput = document.querySelector('input[name="SelectedCompanyId"]');
             const hiddenCompanyNameInput = document.querySelector('input[name="SelectedCompanyName"]');
+            const simulationResultInput = document.getElementById('SimulationResultJson');
 
             function buildSimulationPayload() {
                 const companyParametersPayload = window.companyParameters ?? collectCompanyParametersFromInputs();
@@ -789,6 +791,10 @@
             function applySimulationResult(result) {
                 if (!result) {
                     return;
+                }
+
+                if (simulationResultInput) {
+                    simulationResultInput.value = JSON.stringify(result);
                 }
 
                 const coveragePercent = Number(result.coveragePercent ?? result.input?.coveragePercent ?? 0);
@@ -875,6 +881,10 @@
             }
 
             function resetSimulatorOutputs() {
+                if (simulationResultInput) {
+                    simulationResultInput.value = '{}';
+                }
+
                 if (outputs.baseTotal) outputs.baseTotal.textContent = formatCurrency(0);
                 if (outputs.installTotal) outputs.installTotal.textContent = formatCurrency(0);
                 if (outputs.rentalTotal) outputs.rentalTotal.textContent = formatCurrency(0);

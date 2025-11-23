@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SolarEnergy.Services;
 using SolarEnergy.ViewModels;
 using System.Text.Json;
-using System.Globalization;
-using System.Linq;
 
 namespace SolarEnergy.Controllers
 {
@@ -35,151 +35,19 @@ namespace SolarEnergy.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult ExportSimulationPdf(SimulationViewModel model)
         {
-            // Garante que os parâmetros da empresa estejam preenchidos
             HydrateCompanyParameters(model);
 
-            // Lê os valores originais do formulário. O <input type="number"> envia "0.92",
-            // então precisamos usar CultureInfo.InvariantCulture para obter 0.92, 0.7 e 7.5.
-            double? tariffFromForm = null;
-            double? degradationFromForm = null;
-            double? inflationFromForm = null;
-
-            if (Request.HasFormContentType)
+            var resultados = MapResultadosSimulacao(model);
+            if (resultados is null)
             {
-                var form = Request.Form;
-
-                if (form.TryGetValue(nameof(model.TariffPerKwh), out var tariffStr) &&
-                    double.TryParse(tariffStr, NumberStyles.Any, CultureInfo.InvariantCulture, out var tariffParsed))
-                {
-                    tariffFromForm = tariffParsed;              // ex.: 0.92
-                }
-
-                if (form.TryGetValue(nameof(model.DegradationPercent), out var degrStr) &&
-                    double.TryParse(degrStr, NumberStyles.Any, CultureInfo.InvariantCulture, out var degrParsed))
-                {
-                    degradationFromForm = degrParsed;          // ex.: 0.7
-                }
-
-                if (form.TryGetValue(nameof(model.TariffInflationPercent), out var inflStr) &&
-                    double.TryParse(inflStr, NumberStyles.Any, CultureInfo.InvariantCulture, out var inflParsed))
-                {
-                    inflationFromForm = inflParsed;            // ex.: 7.5
-                }
+                return BadRequest("Resultados da simulação não foram enviados.");
             }
 
-            SimulationPdfViewModel pdfModel;
-
-            if (!model.IsCompanyUser)
-            {
-                // Input de simulação para USUÁRIO
-                var userInput = _userSimulationMapper.ToInput(model);
-
-                // Corrige escala no input (tarifa, degradação, inflação)
-                FixInputScale(userInput, tariffFromForm, degradationFromForm, inflationFromForm);
-
-                var userResult = _simulationService.Calculate(userInput);
-
-                pdfModel = new SimulationPdfViewModel
-                {
-                    IsCompanyUser = false,
-                    SelectedCompanyName = model.SelectedCompanyName,
-
-                    // Valores da calculadora que você já usa no PDF
-                    CalculatorAverageMonthlyConsumptionKwh = model.AverageMonthlyConsumptionKwh,
-                    CalculatorTariffPerKwh = model.TariffPerKwh,
-                    CalculatorCoveragePercent = model.CoveragePercent,
-                    CalculatorDegradationPercent = model.DegradationPercent,
-                    CalculatorHorizonYears = model.HorizonYears,
-                    CalculatorTariffInflationPercent = model.TariffInflationPercent,
-
-                    CompanyParameters = MapCompanyParameters(model.CompanyParameters),
-                    UserResult = userResult
-                };
-            }
-            else
-            {
-                // Input de simulação para EMPRESA
-                var companyInput = _companySimulationMapper.ToInput(model);
-
-                // Mesma correção no input da empresa
-                FixInputScale(companyInput, tariffFromForm, degradationFromForm, inflationFromForm);
-
-                var companyResult = _companySimulationService.Calculate(companyInput);
-
-
-                pdfModel = new SimulationPdfViewModel
-                {
-                    IsCompanyUser = true,
-                    SelectedCompanyName = model.SelectedCompanyName,
-
-                    CalculatorAverageMonthlyConsumptionKwh = model.AverageMonthlyConsumptionKwh,
-                    CalculatorTariffPerKwh = model.TariffPerKwh,
-                    CalculatorCoveragePercent = model.CoveragePercent,
-                    CalculatorDegradationPercent = model.DegradationPercent,
-                    CalculatorHorizonYears = model.HorizonYears,
-                    CalculatorTariffInflationPercent = model.TariffInflationPercent,
-
-                    CompanyParameters = MapCompanyParameters(model.CompanyParameters),
-                    CompanyResult = companyResult
-                };
-            }
-
-            var pdfBytes = _simulationExportService.GenerateSimulationPdf(pdfModel);
-            var fileName = $"simulacao-{(pdfModel.IsCompanyUser ? "empresa" : "usuario")}-{DateTime.UtcNow:yyyyMMddHHmmss}.pdf";
+            var pdfBytes = _simulationExportService.ExportarSimulacaoParaPdf(resultados);
+            var fileName = $"simulacao-{(resultados.IsCompanyUser ? "empresa" : "usuario")}-{DateTime.UtcNow:yyyyMMddHHmmss}.pdf";
 
             return File(pdfBytes, "application/pdf", fileName);
         }
-
-
-        /// <summary>
-        /// Corrige a escala de tarifa, degradação e inflação no input de simulação.
-        /// Funciona tanto para UserSimulationInput quanto para CompanySimulationInput.
-        /// </summary>
-        private static void FixInputScale(object input, double? tariff, double? degradation, double? inflation)
-        {
-            if (input == null) return;
-
-            var type = input.GetType();
-
-            // Tarifa (TariffPerKwh)
-            if (tariff.HasValue)
-            {
-                var prop = type.GetProperty("TariffPerKwh");
-                if (prop != null && prop.CanWrite)
-                {
-                    var value = Convert.ChangeType(tariff.Value, prop.PropertyType, CultureInfo.InvariantCulture);
-                    prop.SetValue(input, value);
-                }
-            }
-
-            // Degradação (DegradationPercent)
-            if (degradation.HasValue)
-            {
-                var prop = type.GetProperty("DegradationPercent");
-                if (prop != null && prop.CanWrite)
-                {
-                    var value = Convert.ChangeType(degradation.Value, prop.PropertyType, CultureInfo.InvariantCulture);
-                    prop.SetValue(input, value);
-                }
-            }
-
-            // Inflação: procura qualquer propriedade que contenha "Inflation" no nome
-            if (inflation.HasValue)
-            {
-                var prop = type
-                    .GetProperties()
-                    .FirstOrDefault(p =>
-                        p.Name.Contains("Inflation", StringComparison.OrdinalIgnoreCase) &&
-                        (p.PropertyType == typeof(double) || p.PropertyType == typeof(decimal)));
-
-                if (prop != null && prop.CanWrite)
-                {
-                    var value = Convert.ChangeType(inflation.Value, prop.PropertyType, CultureInfo.InvariantCulture);
-                    prop.SetValue(input, value);
-                }
-            }
-        }
-
 
 
         [HttpPost]
@@ -234,6 +102,63 @@ namespace SolarEnergy.Controllers
             {
                 // Se por algum motivo o tipo não tiver essas propriedades, só ignora.
             }
+        }
+
+        private static SimulationResultsDto? MapResultadosSimulacao(SimulationViewModel model)
+        {
+            var simulationJson = model.SimulationResultJson?.Trim();
+            if (string.IsNullOrWhiteSpace(simulationJson) || simulationJson == "{}" || simulationJson.Equals("null", StringComparison.OrdinalIgnoreCase))
+            {
+                return null;
+            }
+
+            var jsonOptions = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            if (model.IsCompanyUser)
+            {
+                var companyResult = JsonSerializer.Deserialize<CompanySimulationResult>(simulationJson, jsonOptions);
+                if (companyResult is null)
+                {
+                    return null;
+                }
+
+                return new SimulationResultsDto
+                {
+                    IsCompanyUser = true,
+                    SelectedCompanyName = model.SelectedCompanyName,
+                    CalculatorAverageMonthlyConsumptionKwh = model.AverageMonthlyConsumptionKwh,
+                    CalculatorTariffPerKwh = model.TariffPerKwh,
+                    CalculatorCoveragePercent = model.CoveragePercent,
+                    CalculatorDegradationPercent = model.DegradationPercent,
+                    CalculatorHorizonYears = model.HorizonYears,
+                    CalculatorTariffInflationPercent = model.TariffInflationPercent,
+                    CompanyParameters = MapCompanyParameters(model.CompanyParameters),
+                    CompanyResult = companyResult
+                };
+            }
+
+            var userResult = JsonSerializer.Deserialize<UserSimulationResult>(simulationJson, jsonOptions);
+            if (userResult is null)
+            {
+                return null;
+            }
+
+            return new SimulationResultsDto
+            {
+                IsCompanyUser = false,
+                SelectedCompanyName = model.SelectedCompanyName,
+                CalculatorAverageMonthlyConsumptionKwh = model.AverageMonthlyConsumptionKwh,
+                CalculatorTariffPerKwh = model.TariffPerKwh,
+                CalculatorCoveragePercent = model.CoveragePercent,
+                CalculatorDegradationPercent = model.DegradationPercent,
+                CalculatorHorizonYears = model.HorizonYears,
+                CalculatorTariffInflationPercent = model.TariffInflationPercent,
+                CompanyParameters = MapCompanyParameters(model.CompanyParameters),
+                UserResult = userResult
+            };
         }
 
         private static void HydrateCompanyParameters(SimulationViewModel model)
