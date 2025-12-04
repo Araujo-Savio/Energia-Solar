@@ -1,0 +1,484 @@
+/* ========================================
+   Área Administrativa - Estilos específicos
+   ======================================== */
+
+/* Admin Theme Colors */
+:root {
+    --admin-primary: #2c3e50;
+    --admin-secondary: #34495e;
+    --admin-accent: #e74c3c;
+    --admin-success: #27ae60;
+    --admin-warning: #f39c12;
+    --admin-info: #3498db;
+    --admin-light: #ecf0f1;
+    --admin-dark: #2c3e50;
+    --admin-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --admin-card-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    --admin-border-radius: 0.5rem;
+}
+
+/* Admin Navbar Styles */
+.bg-admin-primary {
+    background: var(--solar-dark-gradient) !important;
+}
+
+.navbar-dark .admin-nav-link {
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+    border-radius: 0.375rem;
+    transition: all 0.3s ease;
+    margin: 0 0.25rem;
+}
+
+.navbar-dark .admin-nav-link:hover {
+    color: #fff !important;
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+}
+
+.navbar-dark .admin-nav-link.active {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.text-admin-accent {
+    color: var(--admin-accent) !important;
+}
+
+/* Admin Navbar Styles - Updated to match main navbar */
+.navbar-enhanced.bg-solar-blue .admin-nav-link {
+    color: rgba(255, 255, 255, 0.95) !important;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    position: relative;
+    padding: 0.75rem 1.25rem !important;
+    margin: 0 0.25rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    text-decoration: none !important;
+}
+
+.navbar-enhanced.bg-solar-blue .admin-nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--solar-orange);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.navbar-enhanced.bg-solar-blue .admin-nav-link:hover::after {
+    width: 80%;
+}
+
+.navbar-enhanced.bg-solar-blue .admin-nav-link:hover {
+    color: var(--solar-orange) !important;
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.navbar-enhanced.bg-solar-blue .admin-nav-link.active {
+    background: linear-gradient(135deg, rgba(255, 107, 53, 0.2) 0%, rgba(255, 107, 53, 0.1) 100%);
+    color: #ffffff !important;
+    font-weight: 600 !important;
+}
+
+.navbar-enhanced.bg-solar-blue .admin-nav-link.active::after {
+    width: 80%;
+}
+
+/* Admin user dropdown to match main style */
+.navbar-enhanced.bg-solar-blue .admin-user-dropdown {
+    padding: 0.5rem 1rem !important;
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.navbar-enhanced.bg-solar-blue .admin-user-dropdown:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-enhanced.bg-solar-blue .admin-dropdown {
+    border: none;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    border-radius: 1rem;
+    padding: 0.75rem 0;
+    margin-top: 0.5rem;
+    min-width: 220px;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+/* Admin Breadcrumb */
+.admin-breadcrumb {
+    background: var(--admin-light);
+    border-bottom: 1px solid #dee2e6;
+}
+
+.admin-breadcrumb .breadcrumb-item a {
+    color: var(--admin-primary);
+    font-weight: 500;
+}
+
+.admin-breadcrumb .breadcrumb-item.active {
+    color: var(--admin-secondary);
+    font-weight: 600;
+}
+
+/* Admin Main Content */
+.admin-main {
+    min-height: calc(100vh - 200px);
+    background: #f8f9fa;
+    padding: 2rem 0;
+}
+
+/* Admin Cards */
+.admin-card {
+    border: none;
+    border-radius: var(--admin-border-radius);
+    box-shadow: var(--admin-card-shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+}
+
+.admin-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 2rem 0 rgba(58, 59, 69, 0.2);
+}
+
+.admin-card-header {
+    background: var(--admin-gradient);
+    color: white;
+    border: none;
+    padding: 1.25rem;
+    font-weight: 600;
+}
+
+.admin-card-body {
+    padding: 1.5rem;
+}
+
+/* Admin Buttons */
+.btn-admin-primary {
+    background: var(--admin-primary);
+    border-color: var(--admin-primary);
+    color: white;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-admin-primary:hover {
+    background: var(--admin-secondary);
+    border-color: var(--admin-secondary);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-admin-accent {
+    background: var(--admin-accent);
+    border-color: var(--admin-accent);
+    color: white;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-admin-accent:hover {
+    background: #c0392b;
+    border-color: #c0392b;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Admin Stats Cards */
+.admin-stat-card {
+    background: white;
+    border-radius: var(--admin-border-radius);
+    box-shadow: var(--admin-card-shadow);
+    padding: 1.5rem;
+    text-align: center;
+    transition: transform 0.2s ease;
+    border-left: 4px solid var(--admin-primary);
+}
+
+.admin-stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.admin-stat-card.success {
+    border-left-color: var(--admin-success);
+}
+
+.admin-stat-card.warning {
+    border-left-color: var(--admin-warning);
+}
+
+.admin-stat-card.info {
+    border-left-color: var(--admin-info);
+}
+
+.admin-stat-card.accent {
+    border-left-color: var(--admin-accent);
+}
+
+.admin-stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--admin-primary);
+    margin: 0;
+}
+
+.admin-stat-label {
+    color: #6c757d;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.admin-stat-icon {
+    font-size: 3rem;
+    opacity: 0.1;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+/* Admin Tables */
+.admin-table {
+    background: white;
+    border-radius: var(--admin-border-radius);
+    overflow: hidden;
+    box-shadow: var(--admin-card-shadow);
+}
+
+.admin-table .table {
+    margin-bottom: 0;
+}
+
+.admin-table .table thead th {
+    background: var(--admin-light);
+    border: none;
+    font-weight: 600;
+    color: var(--admin-primary);
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    padding: 1rem;
+}
+
+.admin-table .table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.admin-table .table tbody tr:hover {
+    background: rgba(52, 73, 94, 0.05);
+}
+
+.admin-table .table tbody td {
+    padding: 1rem;
+    border: none;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+/* Admin Forms */
+.admin-form-group {
+    margin-bottom: 1.5rem;
+}
+
+.admin-form-label {
+    font-weight: 600;
+    color: var(--admin-primary);
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.admin-form-control {
+    border: 2px solid #e9ecef;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.admin-form-control:focus {
+    border-color: var(--admin-primary);
+    box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.25);
+}
+
+/* Admin Badges */
+.admin-badge {
+    font-weight: 500;
+    padding: 0.5rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+}
+
+.admin-badge.active {
+    background: var(--admin-success);
+}
+
+.admin-badge.inactive {
+    background: var(--admin-accent);
+}
+
+.admin-badge.pending {
+    background: var(--admin-warning);
+}
+
+/* Admin Alerts */
+.admin-alert {
+    border: none;
+    border-radius: var(--admin-border-radius);
+    font-weight: 500;
+    box-shadow: var(--admin-card-shadow);
+}
+
+/* Admin Footer */
+.admin-footer {
+    margin-top: auto;
+}
+
+/* Admin Charts */
+.admin-chart-container {
+    background: white;
+    border-radius: var(--admin-border-radius);
+    padding: 1.5rem;
+    box-shadow: var(--admin-card-shadow);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .admin-main {
+        padding: 1rem 0;
+    }
+    
+    .admin-card-body {
+        padding: 1rem;
+    }
+    
+    .admin-stat-number {
+        font-size: 2rem;
+    }
+}
+
+/* Animation Classes */
+.admin-fade-in {
+    animation: adminFadeIn 0.5s ease-in-out;
+}
+
+@keyframes adminFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.admin-slide-up {
+    animation: adminSlideUp 0.3s ease-out;
+}
+
+@keyframes adminSlideUp {
+    from {
+        transform: translateY(10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Loading States */
+.admin-loading {
+    position: relative;
+    overflow: hidden;
+}
+
+.admin-loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: adminLoading 1.5s infinite;
+}
+
+@keyframes adminLoading {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Admin Action Buttons */
+.admin-action-btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+    border-radius: 0.25rem;
+    margin: 0 0.125rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.admin-action-btn:hover {
+    transform: scale(1.05);
+    text-decoration: none;
+}
+
+.admin-action-btn.edit {
+    background: var(--admin-info);
+    color: white;
+}
+
+.admin-action-btn.delete {
+    background: var(--admin-accent);
+    color: white;
+}
+
+.admin-action-btn.view {
+    background: var(--admin-success);
+    color: white;
+}
+
+/* Utility Classes */
+.bg-admin-gradient {
+    background: var(--admin-gradient) !important;
+}
+
+.text-admin-primary {
+    color: var(--admin-primary) !important;
+}
+
+.text-admin-secondary {
+    color: var(--admin-secondary) !important;
+}
+
+.border-admin-primary {
+    border-color: var(--admin-primary) !important;
+}
+
+.shadow-admin {
+    box-shadow: var(--admin-card-shadow) !important;
+}

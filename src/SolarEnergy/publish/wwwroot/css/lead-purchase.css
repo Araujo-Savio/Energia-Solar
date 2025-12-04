@@ -1,0 +1,816 @@
+/* ====================================
+   BREADCRUMB NAVIGATION
+   ==================================== */
+
+.breadcrumb-container {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 1px solid #dee2e6;
+    padding: 1rem 0;
+    margin-bottom: 0;
+}
+
+.breadcrumb {
+    background: transparent;
+    margin: 0;
+    padding: 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.breadcrumb-item {
+    display: flex;
+    align-items: center;
+}
+
+.breadcrumb-item a {
+    color: var(--solar-primary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+}
+
+.breadcrumb-item a:hover {
+    color: var(--solar-primary);
+    background: rgba(255, 107, 53, 0.1);
+    transform: translateY(-1px);
+}
+
+.breadcrumb-item.active {
+    color: var(--solar-dark);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    content: "/";
+    color: var(--solar-muted);
+    margin: 0 0.75rem;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.breadcrumb-item i {
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+.breadcrumb-item.active i {
+    color: var(--solar-primary);
+    opacity: 1;
+}
+
+/* ====================================
+   SOLAR ENERGY - LEAD PURCHASE CSS
+   ==================================== */
+
+:root {
+    --solar-primary: #ff6b35;
+    --solar-secondary: #2c3e50;
+    --solar-success: #27ae60;
+    --solar-info: #3498db;
+    --solar-warning: #f39c12;
+    --solar-danger: #e74c3c;
+    --solar-light: #f8f9fa;
+    --solar-dark: #2c3e50;
+    --solar-muted: #6c757d;
+}
+
+/* Page Layout */
+.purchase-container {
+    min-height: 100vh;
+    background: #f8f9fa;
+    padding: 2rem 0;
+}
+
+/* Hero Section */
+.purchase-hero {
+    background: linear-gradient(135deg, var(--solar-primary) 0%, #ff8c59 100%);
+    color: white;
+    padding: 4rem 0;
+    margin-bottom: 3rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.purchase-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+    opacity: 0.3;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin: 0;
+    font-weight: 300;
+}
+
+/* Balance Section */
+.balance-overview {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin-bottom: 3rem;
+    border: 2px solid #e9ecef;
+}
+
+.balance-title {
+    color: var(--solar-dark);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.balance-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.balance-item {
+    text-align: center;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.balance-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.balance-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 1rem;
+    background: linear-gradient(135deg, var(--solar-primary) 0%, #ff8c59 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.balance-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--solar-dark);
+    margin-bottom: 0.5rem;
+}
+
+.balance-label {
+    color: var(--solar-muted);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Packages Section */
+.packages-section {
+    margin-bottom: 3rem;
+}
+
+.section-title {
+    text-align: center;
+    color: var(--solar-dark);
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.section-subtitle {
+    text-align: center;
+    color: var(--solar-muted);
+    font-size: 1.1rem;
+    margin-bottom: 3rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.packages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.package-card {
+    background: white;
+    border-radius: 20px;
+    padding: 0;
+    border: 3px solid transparent;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    position: relative;
+}
+
+.package-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+}
+
+.package-card.popular {
+    border-color: var(--solar-primary);
+    transform: scale(1.05);
+    z-index: 2;
+}
+
+.package-card.popular::before {
+    content: 'MAIS POPULAR';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, var(--solar-primary) 0%, #ff8c59 100%);
+    color: white;
+    padding: 0.75rem;
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    z-index: 1;
+}
+
+.package-header {
+    padding: 2.5rem 2rem 1.5rem;
+    text-align: center;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    position: relative;
+}
+
+.package-card.popular .package-header {
+    padding-top: 3.5rem;
+}
+
+.package-name {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--solar-dark);
+    margin-bottom: 0.5rem;
+}
+
+.package-description {
+    color: var(--solar-muted);
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+}
+
+.package-price {
+    margin-bottom: 1rem;
+    text-align: center;
+    margin: 1.5rem 0;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(255, 107, 53, 0.05) 0%, rgba(255, 107, 53, 0.02) 100%);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 107, 53, 0.1);
+}
+
+.price-main {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.price-currency {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: var(--solar-primary);
+    vertical-align: top;
+}
+
+.price-amount {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--solar-primary);
+    margin-left: 0.25rem;
+}
+
+.price-detail {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.price-breakdown {
+    margin: 1rem 0;
+}
+
+.price-comparison {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.original-price {
+    font-size: 0.9rem;
+    color: #999;
+}
+
+.discount-label {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.price-per-unit {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    padding: 0.75rem;
+    margin-top: 1rem;
+    border: 1px solid rgba(255, 107, 53, 0.15);
+}
+
+.unit-price-label {
+    display: block;
+    font-size: 0.8rem;
+    color: #666;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
+}
+
+.unit-price-value {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--solar-primary);
+}
+
+.unit-price-original {
+    display: block;
+    font-size: 0.8rem;
+    color: #999;
+    margin-top: 0.25rem;
+}
+
+.savings-badge {
+    background: linear-gradient(135deg, var(--solar-success) 0%, #4caf50 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.package-body {
+    padding: 0 2rem 2rem;
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.benefit-item:hover {
+    background: linear-gradient(135deg, #e3f2fd 0%, #ffffff 100%);
+    border-color: var(--solar-info);
+}
+
+.benefit-icon {
+    width: 24px;
+    height: 24px;
+    background: linear-gradient(135deg, var(--solar-success) 0%, #4caf50 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    flex-shrink: 0;
+}
+
+.benefit-text {
+    font-size: 0.85rem;
+    color: var(--solar-dark);
+    font-weight: 500;
+}
+
+.purchase-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--solar-primary) 0%, #ff8c59 100%);
+    color: white;
+    border: none;
+    padding: 1.2rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.purchase-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
+    transition: left 0.6s;
+}
+
+.purchase-btn:hover::before {
+    left: 100%;
+}
+
+.purchase-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+}
+
+/* History Section */
+.history-section {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    border: 2px solid #e9ecef;
+}
+
+.history-header {
+    background: linear-gradient(135deg, var(--solar-secondary) 0%, #34495e 100%);
+    color: white;
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.history-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.history-body {
+    padding: 2rem;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.history-table th {
+    background: var(--solar-light);
+    color: var(--solar-dark);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.8rem;
+    padding: 1rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.history-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #f8f9fa;
+    vertical-align: middle;
+}
+
+.history-table tr:hover {
+    background: #f8f9fa;
+}
+
+.transaction-badge {
+    background: var(--solar-light);
+    color: var(--solar-dark);
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 0.8rem;
+    border: 1px solid #e9ecef;
+}
+
+.status-success {
+    background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(76, 175, 80, 0.05) 100%);
+    color: var(--solar-success);
+    padding: 0.4rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid rgba(39, 174, 96, 0.2);
+}
+
+.amount-highlight {
+    font-weight: 700;
+    color: var(--solar-success);
+    font-size: 1.1rem;
+}
+
+.discount-badge {
+    background: linear-gradient(135deg, var(--solar-success) 0%, #4caf50 100%);
+    color: white;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Alerts */
+.alert-custom {
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    border: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(76, 175, 80, 0.05) 100%);
+    color: var(--solar-success);
+    border-left: 4px solid var(--solar-success);
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(244, 67, 54, 0.05) 100%);
+    color: var(--solar-danger);
+    border-left: 4px solid var(--solar-danger);
+}
+
+/* Navigation */
+.navigation-section {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    text-align: center;
+    border: 2px solid #e9ecef;
+}
+
+.nav-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.nav-btn {
+    background: linear-gradient(135deg, var(--solar-secondary) 0%, #34495e 100%);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(44, 62, 80, 0.3);
+    color: white;
+    text-decoration: none;
+}
+
+.nav-btn.secondary {
+    background: linear-gradient(135deg, var(--solar-info) 0%, #2196f3 100%);
+}
+
+.nav-btn.secondary:hover {
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+}
+
+/* Enhanced package pricing */
+.package-price {
+    text-align: center;
+    margin: 1.5rem 0;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(255, 107, 53, 0.05) 0%, rgba(255, 107, 53, 0.02) 100%);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 107, 53, 0.1);
+}
+
+.price-main {
+    margin-bottom: 0.5rem;
+}
+
+.price-currency {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: var(--solar-primary);
+    vertical-align: top;
+}
+
+.price-amount {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--solar-primary);
+    margin-left: 0.25rem;
+}
+
+.price-detail {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.price-breakdown {
+    margin: 1rem 0;
+}
+
+.price-comparison {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.original-price {
+    font-size: 0.9rem;
+    color: #999;
+}
+
+.discount-label {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.price-per-unit {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    padding: 0.75rem;
+    margin-top: 1rem;
+    border: 1px solid rgba(255, 107, 53, 0.15);
+}
+
+.unit-price-label {
+    display: block;
+    font-size: 0.8rem;
+    color: #666;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
+}
+
+.unit-price-value {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--solar-primary);
+}
+
+.unit-price-original {
+    display: block;
+    font-size: 0.8rem;
+    color: #999;
+    margin-top: 0.25rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .packages-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .package-card.popular {
+        transform: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.2rem;
+    }
+    
+    .packages-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .balance-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .benefits-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .price-amount {
+        font-size: 1.8rem;
+    }
+    
+    .nav-buttons {
+        flex-direction: column;
+    }
+    
+    .history-table {
+        font-size: 0.85rem;
+    }
+    
+    .history-table th,
+    .history-table td {
+        padding: 0.75rem 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .purchase-container {
+        padding: 1rem 0;
+    }
+    
+    .purchase-hero {
+        padding: 2rem 0;
+    }
+    
+    .hero-title {
+        font-size: 1.8rem;
+    }
+    
+    .balance-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .package-card.popular .package-header {
+        padding-top: 3rem;
+    }
+}
