@@ -27,6 +27,7 @@ namespace SolarEnergy.Services
             var installationTimeMonths = scenarioDefaults.InstallationTimeMonths;
             var maintenanceAnnual = scenarioDefaults.MaintenanceAnnual;
             var installationIncentive = scenarioDefaults.InstallationIncentive;
+            var upfrontInstallationInvestment = installationCost - installationIncentive;
 
             var rentalMonthly = scenarioDefaults.RentalMonthly;
             var rentalSetup = scenarioDefaults.RentalSetup;
@@ -43,7 +44,7 @@ namespace SolarEnergy.Services
             var annualConsumption = monthlyConsumption * 12m;
 
             decimal cumulativeBase = 0m;
-            decimal cumulativeInstall = installationCost - installationIncentive;
+            decimal cumulativeInstall = upfrontInstallationInvestment;
             decimal cumulativeRental = rentalSetup;
             decimal annualSavingsInstallSum = 0m;
             decimal annualSavingsRentalSum = 0m;
@@ -102,7 +103,7 @@ namespace SolarEnergy.Services
                 {
                     var previousSavings = cumulativeInstallSavings - annualSavingsInstall;
                     var fractionOfYear = annualSavingsInstall > 0m
-                        ? (installationCost - installationIncentive - previousSavings) / annualSavingsInstall
+                        ? (upfrontInstallationInvestment - previousSavings) / annualSavingsInstall
                         : 0m;
 
                     paybackYears = year - 1 + Math.Max(0m, Math.Min(1m, fractionOfYear));
@@ -114,7 +115,8 @@ namespace SolarEnergy.Services
             }
 
             var totalBaseCost = cumulativeBase;
-            var totalInstallCost = cumulativeInstall;
+            var totalInstallationInvestment = cumulativeInstall;
+            var totalInstallCost = totalInstallationInvestment;
             var totalRentalCost = cumulativeRental;
 
             var totalInstallSavings = totalBaseCost - totalInstallCost;
@@ -136,7 +138,7 @@ namespace SolarEnergy.Services
                 RentalSavingsTimeline = rentalSavingsTimeline,
                 TimelineLabels = timelineLabels,
                 CostWithoutSolar = (double)totalBaseCost,
-                InstallationInvestment = (double)(installationCost - installationIncentive),
+                InstallationInvestment = (double)totalInstallationInvestment,
                 RentCost = (double)totalRentalCost,
                 InstallationSavings = (double)totalInstallSavings,
                 RentSavings = (double)totalRentalSavings,
@@ -153,7 +155,7 @@ namespace SolarEnergy.Services
                 TotalRentalCost = (double)totalRentalCost,
                 CoveragePercent = (double)Math.Min(Math.Max(coveragePercent, 0m), 120m),
                 AnalyzedHorizonYears = horizonYears,
-                InitialInvestment = (double)(installationCost - installationIncentive),
+                InitialInvestment = (double)totalInstallationInvestment,
                 InstallationTotalSavingHorizon = (double)totalInstallSavings,
                 RentTotalSavingHorizon = (double)totalRentalSavings,
                 InvestmentRecoveryYears = paybackYears.HasValue ? (double)paybackYears : 0d
